@@ -1,0 +1,236 @@
+/* ============================================================
+   Base: font, palette, sfondo, stage scalato
+   ============================================================ */
+@font-face {
+  font-family: 'Fredoka';
+  src: url('../../assets/fonts/fredoka-latin.woff2') format('woff2');
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: block;
+}
+
+:root {
+  --font: 'Fredoka', 'Baloo 2', ui-rounded, 'Arial Rounded MT Bold', 'Segoe UI', system-ui, sans-serif;
+
+  --ink: #262a3d;
+  --ink-soft: #565c78;
+  --paper: #fff9ef;
+  --paper-2: #fdeed3;
+  --line: #ead3ad;
+
+  --red: #ee4655;
+  --red-hi: #ff6f78;
+  --red-lo: #bf2c3f;
+  --red-soft: #ffd5d1;
+  --red-mid: #f9a59e;
+  --red-ink: #8a1d2b;
+
+  --blue: #2f8ae8;
+  --blue-hi: #5aaeff;
+  --blue-lo: #1b5fb4;
+  --blue-soft: #d2e5fb;
+  --blue-mid: #97c4f5;
+  --blue-ink: #13447f;
+
+  --green: #1fb36b;
+  --green-hi: #45d68b;
+  --green-lo: #12814c;
+
+  --gold: #ffc531;
+  --gold-hi: #ffe27a;
+  --gold-lo: #d98c00;
+
+  --tray: #2c3049;
+  --tray-lo: #1d2035;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: #b62d4a;
+}
+
+body {
+  font-family: var(--font);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+}
+
+button {
+  font-family: inherit;
+  color: inherit;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+svg {
+  display: block;
+}
+
+#app {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* ---------- sfondo ---------- */
+.bg,
+.bg-layer,
+.bg-pattern {
+  position: absolute;
+  inset: 0;
+}
+
+.bg-red {
+  background: radial-gradient(130% 85% at 50% 16%, #ff9274 0%, #f2595f 44%, #b42c4a 100%);
+}
+
+.bg-blue {
+  background: radial-gradient(130% 85% at 50% 16%, #7ccdff 0%, #3a8eea 44%, #1b429c 100%);
+  opacity: 0;
+  transition: opacity 0.9s ease;
+}
+
+#app[data-turn='blue'] .bg-blue {
+  opacity: 1;
+}
+
+.bg-pattern {
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.1) 2.4px, transparent 2.9px),
+    radial-gradient(rgba(255, 255, 255, 0.06) 2.4px, transparent 2.9px);
+  background-size: 34px 34px, 34px 34px;
+  background-position: 0 0, 17px 17px;
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.35) 100%);
+  mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.35) 100%);
+}
+
+.dim {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 12, 25, 0.55);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.dim.is-on {
+  opacity: 1;
+}
+
+/* ---------- area sicura + stage ---------- */
+.safe {
+  position: absolute;
+  top: env(safe-area-inset-top, 0px);
+  right: env(safe-area-inset-right, 0px);
+  bottom: env(safe-area-inset-bottom, 0px);
+  left: env(safe-area-inset-left, 0px);
+}
+
+.stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 390px;
+  height: 720px;
+  transform-origin: 50% 50%;
+}
+
+.table {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 12px 12px;
+  transform-origin: 50% 50%;
+}
+
+#app[data-screen='menu'] .table {
+  visibility: hidden;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 40;
+}
+
+.screens {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+}
+
+/* ---------- telefono in orizzontale: il gioco è verticale ---------- */
+.rotate-hint {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+  z-index: 100;
+}
+
+.rh-phone {
+  position: relative;
+  width: 54px;
+  height: 92px;
+  border-radius: 12px;
+  border: 5px solid #fff;
+  animation: rh-turn 2.2s ease-in-out infinite;
+}
+
+.rh-dot {
+  position: absolute;
+  left: 50%;
+  bottom: 5px;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+@keyframes rh-turn {
+  0%, 20% { transform: rotate(-90deg); }
+  50%, 100% { transform: rotate(0deg); }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .rotate-hint {
+    display: flex;
+  }
+
+  .safe,
+  .dim {
+    visibility: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-blue {
+    transition: none;
+  }
+}

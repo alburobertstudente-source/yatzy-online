@@ -1,0 +1,20 @@
+{
+  "name": "yatzy-online",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Yatzy per 2 giocatori: sullo stesso smartphone o online da due telefoni, con carte potenziamento gratta e vinci.",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "build": "node scripts/build.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "test:e2e": "node scripts/e2e.mjs",
+    "peer": "peerjs --host 127.0.0.1 --port 9000 --path /",
+    "test:online": "node scripts/e2e-online.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "peer": "1.0.2",
+    "peerjs": "1.5.5"
+  }
+}
