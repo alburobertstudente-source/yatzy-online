@@ -1,0 +1,17 @@
+{
+  "name": "Yatzy Duello",
+  "short_name": "Yatzy",
+  "description": "Yatzy a due giocatori: sullo stesso telefono o online, con carte potenziamento gratta e vinci.",
+  "lang": "it",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#b42c4a",
+  "theme_color": "#e2475a",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

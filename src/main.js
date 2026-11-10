@@ -87,7 +87,40 @@ function showMenu() {
     onContinue: () => continueGame(),
     onSettings: (patch) => updateSettings(patch),
     onOnline: () => openOnline(),
+    onInstall: () => installApp(),
+    installable: Boolean(installPrompt),
   });
+}
+
+/* ---------------- installazione come app (Chrome / Android) ---------------- */
+let installPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  installPrompt = e;
+  screens.setInstallable(true);
+});
+window.addEventListener('appinstalled', () => {
+  installPrompt = null;
+  screens.setInstallable(false);
+});
+
+async function installApp() {
+  sound.unlock();
+  sound.tap();
+  if (!installPrompt) return;
+  const p = installPrompt;
+  installPrompt = null;
+  screens.setInstallable(false);
+  try {
+    await p.prompt();
+    await p.userChoice;
+  } catch {
+    /* installazione annullata */
+  }
+}
+
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 }
 
 async function startGame() {

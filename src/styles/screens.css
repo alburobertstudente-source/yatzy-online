@@ -491,6 +491,10 @@
 /* ============================================================
    Modalità online
    ============================================================ */
+.btn-menu[hidden] {
+  display: none;
+}
+
 .btn-menu.online {
   background: linear-gradient(180deg, var(--blue-hi), var(--blue));
   box-shadow: inset 0 -6px 0 var(--blue-lo), inset 0 2px 0 rgba(255, 255, 255, 0.3), 0 8px 18px rgba(10, 30, 80, 0.3);

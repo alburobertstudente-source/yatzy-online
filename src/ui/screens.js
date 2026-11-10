@@ -11,6 +11,7 @@ import { CARD_ICONS } from './cardArt.js';
 import { DOCTOR_BADGE, HALO_BADGE } from './memeArt.js';
 
 const ONLINE_ICON = `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M2.5 12h19M12 2.5c3 3 3 16 0 19M12 2.5c-3 3-3 16 0 19" fill="none" stroke="currentColor" stroke-width="2"/></svg>`;
+const INSTALL_ICON = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>`;
 const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const cleanCodeInput = (t) =>
   [...String(t || '').toUpperCase()]
@@ -56,7 +57,7 @@ export class Screens {
   }
 
   /* ---------------- MENU ---------------- */
-  menu({ hasSave, tally, settings, onNew, onContinue, onSettings, onOnline }) {
+  menu({ hasSave, tally, settings, onNew, onContinue, onSettings, onOnline, onInstall, installable = false }) {
     const letters = ['Y', 'A', 'T', 'Z', 'Y'];
     const logo = h(
       'div',
@@ -78,6 +79,9 @@ export class Screens {
       onOnline ? h('button', { class: 'btn btn-menu online', type: 'button', onclick: onOnline }, h('span', { class: 'btn-ico', html: ONLINE_ICON }), 'GIOCA ONLINE') : null,
       h('button', { class: 'btn btn-menu ghost', type: 'button', onclick: () => this.rules() }, h('span', { class: 'btn-ico', html: ICONS.rules }), 'REGOLE'),
     );
+    // installazione come app (Chrome la propone quando è possibile)
+    this.installBtn = onInstall ? h('button', { class: 'btn btn-menu secondary install', type: 'button', hidden: !installable, onclick: onInstall }, h('span', { class: 'btn-ico', html: INSTALL_ICON }), "INSTALLA L'APP") : null;
+    if (this.installBtn) buttons.append(this.installBtn);
     const opts = h(
       'div',
       { class: 'menu-options' },
@@ -162,6 +166,11 @@ export class Screens {
       ),
     );
     return this.#show(el);
+  }
+
+  /** Mostra o nasconde il pulsante "Installa l'app" del menu. */
+  setInstallable(on) {
+    if (this.installBtn) this.installBtn.hidden = !on;
   }
 
   /* ---------------- GIOCA ONLINE ---------------- */

@@ -4,7 +4,7 @@
  *   node scripts/build.mjs
  */
 import { build, transform } from 'esbuild';
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, copyFile } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -38,6 +38,10 @@ html = html
   .replace('</head>', `    <style>${css}</style>\n  </head>`)
   .replace(/<script type="module" src="src\/main\.js"><\/script>/, () => `<script>${peerjs}</script>\n    <script>${script}</script>`);
 
-await mkdir(join(ROOT, 'dist'), { recursive: true });
+await mkdir(join(ROOT, 'dist/icons'), { recursive: true });
 await writeFile(join(ROOT, 'dist/index.html'), html);
+// file per installare il gioco come app (dist/ si può pubblicare così com'è)
+for (const f of ['manifest.webmanifest', 'sw.js', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/maskable-512.png', 'icons/apple-touch-icon.png']) {
+  await copyFile(join(ROOT, f), join(ROOT, 'dist', f));
+}
 console.log(`dist/index.html creato (${(html.length / 1024).toFixed(0)} KB)`);
