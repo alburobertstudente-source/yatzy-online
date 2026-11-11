@@ -3,7 +3,7 @@
  * (la partita sullo stesso telefono funziona offline; l'online richiede internet).
  * Strategia: prima la rete (così gli aggiornamenti arrivano subito), poi la copia salvata.
  */
-const CACHE = 'yatzy-duello-v1';
+const CACHE = 'yatzy-duello-v2';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
 
 self.addEventListener('install', (event) => {
@@ -29,6 +29,7 @@ self.addEventListener('fetch', (event) => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
+  if (url.pathname.startsWith('/api/')) return; // account e classifica: sempre dalla rete
   event.respondWith(
     fetch(req)
       .then((res) => {

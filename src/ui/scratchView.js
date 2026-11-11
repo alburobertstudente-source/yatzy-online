@@ -3,6 +3,7 @@
  * Scoperto più del 50% la carta si rivela con un effetto in base alla rarità.
  * Vive dentro il tavolo, quindi è sempre orientata verso il giocatore di turno.
  */
+import { currentFoil } from './skins.js';
 import { h, wait } from './dom.js';
 import { bigCard, miniCard, CARD_BACK } from './cardArt.js';
 import { CARDS, RARITY_INFO } from '../core/cards.js';
@@ -264,12 +265,9 @@ function drawFoil(ctx, w, hgt, s) {
   ctx.clearRect(0, 0, w, hgt);
   roundRect(ctx, 0, 0, w, hgt, 24 * s);
   ctx.clip();
+  const foil = currentFoil();
   const g = ctx.createLinearGradient(0, 0, w, hgt);
-  g.addColorStop(0, '#aeb7c8');
-  g.addColorStop(0.3, '#eef1f6');
-  g.addColorStop(0.55, '#b3bccc');
-  g.addColorStop(0.8, '#e6eaf1');
-  g.addColorStop(1, '#9ea8bb');
+  [0, 0.3, 0.55, 0.8, 1].forEach((at, k) => g.addColorStop(at, foil.stops[k]));
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, w, hgt);
   // strisce diagonali
@@ -282,7 +280,7 @@ function drawFoil(ctx, w, hgt, s) {
     ctx.stroke();
   }
   // motivo a puntini di dado
-  ctx.fillStyle = 'rgba(70,80,110,0.13)';
+  ctx.fillStyle = foil.dots;
   const step = 26 * s;
   for (let y = step / 2; y < hgt; y += step) {
     for (let x = (Math.round(y / step) % 2 ? step : step / 2); x < w; x += step) {
@@ -311,7 +309,7 @@ function drawFoil(ctx, w, hgt, s) {
   star(ctx, cx, cy, 34 * s, 15 * s);
   ctx.fill();
   ctx.stroke();
-  ctx.fillStyle = '#262a3d';
+  ctx.fillStyle = foil.ink;
   ctx.font = `700 ${30 * s}px Fredoka, 'Arial Rounded MT Bold', sans-serif`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';

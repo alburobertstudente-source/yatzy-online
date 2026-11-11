@@ -20,6 +20,7 @@
  *   sync   {}                    ospite → host   richiesta di stato completo
  *   rematch {}                   rivincita
  *   bye    {}                    l'altro ha lasciato la partita
+ *   profile {card, reply}        nome, avatar, skin e rango del giocatore
  *   ping / pong                  battito per accorgersi delle cadute
  */
 import { Link } from './transport.js';
@@ -160,6 +161,11 @@ export class OnlineSession {
       case 'bye':
         this.emit('left', {});
         break;
+      case 'profile':
+        if (m.card && typeof m.card === 'object') this.emit('profile', m.card);
+        // risponde col proprio profilo (es. l'altro ha ricaricato la pagina)
+        if (!m.reply && this.myCard) this.#send({ t: 'profile', card: this.myCard, reply: true });
+        break;
       default:
         break;
     }
@@ -179,6 +185,12 @@ export class OnlineSession {
   sendAction(a, h) {
     this.seq++;
     this.#send({ t: 'act', seq: this.seq, a, h, n: this.gameNo, e: this.epoch });
+  }
+
+  /** Profilo pubblico (nome, avatar, skin, rango) da mostrare all'avversario. */
+  sendProfile(card) {
+    this.myCard = card;
+    this.#send({ t: 'profile', card });
   }
 
   /** L'host invia lo stato completo (riconnessione o divergenza). */

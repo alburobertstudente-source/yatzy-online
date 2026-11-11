@@ -44,6 +44,11 @@ export class Screens {
     });
   }
 
+  /** Mostra una schermata (usata dal menu principale e dalla campagna). */
+  open(el, opts) {
+    return this.#show(el, opts);
+  }
+
   async close() {
     const el = this.current;
     if (!el) return;
@@ -57,7 +62,7 @@ export class Screens {
   }
 
   /* ---------------- MENU ---------------- */
-  menu({ hasSave, tally, settings, onNew, onContinue, onSettings, onOnline, onInstall, installable = false }) {
+  menu({ hasSave, tally, settings, onNew, onContinue, onSettings, onOnline, onInstall, installable = false, onBack = null }) {
     const letters = ['Y', 'A', 'T', 'Z', 'Y'];
     const logo = h(
       'div',
@@ -93,6 +98,7 @@ export class Screens {
       'div',
       { class: 'screen menu' },
       h('div', { class: 'menu-inner anim-in' }, logo, h('div', { class: 'menu-sub' }, 'SFIDA A DUE GIOCATORI'), versus, buttons, opts),
+      onBack ? h('button', { class: 'icon-btn menu-back', type: 'button', 'aria-label': 'Indietro', onclick: onBack, html: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>' }) : null,
     );
     return this.#show(el, { dim: false });
   }
@@ -322,7 +328,7 @@ export class Screens {
   }
 
   /* ---------------- FINE PARTITA ---------------- */
-  async gameOver({ results, players, rotate, onRematch, onMenu, scorecards = null, viewer = null }) {
+  async gameOver({ results, players, rotate, onRematch, onMenu, scorecards = null, viewer = null, extra = null }) {
     const { winner, breakdown } = results;
     const memesOf = (p) => {
       const card = players.find((x) => x.id === p.id)?.card ?? scorecards?.[p.id];
@@ -372,12 +378,13 @@ export class Screens {
     const center = h(
       'div',
       { class: 'go-center' },
+      extra ? h('div', { class: 'go-extra' }, extra) : null,
       h('button', { class: 'btn btn-menu primary', type: 'button', onclick: onRematch }, 'RIVINCITA'),
       h('button', { class: 'btn btn-menu ghost', type: 'button', onclick: onMenu }, 'MENU'),
     );
     // online: la propria scheda sempre in basso
     const el = viewer === 'blue' ? h('div', { class: 'screen gameover' }, hr.el, center, hb.el) : h('div', { class: 'screen gameover' }, hb.el, center, hr.el);
-    this.rematchBtn = center.firstChild;
+    this.rematchBtn = center.querySelector('.btn-menu.primary');
     if (this.current) await this.close();
     this.current = el;
     this.host.append(el);

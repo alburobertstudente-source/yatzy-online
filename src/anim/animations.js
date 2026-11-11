@@ -5,6 +5,7 @@
 import { TIMING } from '../config.js';
 import { pipsSvg } from '../ui/icons.js';
 import { h, wait } from '../ui/dom.js';
+import { tossFrames, rollParticles } from './rollStyles.js';
 
 export const ms = (t) => t / (TIMING.ANIM_SPEED || 1);
 
@@ -70,7 +71,7 @@ export function setDieFace(die, value) {
  * ESATTAMENTE sulla faccia `value` (decisa prima dal motore).
  * @returns {Promise<void>} risolta quando il dado è fermo
  */
-export function tumbleDie(die, value, { delay = 0, duration = 950, entering = false, onLand } = {}) {
+export function tumbleDie(die, value, { delay = 0, duration = 950, entering = false, onLand, style = 'classic' } = {}) {
   const cube = die.querySelector('.cube');
   const toss = die.querySelector('.die-toss');
   const shadow = die.querySelector('.die-shadow');
@@ -89,7 +90,7 @@ export function tumbleDie(die, value, { delay = 0, duration = 950, entering = fa
 
   const dx = rnd(-10, 10);
   const lift = rnd(40, 58);
-  const tossFrames = entering
+  const tossFrames_ = entering
     ? [
         { transform: `translate(${rnd(-30, 30)}px, -150px) scale(1.55)`, opacity: 0, offset: 0 },
         { transform: `translate(${dx}px, -60px) scale(1.3)`, opacity: 1, offset: 0.25 },
@@ -108,6 +109,9 @@ export function tumbleDie(die, value, { delay = 0, duration = 950, entering = fa
         { transform: 'translate(0, -2px) scale(1)', offset: 0.93 },
         { transform: 'translate(0, 0) scale(1)', offset: 1 },
       ];
+  const custom = style !== 'classic' ? tossFrames(style, { entering, dx, lift }) : null;
+  if (custom) tossFrames_.splice(0, tossFrames_.length, ...custom);
+  if (style !== 'classic') rollParticles(style, die.parentElement, { delay, duration });
   const shadowFrames = [
     { transform: 'scale(1)', opacity: entering ? 0 : 0.55, offset: 0 },
     { transform: 'scale(.55)', opacity: 0.25, offset: 0.3 },
@@ -117,7 +121,7 @@ export function tumbleDie(die, value, { delay = 0, duration = 950, entering = fa
   ];
   const landAt = duration * 0.6;
   if (onLand) setTimeout(onLand, ms(delay + landAt));
-  const p1 = play(toss, tossFrames, { duration, delay, easing: 'linear', fill: 'none' });
+  const p1 = play(toss, tossFrames_, { duration, delay, easing: 'linear', fill: 'none' });
   play(shadow, shadowFrames, { duration, delay, easing: 'linear', fill: 'none' });
   const p2 = play(cube, [{ transform: cubeTransform(from) }, { transform: cubeTransform(to) }], {
     duration: duration * 0.86,

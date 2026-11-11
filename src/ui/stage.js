@@ -16,7 +16,9 @@ export class Stage {
     this.table = h('main', { class: 'table', id: 'table' });
     this.overlay = h('div', { class: 'overlay' });
     this.screens = h('div', { class: 'screens' });
-    this.stage = h('div', { class: 'stage' }, this.table, this.overlay, this.screens);
+    /** livello sopra tutto: finestre del menu, casse, avvisi */
+    this.top = h('div', { class: 'top-layer' });
+    this.stage = h('div', { class: 'stage' }, this.table, this.overlay, this.screens, this.top);
     this.safe = h('div', { class: 'safe' }, this.stage);
     this.dim = h('div', { class: 'dim' });
     this.rotateHint = h(

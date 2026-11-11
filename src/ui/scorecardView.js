@@ -180,19 +180,21 @@ export class ScorecardView {
         const v = p.card.value(cat);
         const filled = v !== null;
         const mine = p.id === current && !filled && !game.scoredThisTurn;
-        const selectable = mine && rolled && interactive;
+        const cursed = mine && Boolean(game.isBlocked?.(cat));
+        const selectable = mine && rolled && interactive && !cursed;
         const selected = selectable && game.selected === cat;
         el.classList.toggle('is-filled', filled);
         el.classList.toggle('is-zero', filled && v === 0);
         el.classList.toggle('is-waiting', mine && !selectable);
         el.classList.toggle('is-selectable', selectable && !selected);
         el.classList.toggle('is-selected', selected);
+        el.classList.toggle('is-cursed', cursed);
         el.setAttribute('aria-disabled', String(!selectable));
-        if (filled) val.textContent = String(v);
-        else if (selected) val.textContent = String(game.previewScore(cat));
+        if (filled) val.textContent = this.hidden === p.id ? '?' : String(v);
+        else if (selected) val.textContent = this.fog === p.id ? '?' : String(game.previewScore(cat));
         else val.textContent = '';
       }
-      if (holdRingFor !== p.id) this.setRing(p.id, p.card.upperTotal(), p.card.hasUpperBonus(), p.card.bonusThreshold || RULES.UPPER_BONUS_THRESHOLD);
+      if (holdRingFor !== p.id && this.hidden !== p.id) this.setRing(p.id, p.card.upperTotal(), p.card.hasUpperBonus(), p.card.bonusThreshold || RULES.UPPER_BONUS_THRESHOLD);
       if (holdChecksFor !== p.id) this.setChecks(p.id, p.card.yatzyBonusCount());
     }
   }

@@ -21,9 +21,10 @@ mkdirSync(OUT, { recursive: true });
 const WEB_PORT = 5198;
 const PEER_PORT = 9010;
 const PAGE = process.env.E2E_PAGE || 'index.html';
-const URL = `http://localhost:${WEB_PORT}/${PAGE}?debug=1&netlog=1&speed=6&peerHost=127.0.0.1&peerPort=${PEER_PORT}&peerPath=/`;
+const URL = `http://localhost:${WEB_PORT}/${PAGE}?classic=1&debug=1&netlog=1&speed=6&peerHost=127.0.0.1&peerPort=${PEER_PORT}&peerPath=/`;
 
-const web = spawn(process.execPath, [join(ROOT, 'scripts/serve.mjs'), String(WEB_PORT), ROOT], { stdio: 'ignore' });
+const DATA = join(ROOT, 'test-results', 'online-data');
+const web = spawn(process.execPath, [join(ROOT, 'scripts/serve.mjs'), String(WEB_PORT), ROOT], { stdio: 'ignore', env: { ...process.env, YATZY_DATA_DIR: DATA } });
 const peer = spawn(join(ROOT, 'node_modules/.bin/peerjs'), ['--host', '127.0.0.1', '--port', String(PEER_PORT), '--path', '/'], { stdio: 'ignore' });
 await new Promise((r) => setTimeout(r, 1500));
 
@@ -46,7 +47,14 @@ async function phone(browser, name) {
   pages.push(page);
   page.on('pageerror', (e) => page.errors.push(`${name} pageerror: ${e.message}`));
   await page.goto(URL);
-  await page.evaluate(() => localStorage.clear());
+  // per giocare online serve un account: ne crea uno nuovo per ogni telefono
+  await page.evaluate(async (who) => {
+    localStorage.clear();
+    const username = `${who}${Math.floor(Math.random() * 1e6)}`.slice(0, 16);
+    const r = await fetch('/api/register', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ username, password: 'prova1234' }) });
+    const d = await r.json();
+    localStorage.setItem('yatzy-duel.account.v1', JSON.stringify({ username: d.profile.username, token: d.token }));
+  }, name.replace(/[^a-z]/gi, '').slice(0, 8) || 'tel');
   await page.goto(URL);
   await page.waitForSelector('.menu .btn-menu');
   return page;
@@ -226,6 +234,12 @@ try {
   const totals = [await host.evaluate(() => window.yatzyDebug.game.results().totals), await guest.evaluate(() => window.yatzyDebug.game.results().totals)];
   check(JSON.stringify(totals[0]) === JSON.stringify(totals[1]), `stesso risultato sui due telefoni (${totals[0].red} - ${totals[0].blue})`);
   check(titles[0].some((x) => /HAI|PAREGGIO/.test(x)) && titles[1].some((x) => /HAI|PAREGGIO/.test(x)), `ognuno vede il proprio risultato (${titles[0].join(' / ')} | ${titles[1].join(' / ')})`);
+  // account: nome dell'avversario, monete e rango assegnati a fine partita
+  const look = await Promise.all([host, guest].map((p) => p.evaluate(() => ({ names: [...document.querySelectorAll('.sb-name')].map((e) => e.textContent), extra: document.querySelector('.go-extra')?.textContent || '', me: window.yatzyApp.account.profile }))));
+  check(look[0].names.includes(look[1].me.username.toUpperCase()) && look[1].names.includes(look[0].me.username.toUpperCase()), `ognuno vede il nome dell'altro (${look[0].names.join('/')} | ${look[1].names.join('/')})`);
+  check(look.every((l) => /monete/.test(l.extra) && /rango/.test(l.extra)), `monete e rango a fine partita (${look[0].extra} | ${look[1].extra})`);
+  const winnerIdx = totals[0].red > totals[0].blue ? 0 : totals[0].red < totals[0].blue ? 1 : -1;
+  if (winnerIdx >= 0) check(look[winnerIdx].me.stats.onlineWins === 1 && look[winnerIdx].me.rank.points > 0 && look[1 - winnerIdx].me.stats.onlineGames === 1, 'il vincitore guadagna rango e una vittoria online');
 
   console.log('\n[3] Rivincita e uscita');
   await guest.locator('.go-center .btn-menu.primary').click();

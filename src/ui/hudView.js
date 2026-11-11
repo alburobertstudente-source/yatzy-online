@@ -15,6 +15,8 @@ export class HudView {
     this.boxes = new Map();
     this.counts = new Map();
     this.names = new Map(players.map((p) => [p.id, p.short]));
+    this.defaults = new Map(this.names);
+    this.hidden = null;
     const side = (p) => {
       const total = h('span', { class: 'sb-total' }, '0');
       const count = h('span', { class: 'sb-cards', title: 'Carte in mano' }, h('span', { class: 'sb-cards-ico', html: MINI.cards }), h('b', {}, '0'));
@@ -40,6 +42,16 @@ export class HudView {
   setSound(on) {
     this.soundBtn.innerHTML = on ? ICONS.soundOn : ICONS.soundOff;
     this.soundBtn.classList.toggle('is-off', !on);
+  }
+
+  /** Nomi personalizzati (avversario online, boss). */
+  setNames(names) {
+    for (const [id, box] of this.boxes) {
+      const name = names?.[id] ?? this.defaults.get(id);
+      this.names.set(id, name);
+      box.querySelector('.sb-name').textContent = name;
+      box.classList.toggle('has-name', Boolean(names?.[id]));
+    }
   }
 
   /** Online: segna con "TU" il giocatore di questo telefono. */
@@ -70,6 +82,10 @@ export class HudView {
     const el = this.totals.get(pid);
     const from = this.values.get(pid) ?? 0;
     this.values.set(pid, value);
+    if (this.hidden === pid) {
+      el.textContent = '?';
+      return;
+    }
     if (!animate || from === value) {
       el.textContent = String(value);
       return;

@@ -159,7 +159,11 @@ svg {
   transform-origin: 50% 50%;
 }
 
-#app[data-screen='menu'] .table {
+#app[data-screen='menu'] .table,
+#app[data-screen='intro'] .table,
+#app[data-screen='hub'] .table,
+#app[data-screen='campaign'] .table,
+#app[data-screen='challenge'] .table {
   visibility: hidden;
 }
 
@@ -174,6 +178,13 @@ svg {
   position: absolute;
   inset: 0;
   z-index: 60;
+  pointer-events: none;
+}
+
+.top-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 80;
   pointer-events: none;
 }
 

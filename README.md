@@ -1,9 +1,10 @@
 # Yatzy Duello – versione online
 
-Yatzy per due giocatori, rosso contro blu, con **carte potenziamento gratta e vinci**. Si gioca in due modi:
+Yatzy per due giocatori, rosso contro blu, con **carte potenziamento gratta e vinci**, **campagna con 100 livelli e 10 boss**, **negozio con casse**, **185 skin** e **rango online**. Si gioca in tre modi:
 
 - **sullo stesso telefono** (NUOVA PARTITA): a ogni cambio turno il tavolo ruota di 180° verso l'altro giocatore;
-- **online da due telefoni** (GIOCA ONLINE): uno crea la partita e manda il codice o il link, l'altro entra. Ognuno gioca dal proprio telefono e vede l'altro giocare in tempo reale.
+- **online da due telefoni** (GIOCA ONLINE): uno crea la partita e manda il codice o il link, l'altro entra. Ognuno gioca dal proprio telefono e vede l'altro giocare in tempo reale;
+- **campagna** da soli: sfide "in tot lanci" e boss contro il computer.
 
 ## Link del gioco
 
@@ -37,10 +38,65 @@ Come funziona: i telefoni si parlano direttamente (WebRTC, libreria [PeerJS](htt
 
 Per usare un server PeerJS proprio basta aggiungere all'indirizzo `?peerHost=mio.server.it&peerPort=443&peerSecure=1`.
 
+## Menu, account e progressi
+
+All'apertura i dadi rotolano sul tavolo, la scritta **YATZY** scoppia e compare **GIOCA**; poi il menu principale: campagna, online, 2 giocatori, negozio, personalizza, profilo, classifica, regole, offerte del giorno e statistiche.
+
+- **Account** (nome utente + password): serve per il **negozio** e per giocare **online**. Senza account si gioca come ospite (campagna e 2 giocatori); creando l'account i progressi da ospite passano all'account. Entrando da un altro telefono si ritrovano monete, oggetti, campagna e rango.
+- **Monete**: si guadagnano coi livelli della campagna (di più per quelli difficili e con più stelle; le ripetizioni valgono un quarto), coi boss (da 400 a 1750) e online (vittoria 140, pareggio 60, sconfitta 30).
+- **Livello del giocatore**: l'esperienza sale giocando (livelli, boss, partite online e sullo stesso telefono, casse aperte).
+
+## Negozio e casse
+
+- **Cassa gratuita** ogni 24 ore (un oggetto e qualche moneta).
+- **Cassa piccola** (150 monete, 1 oggetto), **media** (450, 2 oggetti, almeno uno Non comune), **grande** (1200, 3 oggetti, almeno uno Raro): più la cassa è grande, più conviene e più sono probabili le rarità alte. Le probabilità sono nel negozio.
+- **Offerte del giorno**: 4 oggetti comprabili direttamente, cambiano a mezzanotte.
+- Gli oggetti doppi diventano monete.
+
+## Personalizza
+
+185 oggetti in 6 rarità (Comune, Non comune, Rara, Epica, Leggendaria, Mitica):
+
+- **Dadi** (35 skin: legno, marmo, neon, gemme, oro, galassia con punti a stella, lava, olografico, arcobaleno, diamante, prisma cosmico…)
+- **Animazioni di lancio** (15: super rimbalzo, vortice, bolle, coriandoli, razzo, meteora, fulmine, glitch, portale, stelle cadenti, scia arcobaleno, buco nero…)
+- **Carte** (14 skin, anche olografiche, arcobaleno e prisma: cambia la lamina da grattare e il bordo delle carte)
+- **Tavolo** (13 temi: tramonto, oceano, notte, spazio, vulcano, città neon, aurora, paradiso dorato…)
+- **Avatar**: parte standard e si veste con cappelli, accessori del viso, magliette, pantaloni, scarpe, ali/mantelli; carnagione libera
+- **Profilo**: cornici e titoli
+
+In partita ognuno tira con i propri dadi e la propria animazione (online si vedono quelli dell'avversario).
+
+## Campagna
+
+100 livelli in 10 mondi. I livelli normali sono sfide "realizza qualcosa in tot lanci" (per esempio *Full + Scala grande in 15 lanci*): si tengono i dadi come nel gioco, si tocca l'obiettivo quando è pronto e i dadi ripartono; le stelle dipendono dai lanci avanzati. I lanci di ogni livello sono tarati con un giocatore automatico: si passa dal 97% di vittorie dei primi livelli al 45% circa dell'ultimo mondo (`scripts/gen-levels.mjs`).
+
+Ogni 10 livelli c'è un **boss**: una partita intera (13 round, senza carte) contro il computer, sempre più bravo, con un potere strano:
+
+| Boss | Potere |
+|---|---|
+| Re Ranocchio | dopo il tuo primo lancio un dado salta e cambia faccia |
+| Granchio Pinzetta | a ogni turno un dado non si può tenere |
+| Strega Nebbiolina | niente anteprime dei punti, il suo punteggio è nascosto |
+| Golem di Ghiaccio | dopo il primo lancio un dado si congela per tutto il turno |
+| Capitan Specchio | all'ultimo lancio un dado si capovolge (6↔1, 5↔2, 4↔3) |
+| Drago Avaro | ogni 3 round ti ruba 8 punti dalla casella migliore |
+| Mago del Caos | a ogni turno una tua casella è maledetta |
+| Conte Vampiro | il tuo bonus richiede 73 punti; ogni tuo 0 gli dà 10 punti |
+| Regina Tempesta | nei round pari hai solo 2 lanci e un dado non si può tenere |
+| Signore dei Dadi | 2 lanci nei round pari, un dado non si può tenere, ogni 4 round ti ruba 10 punti |
+
+## Rango online
+
+Ogni partita online cambia il rango (Bronzo, Argento, Oro, Platino, Diamante, Maestro, Campione, Leggenda): si sale di più battendo chi ha più punti. A fine partita si vedono monete e punti rango guadagnati; la **classifica** mostra i migliori 50.
+
+## Dove stanno i dati
+
+Gli account sono su Vercel: le funzioni in `api/` (registrazione, accesso, profilo, classifica) salvano i dati in un archivio Vercel Blob privato; le password sono salvate solo come impronta (scrypt con sale) e l'accesso usa un gettone firmato (`AUTH_SECRET`). Il gioco su Render chiama l'API su `yatzy-duello.vercel.app`. Il profilo resta anche sul telefono, così si gioca senza rete e si sincronizza appena torna.
+
 ## Giocare sullo stesso telefono, anche offline
 
-- Copia `dist/index.html` sul telefono e aprilo con il browser: è un unico file (334 KB) con grafica, font, suoni e libreria online incorporati. Offline funziona la partita sullo stesso telefono; per l'online serve internet.
-- Dal computer: `npm run dev` e apri `http://localhost:5173/`.
+- Copia `dist/index.html` sul telefono e aprilo con il browser: è un unico file (circa 510 KB) con grafica, font, suoni e libreria online incorporati. Offline funziona la partita sullo stesso telefono; per l'online serve internet.
+- Dal computer: `npm run dev` e apri `http://localhost:5173/` (anche le API degli account girano in locale, dati in `.data/`). Con `?classic` si apre direttamente il vecchio menu a 2 giocatori.
 
 Il gioco è pensato per il telefono in verticale: in orizzontale compare l'invito a ruotarlo.
 
@@ -108,7 +164,11 @@ src/
     memes.js             tradizioni della casa (Dottore, Satana)
     turns.js             ordine dei turni e round
     game.js              motore di gioco (eventi, salvataggio, impronta dello stato)
-  net/                   modalità online
+  meta/                  catalogo degli oggetti, casse ed economia, profilo del giocatore
+  campaign/              livelli (levelData.js generato), sfide in tot lanci, boss e loro poteri
+  ai/bot.js              avversario automatico dei boss (Monte Carlo, bravura regolabile)
+  net/                   modalità online e account
+    account.js           accesso, profilo sul telefono e sul server
     peerLoader.js        carica PeerJS (vendor/peerjs.min.js)
     transport.js         stanze con codice, collegamento e riconnessione
     session.js           protocollo: seme comune, mosse, verifiche, ripresa, rivincita
@@ -118,7 +178,10 @@ src/
   anim/                  animazioni (dadi 3D, voli, rotazione), effetti ed effetti delle carte
   audio/sound.js         effetti sonori sintetizzati (Web Audio)
   styles/                CSS
-scripts/                 build, server di sviluppo, test e2e, statistiche
+  ui/meta/               intro, menu principale, negozio e casse, armadio, profilo,
+                         classifica, accesso, campagna, sfide, boss
+api/                     funzioni Vercel: register, login, profile, leaderboard, health
+scripts/                 build, server di sviluppo (anche API), test e2e, taratura livelli
 tests/                   test unitari (node:test)
 vendor/                  PeerJS (licenza MIT)
 dist/index.html          versione compilata in un unico file
@@ -130,9 +193,11 @@ dist/index.html          versione compilata in un unico file
 npm install          # esbuild, PeerJS e il server PeerJS per i test
 npm run dev          # server locale su http://localhost:5173/
 npm run build        # crea dist/index.html
-npm test             # 69 test: punteggi, regole, turni, bonus, carte, tradizioni, partite online allineate
+npm test             # 86 test: punteggi, regole, carte, partite online allineate, catalogo, casse, profilo, rango, campagna, boss, bot, API account
 npm run test:e2e     # partita completa nel browser su vari schermi (richiede Playwright)
 npm run test:online  # due "telefoni" che giocano online tramite un server PeerJS locale
+npm run test:meta    # intro, account, casse, armadio, campagna, boss, classifica, secondo telefono
+node scripts/gen-levels.mjs   # ritara i 90 livelli normali
 npm run peer         # server PeerJS locale (porta 9000) per provare l'online senza internet
 ```
 

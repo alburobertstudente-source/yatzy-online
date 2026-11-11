@@ -12,6 +12,15 @@ import { Controller } from './ui/controller.js';
 import { setVibration } from './ui/dom.js';
 import { sound } from './audio/sound.js';
 import * as store from './storage.js';
+import { Account } from './net/account.js';
+import { MetaUI } from './ui/meta/metaUI.js';
+import { CampaignUI } from './ui/meta/campaignUI.js';
+import { bossIntro, bossModeFor, startBot } from './ui/meta/bossMode.js';
+import { bossHooks } from './campaign/bosses.js';
+import { levelInfo } from './campaign/campaign.js';
+import * as P from './meta/profile.js';
+import { XP } from './meta/economy.js';
+import { botMove } from './ai/bot.js';
 
 const params = new URLSearchParams(location.search);
 
@@ -37,6 +46,13 @@ let held = null;
 /** ultimo stato completo ricevuto e ripresa in corso */
 let latestState = null;
 let resuming = false;
+/** partita della campagna contro un boss in corso */
+let mode = null;
+/** carta pubblica dell'avversario online (nome, avatar, skin, rango) */
+let opponent = null;
+/** partita online già registrata nel profilo (niente doppioni) */
+let recorded = null;
+const account = new Account();
 
 const controller = new Controller({
   stage,
@@ -44,7 +60,7 @@ const controller = new Controller({
   settings,
   players: PLAYERS,
   onSave: (g) => {
-    if (!session) store.save(STORAGE_KEYS.save, g.toJSON());
+    if (!session && !mode) store.save(STORAGE_KEYS.save, g.toJSON());
   },
   onGameOver: (results) => finishGame(results),
   onExit: () => askExit(),
@@ -74,6 +90,89 @@ function tally() {
   return { red: 0, blue: 0, ...store.load(STORAGE_KEYS.tally, {}) };
 }
 
+/* ---------------- menu principale, campagna ---------------- */
+const meta = new MetaUI({
+  stage,
+  screens,
+  account,
+  settings,
+  actions: {
+    campaign: () => campaign.map(),
+    online: () => openOnline(),
+    local: () => showMenu(),
+    rules: () => screens.rules(),
+    install: () => installApp(),
+    installable: () => Boolean(installPrompt),
+    updateSettings: (patch) => updateSettings(patch),
+  },
+});
+const campaign = new CampaignUI({ stage, screens, account, onBoss: (n) => startBoss(n), onHub: () => meta.hub() });
+const classic = params.has('classic');
+
+function home() {
+  return classic ? showMenu() : meta.hub();
+}
+
+const mySkin = () => ({ dice: account.profile.equip.dice, roll: account.profile.equip.roll });
+const PLAIN = { dice: 'dice.classic', roll: 'roll.classic' };
+const BOSS_DICE = { frog: 'dice.mint', crab: 'dice.tomato', witch: 'dice.lavender', golem: 'dice.ice', mirror: 'dice.ocean', dragon: 'dice.dragon', chaos: 'dice.galaxy', vampire: 'dice.ruby', storm: 'dice.sapphire', lord: 'dice.gold' };
+const namedPlayers = (names) => PLAYERS.map((p) => ({ ...p, short: names?.[p.id] ?? p.short }));
+
+/** Partita sullo stesso telefono: il rosso usa le skin del profilo. */
+function setupLocal() {
+  stopBoss();
+  controller.setOffline();
+  controller.setMode(null);
+  controller.setPlayerNames(null);
+  controller.setSkins({ red: mySkin(), blue: PLAIN });
+}
+
+/* ---------------- boss della campagna ---------------- */
+function stopBoss() {
+  if (!mode) return;
+  mode.bot?.stop();
+  mode = null;
+  controller.setMode(null);
+  controller.setOffline();
+  controller.setPlayerNames(null);
+}
+
+async function startBoss(n) {
+  sound.unlock();
+  leaveOnline({ notify: true });
+  stopBoss();
+  const info = levelInfo(n);
+  await bossIntro(screens, info);
+  game = new Game({ cards: false, hooks: bossHooks(info.bossData) });
+  const names = { red: account.profile.username ? account.profile.username.toUpperCase() : 'TU', blue: info.bossData.name.toUpperCase() };
+  controller.setOnline({ viewer: 'red', onAction: () => {}, onDesync: () => {} });
+  controller.setPlayerNames(names);
+  controller.setSkins({ red: mySkin(), blue: { dice: BOSS_DICE[info.bossData.id] || 'dice.coal', roll: 'roll.classic' } });
+  controller.setMode(bossModeFor(info));
+  mode = { type: 'boss', n, info, names, bot: startBot(controller, game, info.bossData.skill) };
+  exposeDebug();
+  await screens.close();
+  app.dataset.screen = 'game';
+  await controller.start(game, { fresh: true });
+}
+
+async function finishBoss(results) {
+  const { n, info } = mode;
+  const g = game;
+  // il bot si ferma; nomi e tavolo restano visibili dietro al risultato
+  mode.bot?.stop();
+  mode = null;
+  const won = results.winner === 'red';
+  const red = g.player('red').card;
+  let rewards = null;
+  account.update((p) => {
+    P.recordGame(p, { score: results.totals.red, yatzys: red.yatzyBonusCount() + (red.scores.yatzy === 50 ? 1 : 0), won });
+    if (won) rewards = P.completeLevel(p, n, { stars: 0, coins: info.coins, replayCoins: info.replayCoins, xp: info.xp, boss: true });
+  });
+  app.dataset.screen = 'gameover';
+  await campaign.showResult({ n, won, boss: info.bossData, rewards, score: `${results.totals.red} – ${results.totals.blue}`, retry: () => startBoss(n) });
+}
+
 /* ---------------- flusso ---------------- */
 function showMenu() {
   app.dataset.screen = 'menu';
@@ -89,6 +188,7 @@ function showMenu() {
     onOnline: () => openOnline(),
     onInstall: () => installApp(),
     installable: Boolean(installPrompt),
+    onBack: classic ? null : () => meta.hub(),
   });
 }
 
@@ -128,6 +228,7 @@ async function startGame() {
   sound.tap();
   leaveOnline({ notify: true });
   store.remove(STORAGE_KEYS.save);
+  setupLocal();
   game = new Game();
   exposeDebug();
   await screens.close();
@@ -146,6 +247,7 @@ async function continueGame() {
   } catch {
     return startGame();
   }
+  setupLocal();
   exposeDebug();
   await screens.close();
   app.dataset.screen = 'game';
@@ -153,6 +255,21 @@ async function continueGame() {
 }
 
 function askExit() {
+  if (mode) {
+    const n = mode.n;
+    screens.confirmExit({
+      rotated: false,
+      title: 'Abbandonare la sfida?',
+      text: 'La partita contro il boss finirà e non riceverai la ricompensa.',
+      onStay: () => screens.close(),
+      onExit: async () => {
+        stopBoss();
+        await screens.close();
+        campaign.map({ focus: n });
+      },
+    });
+    return;
+  }
   if (session) {
     screens.confirmExit({
       rotated: false,
@@ -162,7 +279,7 @@ function askExit() {
       onExit: async () => {
         leaveOnline({ notify: true });
         await screens.close();
-        showMenu();
+        home();
       },
     });
     return;
@@ -179,8 +296,13 @@ function askExit() {
 }
 
 function finishGame(results) {
+  if (mode) return finishBoss(results);
   if (session) return finishOnlineGame(results);
   store.remove(STORAGE_KEYS.save);
+  account.update((p) => {
+    P.recordGame(p, { score: results.totals.red });
+    P.addXp(p, XP.local);
+  });
   const t = tally();
   if (results.winner) t[results.winner]++;
   store.save(STORAGE_KEYS.tally, t);
@@ -210,6 +332,14 @@ function shareUrl(code) {
 function openOnline(initialCode = '') {
   sound.unlock();
   sound.tap();
+  if (!account.loggedIn) {
+    // per giocare online serve un account
+    const ask = () => meta.auth({ reason: 'Per giocare online serve un account.', onDone: () => openOnline(initialCode) });
+    if (!screens.current) meta.hub().then(ask);
+    else ask();
+    return;
+  }
+  stopBoss();
   app.dataset.screen = 'menu';
   const lobby = screens.onlineLobby({
     initialCode,
@@ -239,7 +369,7 @@ function openOnline(initialCode = '') {
     onBack: () => {
       leaveOnline({ notify: true });
       if (location.hash) history.replaceState(null, '', location.pathname + location.search);
-      showMenu();
+      home();
     },
   });
 }
@@ -248,8 +378,19 @@ function attachSession(s) {
   leaveOnline({ notify: false });
   session = s;
   s.provideState = () => (game && controller.game === game ? game.toJSON() : null);
-  s.on('start', ({ seed }) => startOnlineGame(s, seed));
-  s.on('state', ({ state }) => resumeOnlineGame(s, state));
+  s.on('start', ({ seed }) => {
+    s.sendProfile(P.publicCard(account.profile));
+    startOnlineGame(s, seed);
+  });
+  s.on('state', ({ state }) => {
+    s.sendProfile(P.publicCard(account.profile));
+    resumeOnlineGame(s, state);
+  });
+  s.on('profile', (card) => {
+    if (session !== s) return;
+    opponent = card;
+    applyOnlineLook(s);
+  });
   s.on('action', (msg) => {
     if (session !== s) return;
     if (held) held.push(msg);
@@ -258,7 +399,7 @@ function attachSession(s) {
   s.on('status', (st) => {
     if (session !== s || !s.started) return;
     if (st === 'connected') screens.hideConnection();
-    else screens.showConnection(st, { onLeave: () => { leaveOnline({ notify: true }); screens.close().then(showMenu); } });
+    else screens.showConnection(st, { onLeave: () => { leaveOnline({ notify: true }); screens.close().then(home); } });
   });
   s.on('left', async () => {
     if (session !== s) return;
@@ -269,13 +410,21 @@ function attachSession(s) {
       button: 'MENU',
       onClose: async () => {
         await screens.close();
-        showMenu();
+        home();
       },
     });
   });
   s.on('error', (e) => {
     if (session === s && !s.started) screens.current && console.info(e.text);
   });
+}
+
+/** Nome e skin dell'avversario online (arrivano col suo profilo). */
+function applyOnlineLook(s) {
+  const other = s.color === 'red' ? 'blue' : 'red';
+  const name = opponent?.username ? String(opponent.username).slice(0, 16).toUpperCase() : null;
+  controller.setPlayerNames(name ? { [other]: name } : null);
+  controller.setSkins({ [s.color]: mySkin(), [other]: opponent?.equip ? { dice: opponent.equip.dice, roll: opponent.equip.roll } : PLAIN });
 }
 
 async function waitControllerIdle(limit = 4000) {
@@ -301,11 +450,13 @@ async function startOnlineGame(s, seed) {
   if (location.hash) history.replaceState(null, '', location.pathname + location.search);
   await waitControllerIdle();
   game = new Game({ rng: createSeededRandom(seed) });
+  controller.setMode(null);
   controller.setOnline({
     viewer: s.color,
     onAction: (a, h) => s.sendAction(a, h),
     onDesync: () => s.requestSync(),
   });
+  applyOnlineLook(s);
   exposeDebug();
   await screens.close();
   app.dataset.screen = 'game';
@@ -336,6 +487,7 @@ async function resumeOnlineGame(s, state) {
     onAction: (a, h) => s.sendAction(a, h),
     onDesync: () => s.requestSync(),
   });
+  applyOnlineLook(s);
   exposeDebug();
   if (screens.current) await screens.close();
   app.dataset.screen = 'game';
@@ -347,22 +499,33 @@ function finishOnlineGame(results) {
   if (results.winner === session.color) sound.win();
   else if (results.winner) sound.lose();
   else sound.combo();
+  // monete e rango: una volta sola per partita
+  let extra = null;
+  if (recorded !== game) {
+    recorded = game;
+    const me = game.player(session.color).card;
+    const outcome = results.winner === session.color ? 'win' : results.winner ? 'loss' : 'draw';
+    const res = account.update((p) => P.recordOnline(p, { outcome, opponentPoints: Number(opponent?.rank) || 0, score: results.totals[session.color], yatzys: me.yatzyBonusCount() + (me.scores.yatzy === 50 ? 1 : 0) }));
+    extra = `+${res.coins} monete · rango ${res.delta >= 0 ? '+' : ''}${res.delta} (${res.rank.name}${res.promoted ? ' ▲' : res.demoted ? ' ▼' : ''})`;
+  }
+  const other = session.color === 'red' ? 'blue' : 'red';
   screens.gameOver({
     results,
-    players: PLAYERS,
+    extra,
+    players: namedPlayers(opponent?.username ? { [other]: String(opponent.username).slice(0, 16).toUpperCase() } : null),
     scorecards: game ? Object.fromEntries(game.players.map((p) => [p.id, p.card])) : null,
     rotate: false,
     viewer: session.color,
     onRematch: () => {
       sound.tap();
-      if (!session) return showMenu();
+      if (!session) return home();
       session.rematch();
       if (screens.rematchBtn) screens.rematchBtn.textContent = 'IN ATTESA…';
     },
     onMenu: async () => {
       leaveOnline({ notify: true });
       await screens.close();
-      showMenu();
+      home();
     },
   });
 }
@@ -375,6 +538,8 @@ function leaveOnline({ notify }) {
   if (notify) s.leave();
   else s.close();
   controller.setOffline();
+  controller.setPlayerNames(null);
+  opponent = null;
   screens.hideConnection();
 }
 
@@ -419,6 +584,9 @@ function exposeDebug() {
     get myTurn() {
       return controller.isMyTurn;
     },
+    get boss() {
+      return mode;
+    },
     hash: () => game?.stateHash(),
   };
 }
@@ -429,17 +597,27 @@ document.addEventListener('contextmenu', (e) => e.preventDefault());
 document.addEventListener('dblclick', (e) => e.preventDefault(), { passive: false });
 window.addEventListener('hashchange', () => {
   const c = location.hash.replace('#', '').toUpperCase();
-  if (isValidCode(c) && !session && app.dataset.screen === 'menu') openOnline(c);
+  if (isValidCode(c) && !session && ['menu', 'hub'].includes(app.dataset.screen)) openOnline(c);
 });
+account.refresh();
 const hashCode = location.hash.replace('#', '').toUpperCase();
-if (isValidCode(hashCode)) openOnline(hashCode);
-else showMenu();
+if (isValidCode(hashCode)) {
+  if (classic) openOnline(hashCode);
+  else meta.hub().then(() => openOnline(hashCode));
+} else if (classic) showMenu();
+else if (params.has('skipintro')) meta.hub();
+else meta.intro().then(() => meta.hub());
 if (params.has('debug')) {
   window.yatzyApp = {
     get game() {
       return game;
     },
     controller,
+    account,
+    meta,
+    campaign,
+    startBoss,
+    botMove,
     get session() {
       return session;
     },

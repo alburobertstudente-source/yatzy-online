@@ -47,7 +47,7 @@ const idle = (page, timeout = 40000) =>
   page.waitForFunction(() => window.yatzyDebug && !window.yatzyDebug.busy && !window.yatzyDebug.scratching, null, { timeout });
 const pd = (page, sel) => page.locator(sel).first().dispatchEvent('pointerdown');
 
-async function newPage(browser, viewport, query = 'debug=1&speed=6') {
+async function newPage(browser, viewport, query = 'classic=1&debug=1&speed=6') {
   const ctx = await browser.newContext({ viewport, deviceScaleFactor: 1, hasTouch: true, isMobile: viewport.width < 600 });
   const page = await ctx.newPage();
   const errors = [];
@@ -461,7 +461,7 @@ async function cardsTest(browser) {
 /* ------------------------------------------------------------------ */
 async function memesTest(browser) {
   console.log('\n[5] Tradizioni della casa: Dottore e Satana');
-  const { page, errors, ctx } = await newPage(browser, { width: 390, height: 844 }, 'debug=1&speed=2');
+  const { page, errors, ctx } = await newPage(browser, { width: 390, height: 844 }, 'classic=1&debug=1&speed=2');
   await startGame(page);
   const score = async (pid, values, cat, { skip = false, shot = null } = {}) => {
     await turnReady(page);
@@ -564,7 +564,7 @@ async function upperBonusAndResumeTest(browser) {
 /* ------------------------------------------------------------------ */
 async function performanceTest(browser) {
   console.log('\n[7] Fluidità animazioni con CPU rallentata 4x');
-  const { page, ctx } = await newPage(browser, { width: 390, height: 844 }, 'debug=1&speed=1');
+  const { page, ctx } = await newPage(browser, { width: 390, height: 844 }, 'classic=1&debug=1&speed=1');
   await page.locator('.menu .btn-menu.primary').click();
   const cdp = await ctx.newCDPSession(page);
   await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });

@@ -9,7 +9,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const CSS_FILES = ['base.css', 'game.css', 'effects.css', 'screens.css', 'cards.css', 'memes.css'].map((f) => join(ROOT, 'src/styles', f));
+const CSS_FILES = ['base.css', 'game.css', 'effects.css', 'screens.css', 'cards.css', 'memes.css', 'skins.css', 'meta.css'].map((f) => join(ROOT, 'src/styles', f));
 
 const js = await build({
   entryPoints: [join(ROOT, 'src/main.js')],

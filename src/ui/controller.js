@@ -118,6 +118,43 @@ export class Controller {
     this.hud.setViewer(null);
   }
 
+  /**
+   * Nomi mostrati nell'intestazione e negli annunci (online: nome dell'avversario,
+   * campagna: nome del boss). null = ROSSO / BLU.
+   */
+  setPlayerNames(names = null) {
+    this.names = names;
+    this.hud.setNames(names);
+    if (this.viewer) this.hud.setViewer(this.viewer);
+  }
+
+  /** Skin dei dadi e stile di lancio di ogni giocatore: {red:{dice,roll}, blue:{dice,roll}}. */
+  setSkins(skins) {
+    this.skins = skins;
+    if (this.game) this.#applySkin(this.game.current.id);
+  }
+
+  #applySkin(pid) {
+    const sk = this.skins?.[pid];
+    this.tray.setSkin(sk?.dice ?? 'dice.classic', sk?.roll ?? 'roll.classic');
+  }
+
+  /**
+   * Regole speciali della partita (boss): turnStart(ctrl, game), afterRoll(ctrl, res),
+   * afterScore(ctrl, res); fog = giocatore senza anteprime, hidden = punti nascosti.
+   */
+  setMode(mode = null) {
+    this.mode = mode;
+    this.card.fog = mode?.fog ?? null;
+    this.card.hidden = mode?.hidden ?? null;
+    this.hud.hidden = mode?.hidden ?? null;
+  }
+
+  /** Coda delle mosse dell'avversario vuota e nessuna in corso. */
+  get remoteIdle() {
+    return !this.remoteRunning && this.remoteQueue.length === 0;
+  }
+
   /** Blocca input e invii finché non riparte la partita (ripresa online in arrivo). */
   freeze() {
     this.frozen = true;
@@ -155,6 +192,8 @@ export class Controller {
   }
 
   #turnText(pid, fresh) {
+    const name = this.names?.[pid];
+    if (name && pid !== this.viewer) return fresh ? `INIZIA ${name}` : `TURNO DI ${name}`;
     if (this.viewer) return pid === this.viewer ? (fresh ? 'INIZI TU!' : 'TOCCA A TE') : `${fresh ? 'INIZIA' : 'TOCCA AL'} ${this.#short(pid)}`;
     return fresh ? `INIZIA IL ${this.#short(pid)}` : `TOCCA AL ${this.#short(pid)}`;
   }
@@ -275,7 +314,10 @@ export class Controller {
     this.targetBar.hide();
     this.popup.close();
     const pid = game.current.id;
+    this.stage.table.classList.toggle('no-cards', !game.cardsEnabled);
+    this.hand.el.dataset.note = this.mode?.note ?? '';
     this.stage.setTurnColor(pid);
+    this.#applySkin(pid);
     this.stage.setRotation(this.#rotationFor(pid));
     for (const p of game.players) await this.hud.setTotal(p.id, p.card.total(), false);
     this.hud.setActive(pid);
@@ -306,6 +348,8 @@ export class Controller {
       });
       await wait(ms(TIMING.BANNER_HOLD));
       await banner.hide();
+      if (game !== this.game) return;
+      await this.mode?.turnStart?.(this, game);
     }
     await this.#drawPhase();
     if (game !== this.game) return;
@@ -331,7 +375,7 @@ export class Controller {
     this.card.render(g, { interactive: live });
     this.hand.render(g, { interactive: live && this.isMyTurn, player: this.#handOwner() });
     this.hud.setCardInfo(g.players);
-    this.tray.setDecor({ foresight: g.turnState.foresight, noHold: g.current.status.noHoldDie });
+    this.tray.setDecor({ foresight: g.turnState.foresight, noHold: g.current.status.noHoldDie ?? g.turnState.noHold?.[0] ?? null, frozen: g.turnState.frozen?.[0] ?? null });
     this.tray.setHeld(g.dice.held, live && this.isMyTurn && g.dice.hasRolled && g.dice.rollsLeft > 0 && !g.scoredThisTurn);
     this.updateControls();
     if (this.targeting) this.#refreshTargeting();
@@ -504,6 +548,7 @@ export class Controller {
         onLand: () => sound.land(),
       });
       if (res.curse) await this.#curseStrikes(res);
+      if (res.boss && g === this.game) await this.mode?.afterRoll?.(this, res);
       if (g !== this.game) return;
       this.busy = false;
       this.renderAll();
@@ -646,6 +691,13 @@ export class Controller {
         const tr = this.#rect(this.tray.el);
         toast(this.fx, 'PRIMA LANCIA I DADI', { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'hint' });
       }
+      return;
+    }
+    if (g.isBlocked?.(cat) && g.current.card.scores[cat] === null) {
+      sound.denied();
+      shake(cell.el, 4);
+      const tr = this.#rect(this.tray.el);
+      toast(this.fx, 'CASELLA MALEDETTA IN QUESTO TURNO', { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'hint' });
       return;
     }
     if (!g.canSelect(cat)) return;
@@ -1028,6 +1080,8 @@ export class Controller {
       this.#save();
       await this.#animateScore(res);
       if (g !== this.game) return;
+      if (res.boss) await this.mode?.afterScore?.(this, res);
+      if (g !== this.game) return;
       await this.#advanceTurn();
     } finally {
       if (g === this.game) this.busy = false;
@@ -1170,6 +1224,7 @@ export class Controller {
       rotated: toDeg === 180,
     });
     this.stage.setTurnColor(pid);
+    this.#applySkin(pid);
     this.hud.setActive(pid);
     this.hud.setRound(next.round);
     this.renderAll({ interactive: false });
@@ -1180,6 +1235,8 @@ export class Controller {
       await wait(ms(TIMING.BANNER_HOLD + 200));
     }
     await banner.hide();
+    if (g !== this.game) return;
+    await this.mode?.turnStart?.(this, g);
     if (g !== this.game) return;
     await this.#drawPhase();
     if (g !== this.game) return;

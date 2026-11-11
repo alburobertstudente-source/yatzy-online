@@ -6,6 +6,7 @@ import { pipsSvg, ICONS } from './icons.js';
 import { MINI } from './cardArt.js';
 import { setDieFace, tumbleDie, play, EASE } from '../anim/animations.js';
 import { TIMING } from '../config.js';
+import { applyDiceSkin, rollStyleOf } from './skins.js';
 
 function buildDie() {
   const faces = [1, 2, 3, 4, 5, 6].map((n) => h('div', { class: `face f${n}`, html: pipsSvg(n) }));
@@ -45,6 +46,13 @@ export class TrayView {
       setDieFace(die, (i % 6) + 1);
     }
     this.el = h('section', { class: 'tray' }, row);
+    this.rollStyle = 'classic';
+  }
+
+  /** Skin dei dadi e stile di lancio (del giocatore di turno). */
+  setSkin(diceId, rollId) {
+    applyDiceSkin(this.el, diceId);
+    this.rollStyle = rollStyleOf(rollId);
   }
 
   /** Vassoio vuoto (inizio turno). */
@@ -84,7 +92,7 @@ export class TrayView {
       s.el.classList.remove('is-empty', 'is-out');
       const delay = order.indexOf(i) * TIMING.ROLL_STAGGER;
       const duration = TIMING.ROLL_MIN + Math.random() * (TIMING.ROLL_MAX - TIMING.ROLL_MIN);
-      return tumbleDie(s.die, values[i], { delay, duration, entering, onLand: () => onLand?.(i) });
+      return tumbleDie(s.die, values[i], { delay, duration, entering, style: this.rollStyle, onLand: () => onLand?.(i) });
     });
     await Promise.all(jobs);
   }
@@ -123,8 +131,9 @@ export class TrayView {
    * Decorazioni delle carte: valori rivelati dall'Occhio del Destino e
    * dado che non si può conservare (Apocalisse dei Dadi).
    */
-  setDecor({ foresight = {}, noHold = null } = {}) {
+  setDecor({ foresight = {}, noHold = null, frozen = null } = {}) {
     this.slots.forEach((s, i) => {
+      s.el.classList.toggle('is-frozen', frozen === i);
       const f = foresight[i];
       s.el.classList.toggle('has-foresight', f !== undefined);
       s.eye.lastChild.textContent = f !== undefined ? String(f) : '';
