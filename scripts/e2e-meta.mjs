@@ -50,6 +50,8 @@ try {
   await page.screenshot({ path: join(OUT, '01-intro.png') });
   await page.click('.intro-play');
   await page.waitForSelector('.hub-campaign');
+  const track = () => page.evaluate(() => (window.yatzyApp.music.playingKey || '').split(':')[0]);
+  check((await track()) === 'menu' && (await page.evaluate(() => window.yatzyApp.sound.ctx?.state)) === 'running', 'dopo GIOCA parte la musica rilassante del menu');
   const hubButtons = await page.locator('.hub-btn').count();
   check(hubButtons >= 7, `menu pieno: campagna + ${hubButtons} pulsanti`);
   await page.screenshot({ path: join(OUT, '02-hub.png') });
@@ -125,6 +127,7 @@ try {
   await page.waitForTimeout(300);
   if (await page.evaluate(() => window.yatzyDebug.scratching)) await page.evaluate(() => window.yatzyDebug.revealScratch());
   check(await page.evaluate(() => document.querySelector('.tray').dataset.diceSkin === 'dice.lava'), 'in partita il rosso tira con i dadi Lava');
+  check((await track()) === 'game' && (await page.evaluate(() => window.yatzyApp.sound.voice)) === 'lava', 'in partita: musica tranquilla e suono dei dadi Lava');
   await page.screenshot({ path: join(OUT, '06-partita-skin.png') });
   await page.evaluate(() => window.yatzyApp.meta.hub());
   await page.waitForSelector('.hub-campaign');
@@ -134,6 +137,7 @@ try {
   await page.waitForSelector('.cm-node[data-level="1"]');
   await page.screenshot({ path: join(OUT, '07-campagna.png') });
   check((await page.locator('.cm-node').count()) === 100, 'mappa con 100 livelli');
+  check((await track()) === 'campaign', 'nella campagna cambia musica');
   check((await page.locator('.cm-node.boss').count()) === 10, '10 boss');
   check((await page.locator('.cm-node.locked').count()) === 99, 'solo il primo livello è aperto');
   await page.click('.cm-node[data-level="1"]', { force: true });
@@ -176,6 +180,7 @@ try {
   await page.click('.lv-sheet.boss .btn-menu');
   await page.waitForSelector('.boss-intro .btn-menu');
   await page.screenshot({ path: join(OUT, '10-boss.png') });
+  check((await track()) === 'boss', 'contro il boss parte la musica dello scontro');
   await page.click('.boss-intro .btn-menu');
   p0 = await prof(page);
   let sawBot = false;

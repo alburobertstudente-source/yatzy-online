@@ -13,6 +13,7 @@ import { WORLDS, levelInfo } from '../../campaign/campaign.js';
 import { Challenge, goalLabel } from '../../campaign/challenge.js';
 import * as P from '../../meta/profile.js';
 import { pageShell, sheet, fmt } from './common.js';
+import { music } from '../../audio/music.js';
 
 const XS = [18, 50, 78, 62, 30, 14, 42, 74, 56, 50];
 const PATH = XS.map((x, k) => `${k ? 'L' : 'M'}${x} ${28 + k * 62}`).join(' ');
@@ -76,6 +77,7 @@ export class CampaignUI {
       );
     }
     this.stage.app.dataset.screen = 'campaign';
+    music.play('campaign');
     this.stage.setRotation(0);
     this.stage.setTurnColor('red');
     await this.screens.open(el, { dim: false });
@@ -198,9 +200,8 @@ export class CampaignUI {
       busy = true;
       const res = ch.roll();
       tray.setHeld(ch.held, false);
-      sound.roll(res.rolled.length);
       buzz(10);
-      await tray.roll(res.values, res.rolled, { entering: res.rolled.length === 5 && !ch.held.some(Boolean), onLand: () => sound.land() });
+      await tray.roll(res.values, res.rolled, { entering: res.rolled.length === 5 && !ch.held.some(Boolean) });
       busy = false;
       renderGoals();
       pop(rollsEl.parentElement, 1.15);
@@ -227,6 +228,7 @@ export class CampaignUI {
     };
     renderGoals();
     this.stage.app.dataset.screen = 'challenge';
+    music.play('campaign');
     this.stage.setRotation(0);
     this.stage.setTurnColor('red');
     if (new URLSearchParams(location.search).has('debug')) {

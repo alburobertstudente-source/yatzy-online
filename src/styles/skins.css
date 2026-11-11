@@ -598,3 +598,514 @@
     box-shadow: 0 0 26px rgba(47, 208, 255, 0.9);
   }
 }
+
+/* ============================================================
+   Dadi più belli: lucentezza, bordo, effetti dei dadi a tema
+   ============================================================ */
+.skinned .face,
+.dice-swatch .face {
+  overflow: hidden;
+  background: radial-gradient(circle at 28% 20%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 38%), var(--die-face);
+  box-shadow: inset var(--die-ring, 0 0 0 0 transparent), inset 0 0 0 1.5px rgba(30, 30, 60, 0.08), inset 0 -4px 7px rgba(20, 20, 50, 0.16), inset 0 3px 4px rgba(255, 255, 255, 0.35);
+}
+
+.dfx-jelly .face {
+  opacity: 0.92;
+}
+
+.dfx-jelly .slot .die,
+.tray.dfx-jelly .slot:not(.is-empty) .die {
+  animation: die-jelly 2.6s ease-in-out infinite;
+}
+
+@keyframes die-jelly {
+  0%,
+  100% {
+    scale: 1 1;
+  }
+  50% {
+    scale: 1.04 0.96;
+  }
+}
+
+.dfx-bubbles .face::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 80%, rgba(255, 255, 255, 0.8) 0 2px, transparent 3px), radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.7) 0 1.5px, transparent 2.5px), radial-gradient(circle at 55% 90%, rgba(255, 255, 255, 0.7) 0 2.5px, transparent 3.5px);
+  background-size: 100% 200%;
+  animation: die-bubbles 3s linear infinite;
+}
+
+@keyframes die-bubbles {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 -200%;
+  }
+}
+
+.dfx-storm .face::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 40%, rgba(255, 240, 150, 0.85) 45%, transparent 50%);
+  opacity: 0;
+  animation: die-flash 3.4s steps(1) infinite;
+}
+
+@keyframes die-flash {
+  0%,
+  86%,
+  92% {
+    opacity: 0;
+  }
+  88%,
+  94% {
+    opacity: 1;
+  }
+}
+
+.dfx-glowin .face {
+  box-shadow: inset 0 0 14px rgba(255, 220, 90, 0.7), inset 0 -4px 7px rgba(20, 20, 50, 0.16);
+  animation: die-candle 1.6s ease-in-out infinite alternate;
+}
+
+@keyframes die-candle {
+  to {
+    box-shadow: inset 0 0 20px rgba(255, 200, 60, 0.95), inset 0 -4px 7px rgba(20, 20, 50, 0.16);
+  }
+}
+
+.dfx-lavalamp .face {
+  background-size: 100% 220%, 100% 220%, 100% 220%, 100% 100%;
+  animation: die-lavalamp 5s ease-in-out infinite alternate;
+}
+
+@keyframes die-lavalamp {
+  to {
+    background-position: 0 0, 0 100%, 0 70%, 0 0;
+  }
+}
+
+.dfx-scan .face::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 30%;
+  background: linear-gradient(180deg, transparent, rgba(200, 255, 250, 0.6), transparent);
+  animation: die-scan 1.8s linear infinite;
+}
+
+@keyframes die-scan {
+  from {
+    top: -30%;
+  }
+  to {
+    top: 100%;
+  }
+}
+
+.dfx-scan .face .pips {
+  filter: drop-shadow(0 0 3px #20e3ff);
+}
+
+/* ---------- assurdi ---------- */
+.dfx-dj .face .pips,
+.dfx-disco .face .pips,
+.dfx-infinity .face .pips,
+.dfx-kaleido .face .pips,
+.dfx-fireflow .face .pips {
+  filter: drop-shadow(0 0 3px var(--die-pip)) drop-shadow(0 0 6px var(--die-pip));
+}
+
+.dfx-dj .face {
+  animation: die-dj 0.47s ease-in-out infinite alternate;
+}
+
+@keyframes die-dj {
+  from {
+    background-size: 100% 22%, 100% 100%;
+  }
+  to {
+    background-size: 100% 48%, 100% 100%;
+  }
+}
+
+.dfx-vortex .face::before,
+.dfx-kaleido .face::before {
+  content: '';
+  position: absolute;
+  inset: -40%;
+  background: conic-gradient(from 0deg, transparent, rgba(255, 140, 40, 0.55), transparent 30%, rgba(160, 90, 255, 0.5), transparent 60%, rgba(255, 140, 40, 0.4), transparent);
+  animation: roll-art-spin 2.4s linear infinite;
+  mix-blend-mode: screen;
+}
+
+.dfx-kaleido .face::before {
+  background: repeating-conic-gradient(from 0deg, rgba(255, 255, 255, 0.45) 0 10deg, transparent 10deg 30deg);
+  animation-duration: 6s;
+}
+
+.dfx-kaleido .face {
+  animation: die-hue 4s linear infinite;
+}
+
+@keyframes die-hue {
+  to {
+    filter: hue-rotate(360deg);
+  }
+}
+
+.dfx-fireflow .face {
+  background-size: 100% 200%;
+  animation: die-fire 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes die-fire {
+  to {
+    background-position: 0 100%;
+    box-shadow: inset 0 0 16px rgba(255, 240, 160, 0.9), inset 0 -4px 7px rgba(20, 20, 50, 0.16);
+  }
+}
+
+.dfx-disco .face::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 30%, #ff3dbb 0 2px, transparent 3px), radial-gradient(circle at 70% 20%, #2fd0ff 0 2px, transparent 3px), radial-gradient(circle at 60% 75%, #ffe14d 0 2px, transparent 3px), radial-gradient(circle at 25% 80%, #56ff9e 0 2px, transparent 3px);
+  animation: die-twinkle 0.6s steps(2) infinite;
+}
+
+.dfx-fuse .face::before {
+  content: '';
+  position: absolute;
+  left: 46%;
+  top: 6%;
+  width: 8%;
+  height: 8%;
+  border-radius: 50%;
+  background: #fff7c2;
+  box-shadow: 0 0 6px 3px #ffb02e;
+  animation: die-twinkle 0.25s steps(2) infinite;
+}
+
+.dfx-confettiflow .face {
+  background-size: 140% 140%, 140% 140%, 140% 140%, 140% 140%, 140% 140%, 100% 100%;
+  animation: die-confetti 3s linear infinite;
+}
+
+@keyframes die-confetti {
+  to {
+    background-position: 0 100%, 100% 0, 50% 100%, 100% 50%, 0 50%, 0 0;
+  }
+}
+
+/* il vassoio trema (TNT, buco nero) */
+.tray.is-quake {
+  animation: tray-quake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+@keyframes tray-quake {
+  10%,
+  90% {
+    transform: translate(-2px, 1px);
+  }
+  20%,
+  80% {
+    transform: translate(4px, -2px);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translate(-6px, 2px);
+  }
+  40%,
+  60% {
+    transform: translate(6px, -1px);
+  }
+}
+
+/* ---------- effetti quando il dado atterra ---------- */
+.lfx {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  width: 12px;
+  height: 12px;
+  margin: -6px;
+  pointer-events: none;
+  z-index: 5;
+  animation: lfx-up 1.1s ease-out both;
+}
+
+@keyframes lfx-up {
+  from {
+    transform: translate(0, 0) scale(0.3);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  to {
+    transform: translate(var(--x), var(--y)) scale(1.15) rotate(var(--r));
+    opacity: 0;
+  }
+}
+
+.lfx-note::before { content: '♪'; font-size: 18px; font-weight: 700; color: #b38bff; text-shadow: 0 0 6px #fff; }
+.lfx-heart::before { content: '♥'; font-size: 16px; color: #ff5a8a; text-shadow: 0 0 6px #fff; }
+.lfx-snow::before { content: '❄'; font-size: 13px; color: #fff; text-shadow: 0 0 6px #5aaeff; }
+.lfx-coin { border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff3a8, #ffc531 55%, #d98c00); box-shadow: 0 0 6px #ffd23f; }
+.lfx-spark { width: 10px; height: 10px; background: hsl(var(--h), 100%, 75%); clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%); filter: drop-shadow(0 0 4px #fff); }
+.lfx-bubble { border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff 0 18%, rgba(160, 220, 255, 0.35) 40%, rgba(120, 200, 255, 0.1) 70%); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.85); }
+.lfx-flame { border-radius: 50% 50% 50% 0; rotate: -45deg; background: radial-gradient(circle at 60% 40%, #fff3a0, #ff9f1a 50%, #ff3d00); filter: blur(0.5px); }
+.lfx-smoke { width: 22px; height: 22px; margin: -11px; border-radius: 50%; background: radial-gradient(circle, rgba(90, 90, 100, 0.85), rgba(60, 60, 70, 0) 70%); }
+.lfx-drop { width: 8px; height: 11px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; background: linear-gradient(180deg, #e6fbff, #2fb8ff); }
+.lfx-confetti { width: 7px; height: 11px; border-radius: 2px; background: hsl(var(--h), 95%, 60%); }
+.lfx-eq { width: 6px; height: 22px; border-radius: 3px; background: linear-gradient(0deg, #20e3ff, #ff3df2); box-shadow: 0 0 8px #20e3ff; }
+.lfx-suck { width: 6px; height: 6px; border-radius: 50%; background: #ffb02e; box-shadow: 0 0 6px #ff7a1a; animation-name: lfx-suck; }
+
+@keyframes lfx-suck {
+  from {
+    transform: translate(calc(var(--x) * 1.5), calc(var(--y) * -0.8)) scale(1);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  to {
+    transform: translate(0, 0) scale(0);
+    opacity: 0;
+  }
+}
+
+.lfx-ring,
+.lfx-zap {
+  width: 60px;
+  height: 60px;
+  margin: -30px;
+  top: 50%;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
+  animation-name: lfx-ring;
+}
+
+.lfx-zap {
+  border-color: #ffe14d;
+  box-shadow: 0 0 14px #ffe14d;
+}
+
+@keyframes lfx-ring {
+  from {
+    transform: scale(0.2);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+/* effetti grandi dei dadi assurdi (su tutto il vassoio) */
+.lfx-big {
+  position: absolute;
+  inset: -30px -10px;
+  pointer-events: none;
+  z-index: 6;
+  border-radius: 30px;
+  animation: lfx-big 1.4s ease-out both;
+}
+
+@keyframes lfx-big {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  20% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+}
+
+.lfx-bigboom {
+  background: radial-gradient(circle, #fff7c2 0 12%, #ffb02e 25%, #ff3d00 45%, rgba(80, 20, 0, 0.5) 60%, transparent 72%);
+  animation-duration: 1s;
+}
+
+.lfx-bighole {
+  background: radial-gradient(circle, #000 0 18%, rgba(59, 29, 143, 0.9) 30%, rgba(255, 122, 26, 0.6) 40%, transparent 60%);
+  animation-name: lfx-hole;
+}
+
+@keyframes lfx-hole {
+  from {
+    opacity: 0;
+    transform: scale(0.2) rotate(0deg);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1) rotate(200deg);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.05) rotate(720deg);
+  }
+}
+
+.lfx-bigrainbow {
+  inset: -60px -10px auto;
+  height: 160px;
+  border-radius: 160px 160px 0 0;
+  background: radial-gradient(circle at 50% 100%, transparent 0 40%, #9b6bff 40% 45%, #4db8ff 45% 50%, #59e36b 50% 55%, #ffe14d 55% 60%, #ffa64d 60% 65%, #ff4d4d 65% 70%, transparent 70%);
+}
+
+.lfx-bigfire {
+  background: radial-gradient(ellipse at 50% 100%, rgba(255, 240, 160, 0.9), rgba(255, 120, 20, 0.7) 35%, rgba(255, 40, 0, 0.3) 55%, transparent 70%);
+}
+
+.lfx-bigrings {
+  border: 4px solid #ff3dbb;
+  box-shadow: 0 0 0 8px rgba(122, 77, 255, 0.5), 0 0 0 16px rgba(47, 208, 255, 0.4), 0 0 0 24px rgba(86, 255, 158, 0.3), 0 0 30px #fff;
+}
+
+.lfx-bigdisco {
+  background: conic-gradient(from 0deg, rgba(255, 61, 187, 0.5), transparent 10%, rgba(47, 208, 255, 0.5) 20%, transparent 30%, rgba(255, 225, 77, 0.5) 40%, transparent 50%, rgba(86, 255, 158, 0.5) 60%, transparent 70%, rgba(165, 77, 255, 0.5) 80%, transparent 90%);
+  border-radius: 50%;
+  inset: -80px -20px;
+  animation-name: lfx-disco;
+}
+
+@keyframes lfx-disco {
+  from {
+    opacity: 0;
+    transform: rotate(0deg);
+  }
+  20%,
+  70% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: rotate(180deg);
+  }
+}
+
+.lfx-bigmiao {
+  inset: auto 0 100%;
+  height: auto;
+  text-align: center;
+  font-size: 40px;
+  font-weight: 700;
+  color: #ffd1f0;
+  -webkit-text-stroke: 2px #3b1d8f;
+  paint-order: stroke fill;
+  text-shadow: 0 0 14px #b38bff;
+}
+
+.lfx-bigwave {
+  inset: 20% -10px -20px;
+  border-radius: 50% 50% 20px 20px;
+  background: linear-gradient(180deg, rgba(230, 251, 255, 0.9), rgba(47, 184, 255, 0.75) 40%, rgba(11, 79, 143, 0.5));
+  animation-name: lfx-wave;
+}
+
+@keyframes lfx-wave {
+  from {
+    opacity: 0;
+    transform: translateX(-110%) skewX(-12deg);
+  }
+  40% {
+    opacity: 1;
+    transform: translateX(0) skewX(-6deg);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(80%) skewX(0deg);
+  }
+}
+
+.lfx-bigparty {
+  background: radial-gradient(circle at 15% 30%, #ff3d7f 0 4px, transparent 5px), radial-gradient(circle at 80% 20%, #ffd23f 0 4px, transparent 5px), radial-gradient(circle at 40% 70%, #2fd0ff 0 4px, transparent 5px), radial-gradient(circle at 65% 55%, #56ff9e 0 4px, transparent 5px), radial-gradient(circle at 90% 75%, #a54dff 0 4px, transparent 5px), radial-gradient(circle at 25% 85%, #ff9f1a 0 4px, transparent 5px);
+  background-size: 120px 90px;
+  animation-name: lfx-party;
+}
+
+@keyframes lfx-party {
+  from {
+    opacity: 0;
+    background-position: 0 -80px;
+  }
+  15% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    background-position: 30px 120px;
+  }
+}
+
+.lfx-bigeq {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  inset: auto 4px 100%;
+  height: 70px;
+  padding: 0 10px;
+}
+
+.lfx-bigeq i {
+  width: 9%;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(0deg, #20e3ff, #ff3df2);
+  box-shadow: 0 0 10px #20e3ff;
+  animation: lfx-eqbar 0.35s ease-in-out infinite alternate;
+}
+
+.lfx-bigeq i:nth-child(odd) {
+  animation-delay: 0.15s;
+}
+
+.lfx-bigeq i:nth-child(3n) {
+  animation-duration: 0.25s;
+}
+
+@keyframes lfx-eqbar {
+  from {
+    height: 15%;
+  }
+  to {
+    height: 100%;
+  }
+}
+
+/* rarità Assurda */
+.rarity-chip.r-absurd {
+  background: linear-gradient(90deg, #00d9ff, #ff3dbb, #ffe14d, #56ff9e, #00d9ff);
+  background-size: 300% 100%;
+  animation: die-flow 2.5s linear infinite;
+  color: #1a0c4a;
+}
+
+.item-tile.r-absurd {
+  background: linear-gradient(180deg, #fff 40%, #d6f7ff);
+  box-shadow: 0 0 0 3px #00d9ff, 0 0 18px rgba(0, 217, 255, 0.75), 0 0 30px rgba(255, 61, 187, 0.4);
+  animation: tile-absurd 2s ease-in-out infinite alternate;
+}
+
+@keyframes tile-absurd {
+  to {
+    box-shadow: 0 0 0 3px #ff3dbb, 0 0 22px rgba(255, 61, 187, 0.75), 0 0 34px rgba(0, 217, 255, 0.5);
+  }
+}
+
+.co-item.r-absurd {
+  box-shadow: 0 0 0 5px #fff, 0 0 0 10px #00d9ff, 0 0 70px rgba(0, 217, 255, 0.95), 0 0 120px rgba(255, 61, 187, 0.6);
+}

@@ -91,6 +91,7 @@ export class Screens {
       'div',
       { class: 'menu-options' },
       toggle('Ruota lo schermo a ogni turno', settings.rotate, (v) => onSettings({ rotate: v })),
+      toggle('Musica', settings.music !== false, (v) => onSettings({ music: v })),
       toggle('Suoni', settings.sound, (v) => onSettings({ sound: v })),
       toggle('Vibrazione', settings.vibration, (v) => onSettings({ vibration: v })),
     );

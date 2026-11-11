@@ -57,7 +57,7 @@ export async function openChestAnimation(host, chestId, result) {
   }
   chest.classList.add('is-open');
   rays.classList.add('is-on');
-  sound.reveal(best === 'mythic' ? 'legendary' : best === 'uncommon' ? 'common' : best);
+  sound.reveal(best);
   buzz([30, 40, 60]);
   const r = chest.getBoundingClientRect();
   const hr = el.getBoundingClientRect();
@@ -82,7 +82,7 @@ export async function openChestAnimation(host, chestId, result) {
     );
     const front = h('div', { class: 'co-front' }, card, h('div', { class: 'co-count' }, `${k + 1} / ${result.items.length}`), h('div', { class: 'co-hint' }, 'TOCCA PER CONTINUARE'));
     el.append(front);
-    sound.reveal(it.rarity === 'mythic' ? 'legendary' : it.rarity === 'uncommon' ? 'rare' : it.rarity);
+    sound.reveal(it.rarity);
     await play(card, [{ transform: 'translateY(120px) scale(.2) rotate(-12deg)', opacity: 0 }, { transform: 'translateY(-10px) scale(1.08)', opacity: 1, offset: 0.7 }, { transform: 'none', opacity: 1 }], { duration: 520, easing: EASE.out });
     if (rarityRank(it.rarity) >= 3) sparkle(fx, el.offsetWidth / 2, el.offsetHeight * 0.42, { colors: [RARITY[it.rarity].color, '#fff'], count: 22, spread: 160, size: 11 });
     await tapOrWait(front);

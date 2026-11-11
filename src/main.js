@@ -21,12 +21,15 @@ import { levelInfo } from './campaign/campaign.js';
 import * as P from './meta/profile.js';
 import { XP } from './meta/economy.js';
 import { botMove } from './ai/bot.js';
+import { music } from './audio/music.js';
 
 const params = new URLSearchParams(location.search);
 
 /* ---------------- impostazioni ---------------- */
-const settings = { rotate: true, sound: true, vibration: true, ...store.load(STORAGE_KEYS.settings, {}) };
+const settings = { rotate: true, sound: true, music: true, vibration: true, ...store.load(STORAGE_KEYS.settings, {}) };
+if (params.has('nomusic')) settings.music = false;
 sound.setEnabled(settings.sound);
+music.setEnabled(settings.music && settings.sound);
 setVibration(settings.vibration);
 
 if (params.has('speed')) {
@@ -72,6 +75,7 @@ function updateSettings(patch) {
   Object.assign(settings, patch);
   store.save(STORAGE_KEYS.settings, settings);
   sound.setEnabled(settings.sound);
+  music.setEnabled(settings.music && settings.sound);
   setVibration(settings.vibration);
   controller.hud.setSound(settings.sound);
   if ('rotate' in patch) controller.applyRotationSetting();
@@ -120,6 +124,7 @@ const namedPlayers = (names) => PLAYERS.map((p) => ({ ...p, short: names?.[p.id]
 
 /** Partita sullo stesso telefono: il rosso usa le skin del profilo. */
 function setupLocal() {
+  music.play('game');
   stopBoss();
   controller.setOffline();
   controller.setMode(null);
@@ -176,6 +181,7 @@ async function finishBoss(results) {
 /* ---------------- flusso ---------------- */
 function showMenu() {
   app.dataset.screen = 'menu';
+  music.play('menu');
   stage.setRotation(0);
   stage.setTurnColor('red');
   return screens.menu({
@@ -450,6 +456,7 @@ async function startOnlineGame(s, seed) {
   if (location.hash) history.replaceState(null, '', location.pathname + location.search);
   await waitControllerIdle();
   game = new Game({ rng: createSeededRandom(seed) });
+  music.play('game');
   controller.setMode(null);
   controller.setOnline({
     viewer: s.color,
@@ -618,6 +625,8 @@ if (params.has('debug')) {
     campaign,
     startBoss,
     botMove,
+    music,
+    sound,
     get session() {
       return session;
     },

@@ -9,6 +9,7 @@ import { sound } from '../../audio/sound.js';
 import { bossSvg } from '../bossArt.js';
 import { botMove } from '../../ai/bot.js';
 import { TIMING } from '../../config.js';
+import { music } from '../../audio/music.js';
 
 /** Schermata di presentazione: il boss entra, mostra il potere, COMBATTI! */
 export async function bossIntro(screens, info) {
@@ -30,6 +31,7 @@ export async function bossIntro(screens, info) {
     ),
   );
   await screens.open(el, { dim: false });
+  music.play('boss', { intensity: (info.bossIndex - 1) / 9 });
   sound.curse();
   buzz([40, 30, 40]);
   play(art, [{ transform: 'translateY(-30px) scale(.6) rotate(-8deg)', opacity: 0 }, { transform: 'scale(1.1) rotate(4deg)', opacity: 1, offset: 0.6 }, { transform: 'none', opacity: 1 }], { duration: 700, easing: EASE.out });
@@ -87,8 +89,7 @@ export function bossModeFor(info) {
       banner(ctrl, LABEL[fx.type] || b.effect.toUpperCase());
       if (fx.type === 'jump' || fx.type === 'flip') {
         await wait(ms(250));
-        sound.roll(1);
-        await ctrl.tray.roll(res.values, fx.dice, { onLand: () => sound.land() });
+        await ctrl.tray.roll(res.values, fx.dice);
       } else if (fx.type === 'freeze') {
         ctrl.renderAll({ interactive: false });
         const slot = ctrl.tray.slotEl(fx.dice[0]);

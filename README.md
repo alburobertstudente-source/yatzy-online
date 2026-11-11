@@ -1,6 +1,6 @@
 # Yatzy Duello – versione online
 
-Yatzy per due giocatori, rosso contro blu, con **carte potenziamento gratta e vinci**, **campagna con 100 livelli e 10 boss**, **negozio con casse**, **185 skin** e **rango online**. Si gioca in tre modi:
+Yatzy per due giocatori, rosso contro blu, con **carte potenziamento gratta e vinci**, **campagna con 100 livelli e 10 boss**, **negozio con casse**, **230 oggetti**, **musica** e **rango online**. Si gioca in tre modi:
 
 - **sullo stesso telefono** (NUOVA PARTITA): a ogni cambio turno il tavolo ruota di 180° verso l'altro giocatore;
 - **online da due telefoni** (GIOCA ONLINE): uno crea la partita e manda il codice o il link, l'altro entra. Ognuno gioca dal proprio telefono e vede l'altro giocare in tempo reale;
@@ -49,22 +49,31 @@ All'apertura i dadi rotolano sul tavolo, la scritta **YATZY** scoppia e compare 
 ## Negozio e casse
 
 - **Cassa gratuita** ogni 24 ore (un oggetto e qualche moneta).
-- **Cassa piccola** (150 monete, 1 oggetto), **media** (450, 2 oggetti, almeno uno Non comune), **grande** (1200, 3 oggetti, almeno uno Raro): più la cassa è grande, più conviene e più sono probabili le rarità alte. Le probabilità sono nel negozio.
+- **Cassa piccola** (150 monete, 1 oggetto), **media** (450, 2 oggetti, almeno uno Non comune), **grande** (1200, 3 oggetti, almeno uno Raro): più la cassa è grande, più conviene e più sono probabili le rarità alte; solo media e grande possono dare un dado **Assurdo**. Le probabilità sono nel negozio.
 - **Offerte del giorno**: 4 oggetti comprabili direttamente, cambiano a mezzanotte.
 - Gli oggetti doppi diventano monete.
 
 ## Personalizza
 
-185 oggetti in 6 rarità (Comune, Non comune, Rara, Epica, Leggendaria, Mitica):
+230 oggetti in 7 rarità (Comune, Non comune, Rara, Epica, Leggendaria, Mitica e **Assurda**):
 
-- **Dadi** (35 skin: legno, marmo, neon, gemme, oro, galassia con punti a stella, lava, olografico, arcobaleno, diamante, prisma cosmico…)
-- **Animazioni di lancio** (15: super rimbalzo, vortice, bolle, coriandoli, razzo, meteora, fulmine, glitch, portale, stelle cadenti, scia arcobaleno, buco nero…)
-- **Carte** (14 skin, anche olografiche, arcobaleno e prisma: cambia la lamina da grattare e il bordo delle carte)
-- **Tavolo** (13 temi: tramonto, oceano, notte, spazio, vulcano, città neon, aurora, paradiso dorato…)
+- **Dadi** (80 skin, tutte lucide e ognuna col **suo suono**): classici colorati, legno, marmo, gemme, oro; a tema **Pop It** (scoppiettano), **Pizza Margherita** (punti di salame, crosta croccante), **Anguria** (semini, succosa), **Biscotto** (gocce di cioccolato, croccante), **Formaggio** (buchi), **Ciambella** (codette), **Sushi**, **Paperella** (squittisce), **Pallone**, **Slime**, **Orsetto Gommoso** (boing), **Zampetta** e **Gattino** (miao), **Dollaroni** (monete), **Arcade** (8-bit), **Dadi Musicali** (ogni faccia suona una nota: i dadi fanno una melodia), **Gran Pianoforte** (accordo), **Batteria** (ogni faccia è un tamburo), **Acquario** (bolle), **Tempesta** (tuoni), **Zucca**, **Pianeta**, **Lampada Lava**, **Ologramma**…
+- **Dadi Assurdi** (la rarità più alta, solo nelle casse media 0,2% e grande 0,8%): effetti enormi quando atterrano, con suono dedicato: **Dado DJ** (equalizzatore e bass drop), **Buco Nero** (risucchia e fa tremare il vassoio), **Unicorno** (arcobaleno e arpa magica), **Fenice** (fiammata), **Dado Infinito** (caleidoscopio e anelli), **Palla da Discoteca** (luci), **Dinamite** (esplosione), **Gatto Cosmico** (MIAO!), **Tsunami** (onda), **Festa Pazza** (coriandoli e trombetta)
+- **Animazioni di lancio** (15, ognuna col suo rumore: super rimbalzo, vortice, bolle, coriandoli, razzo, meteora, fulmine, glitch, portale, stelle cadenti, scia arcobaleno, buco nero…)
+- **Carte** (14 skin, anche olografiche, arcobaleno e prisma: cambiano la lamina da grattare e il suono quando gratti)
+- **Tavolo** (13 temi, ognuno col suo sottofondo: uccellini, onde, grilli, vento, vulcano, spazio, città neon, arpa…)
 - **Avatar**: parte standard e si veste con cappelli, accessori del viso, magliette, pantaloni, scarpe, ali/mantelli; carnagione libera
 - **Profilo**: cornici e titoli
 
-In partita ognuno tira con i propri dadi e la propria animazione (online si vedono quelli dell'avversario).
+In partita ognuno tira con i propri dadi e la propria animazione (online si vedono e si sentono quelli dell'avversario).
+
+## Musica e suoni
+
+Tutto è sintetizzato dal vivo (Web Audio, nessun file audio):
+
+- **musica rilassante** nel menu (lo-fi: piano elettrico, basso morbido, spazzole, fruscio del vinile), **ambient** tranquilla durante le partite, musica **allegra** nella campagna e **musica da scontro** contro i boss (batteria, basso incalzante, accordi minori; più veloce per i boss finali), con dissolvenza tra un brano e l'altro;
+- effetti **ASMR**: dadi con colpo nitido, corpo morbido, stereo e un filo di riverbero; tocchi a bolla; ogni skin dei dadi ha agitazione, atterraggio e "tieni" diversi;
+- in Impostazioni ci sono **Musica** e **Suoni** separati (il pulsante audio in partita spegne tutto). La musica parte al primo tocco (GIOCA), come richiedono i browser.
 
 ## Campagna
 
@@ -176,7 +185,9 @@ src/
                          pulsanti, intestazione, mano, gratta e vinci,
                          bersagli delle carte, schermate, controller
   anim/                  animazioni (dadi 3D, voli, rotazione), effetti ed effetti delle carte
-  audio/sound.js         effetti sonori sintetizzati (Web Audio)
+  audio/sound.js         effetti sonori sintetizzati (Web Audio, riverbero, stereo)
+  audio/voices.js        suoni delle skin: dadi, animazioni di lancio, carte
+  audio/music.js         musica generata dal vivo (menu, partita, campagna, boss) e ambienti dei tavoli
   styles/                CSS
   ui/meta/               intro, menu principale, negozio e casse, armadio, profilo,
                          classifica, accesso, campagna, sfide, boss
@@ -193,7 +204,7 @@ dist/index.html          versione compilata in un unico file
 npm install          # esbuild, PeerJS e il server PeerJS per i test
 npm run dev          # server locale su http://localhost:5173/
 npm run build        # crea dist/index.html
-npm test             # 86 test: punteggi, regole, carte, partite online allineate, catalogo, casse, profilo, rango, campagna, boss, bot, API account
+npm test             # 87 test: punteggi, regole, carte, partite online allineate, catalogo, casse, profilo, rango, campagna, boss, bot, API account
 npm run test:e2e     # partita completa nel browser su vari schermi (richiede Playwright)
 npm run test:online  # due "telefoni" che giocano online tramite un server PeerJS locale
 npm run test:meta    # intro, account, casse, armadio, campagna, boss, classifica, secondo telefono

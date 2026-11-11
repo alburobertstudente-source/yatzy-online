@@ -18,6 +18,8 @@ import { WORLDS } from '../../campaign/campaign.js';
 import { pageShell, coinPill, itemTile, itemArt, rarityChip, sheet, fmt } from './common.js';
 import { openChestAnimation, catLabel } from './chestOpen.js';
 import { Account } from '../../net/account.js';
+import { music } from '../../audio/music.js';
+import { previewSound } from '../../audio/voices.js';
 
 const toggle = (label, on, onChange) => {
   const input = h('input', { type: 'checkbox', checked: on, onchange: (e) => onChange(e.target.checked) });
@@ -62,6 +64,8 @@ export class MetaUI {
   /** Tema del tavolo e skin delle carte del giocatore. */
   applySkins() {
     applyTheme(this.stage.app, this.profile.equip);
+    sound.cardVoice = ITEMS[this.profile.equip.cards]?.skin || 'silver';
+    music.setAmbient(ITEMS[this.profile.equip.table]?.theme || 'classic');
   }
 
   #clearTimers() {
@@ -78,6 +82,7 @@ export class MetaUI {
 
   async #open(el) {
     this.#clearTimers();
+    music.play('menu');
     this.stage.app.dataset.screen = 'hub';
     this.stage.setRotation(0);
     this.stage.setTurnColor('red');
@@ -112,8 +117,9 @@ export class MetaUI {
     const skipper = () => (skip = true);
     el.addEventListener('pointerdown', skipper);
     // 1. i dadi entrano rotolando
-    sound.roll(5, 1.1);
-    await Promise.all(dice.map((d, i) => tumbleDie(d, [6, 1, 5, 2, 6][i], { delay: i * 90, duration: 1100, entering: true, onLand: () => sound.land() })));
+    const voice = ITEMS[this.profile.equip.dice]?.voice || 'classic';
+    sound.roll(5, 1.1, voice);
+    await Promise.all(dice.map((d, i) => tumbleDie(d, [6, 1, 5, 2, 6][i], { delay: i * 90, duration: 1100, entering: true, onLand: () => sound.land(0, [6, 1, 5, 2, 6][i], i, voice) })));
     if (!skip) await wait(ms(250));
     // 2. i dadi si stringono e scoppiano nella scritta
     await Promise.all(dice.map((d, i) => play(d.parentElement, [{ transform: 'none' }, { transform: `translateX(${(2 - i) * 46}px) scale(.6)`, opacity: 0.9 }], { duration: 260, easing: EASE.in, fill: 'forwards' })));
@@ -144,6 +150,7 @@ export class MetaUI {
     await new Promise((resolve) => go.addEventListener('click', resolve, { once: true }));
     sound.unlock();
     sound.tap();
+    music.play('menu');
     buzz(15);
   }
 
@@ -383,8 +390,7 @@ export class MetaUI {
     const tray = new TrayView({ count: 3, onDieTap: () => {} });
     trayBox.append(tray.el, h('button', { class: 'btn wd-try', type: 'button', onclick: () => tryRoll() }, h('span', { html: MI.dice }), 'PROVA'));
     const tryRoll = () => {
-      sound.roll(3);
-      tray.roll([1 + Math.floor(Math.random() * 6), 1 + Math.floor(Math.random() * 6), 1 + Math.floor(Math.random() * 6)], [0, 1, 2], { onLand: () => sound.land() });
+      tray.roll([1 + Math.floor(Math.random() * 6), 1 + Math.floor(Math.random() * 6), 1 + Math.floor(Math.random() * 6)], [0, 1, 2]);
     };
     tray.showValues([6, 3, 5]);
     const render = () => {
@@ -440,6 +446,7 @@ export class MetaUI {
     sound.select();
     buzz(10);
     if (cat === 'dice' || cat === 'roll') setTimeout(() => this.#wardrobeRoll?.(), 60);
+    else if (next) previewSound(sound, it);
   }
 
   /* ------------------------------------------------------------ */
@@ -607,6 +614,7 @@ export class MetaUI {
         'div',
         { class: 'settings' },
         h('h3', {}, 'Impostazioni'),
+        toggle('Musica', set.music !== false, (v) => up({ music: v })),
         toggle('Suoni', set.sound, (v) => up({ sound: v })),
         toggle('Vibrazione', set.vibration, (v) => up({ vibration: v })),
         toggle('Ruota lo schermo (2 giocatori)', set.rotate, (v) => up({ rotate: v })),

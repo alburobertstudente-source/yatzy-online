@@ -541,11 +541,9 @@ export class Controller {
       this.tray.setHeld(g.dice.held, false);
       this.tray.setDecor({ foresight: g.turnState.foresight, noHold: null });
       this.updateControls({ locked: true });
-      sound.roll(res.rolled.length);
       buzz(10);
       await this.tray.roll(res.rolledValues, res.rolled, {
         entering: res.rollIndex === 0,
-        onLand: () => sound.land(),
       });
       if (res.curse) await this.#curseStrikes(res);
       if (res.boss && g === this.game) await this.mode?.afterRoll?.(this, res);
@@ -566,8 +564,7 @@ export class Controller {
     this.hud.setCardInfo(this.game.players);
     await this.cardFx.curseBanner(c.type);
     if (c.dice.length) {
-      sound.roll(c.dice.length);
-      await this.tray.roll(res.values, c.dice, { onLand: () => sound.land() });
+      await this.tray.roll(res.values, c.dice);
     }
     if (c.noHoldDie !== null) {
       this.tray.setHeld(this.game.dice.held, false);
@@ -961,8 +958,7 @@ export class Controller {
     const tr = this.#rect(this.tray.el);
     switch (res.kind) {
       case 'reroll':
-        sound.roll(res.dice.length);
-        await this.tray.roll(res.values, res.dice, { onLand: () => sound.land() });
+        await this.tray.roll(res.values, res.dice);
         res.dice.forEach((i) => this.cardFx.glowDie(this.tray.slotEl(i), def.rarity));
         this.#diceChangedCombo();
         break;
@@ -976,15 +972,14 @@ export class Controller {
         await this.#drawPhase({ extra: true });
         break;
       case 'setDie':
-        sound.roll(1);
-        await this.tray.roll(res.values, [res.die], { onLand: () => sound.land() });
+        await this.tray.roll(res.values, [res.die]);
         this.cardFx.glowDie(this.tray.slotEl(res.die), def.rarity);
         this.#diceChangedCombo();
         break;
       case 'setAll':
         sound.godHand();
         this.cardFx.godRays(this.tray.el);
-        await this.tray.roll(res.values, [0, 1, 2, 3, 4], { onLand: () => sound.land() });
+        await this.tray.roll(res.values, [0, 1, 2, 3, 4]);
         [0, 1, 2, 3, 4].forEach((i) => this.cardFx.glowDie(this.tray.slotEl(i), 'legendary'));
         this.#diceChangedCombo();
         break;

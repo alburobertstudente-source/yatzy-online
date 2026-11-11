@@ -1,3 +1,5 @@
+import { VOICES } from './voices.js';
+
 /**
  * Effetti sonori sintetizzati con Web Audio (nessun file audio esterno).
  * L'AudioContext viene creato al primo tocco (requisito di iOS/Android).
@@ -9,6 +11,17 @@ class SoundFX {
     this.master = null;
     this.enabled = true;
     this.noise = null;
+    /** voce dei dadi del vassoio visibile (skin): cambia lanci, atterraggi e "tieni" */
+    this.voice = 'classic';
+    /** sapore della skin delle carte (gratta e rivela) */
+    this.cardVoice = 'silver';
+    this.listeners = new Set();
+  }
+
+  /** Avvisa (es. la musica) quando l'audio è pronto. */
+  onReady(fn) {
+    this.listeners.add(fn);
+    if (this.ctx) fn(this.ctx);
   }
 
   /** Da chiamare dentro un gesto dell'utente. */
@@ -27,13 +40,48 @@ class SoundFX {
       comp.threshold.value = -14;
       comp.ratio.value = 4;
       this.master.connect(comp).connect(this.ctx.destination);
+      this.comp = comp;
+      // riverbero corto per gli effetti "ASMR" (risposta all'impulso generata)
+      this.reverb = this.ctx.createConvolver();
+      this.reverb.buffer = this.#impulse(1.4, 3.2);
+      this.wet = this.ctx.createGain();
+      this.wet.gain.value = 0.32;
+      this.wet.connect(this.reverb).connect(this.master);
       // buffer di rumore bianco riutilizzabile
       const len = Math.floor(this.ctx.sampleRate * 0.5);
       this.noise = this.ctx.createBuffer(1, len, this.ctx.sampleRate);
       const data = this.noise.getChannelData(0);
       for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      this.listeners.forEach((fn) => fn(this.ctx));
     } catch {
       this.ctx = null;
+    }
+  }
+
+  #impulse(seconds, decay) {
+    const rate = this.ctx.sampleRate;
+    const len = Math.floor(rate * seconds);
+    const buf = this.ctx.createBuffer(2, len, rate);
+    for (let ch = 0; ch < 2; ch++) {
+      const d = buf.getChannelData(ch);
+      for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len) ** decay;
+    }
+    return buf;
+  }
+
+  /** Collega un nodo all'uscita con posizione stereo e un po' di riverbero. */
+  out(node, { pan = 0, send = 0 } = {}) {
+    let last = node;
+    if (pan && this.ctx.createStereoPanner) {
+      const p = this.ctx.createStereoPanner();
+      p.pan.value = Math.max(-1, Math.min(1, pan));
+      last = node.connect(p);
+    }
+    last.connect(this.master);
+    if (send > 0) {
+      const g = this.ctx.createGain();
+      g.gain.value = send;
+      last.connect(g).connect(this.wet);
     }
   }
 
@@ -46,7 +94,7 @@ class SoundFX {
   }
 
   /* ---------- primitive ---------- */
-  tone({ freq = 440, to = null, type = 'sine', dur = 0.15, gain = 0.3, delay = 0, attack = 0.005 }) {
+  tone({ freq = 440, to = null, type = 'sine', dur = 0.15, gain = 0.3, delay = 0, attack = 0.005, pan = 0, send = 0, vibrato = 0 }) {
     attack = Math.min(attack, dur * 0.8);
     if (!this.ready) return;
     const t = this.ctx.currentTime + delay;
@@ -58,12 +106,22 @@ class SoundFX {
     g.gain.setValueAtTime(0.0001, t);
     g.gain.exponentialRampToValueAtTime(gain, t + attack);
     g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    o.connect(g).connect(this.master);
+    if (vibrato) {
+      const lfo = this.ctx.createOscillator();
+      const lg = this.ctx.createGain();
+      lfo.frequency.value = 6;
+      lg.gain.value = vibrato;
+      lfo.connect(lg).connect(o.frequency);
+      lfo.start(t);
+      lfo.stop(t + dur + 0.02);
+    }
+    o.connect(g);
+    this.out(g, { pan, send });
     o.start(t);
     o.stop(t + dur + 0.02);
   }
 
-  burst({ dur = 0.05, gain = 0.3, freq = 2500, q = 1.2, type = 'bandpass', delay = 0, sweepTo = null }) {
+  burst({ dur = 0.05, gain = 0.3, freq = 2500, q = 1.2, type = 'bandpass', delay = 0, sweepTo = null, pan = 0, send = 0, attack = 0 }) {
     if (!this.ready) return;
     const t = this.ctx.currentTime + delay;
     const src = this.ctx.createBufferSource();
@@ -74,41 +132,45 @@ class SoundFX {
     if (sweepTo) f.frequency.exponentialRampToValueAtTime(sweepTo, t + dur);
     f.Q.value = q;
     const g = this.ctx.createGain();
-    g.gain.setValueAtTime(gain, t);
+    if (attack) {
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(gain, t + attack);
+    } else g.gain.setValueAtTime(gain, t);
     g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    src.connect(f).connect(g).connect(this.master);
+    src.connect(f).connect(g);
+    this.out(g, { pan, send });
     src.start(t, Math.random() * 0.3);
     src.stop(t + dur + 0.02);
   }
 
   /* ---------- effetti del gioco ---------- */
-  /** Rumore dei dadi agitati e lanciati. */
-  roll(count = 5, duration = 0.9) {
+  /** Rumore dei dadi agitati e lanciati (dipende dalla skin dei dadi). */
+  roll(count = 5, duration = 0.9, voice = this.voice) {
     if (!this.ready) return;
-    const hits = 6 + count * 3;
-    for (let i = 0; i < hits; i++) {
-      const d = (i / hits) * duration * 0.7 + Math.random() * 0.04;
-      this.burst({ dur: 0.025 + Math.random() * 0.02, gain: 0.12 + Math.random() * 0.12, freq: 1800 + Math.random() * 2600, q: 3, delay: d });
-    }
+    VOICES.shake(this, voice, count, duration);
   }
 
-  /** Dado che si ferma sul tavolo. */
-  land(delay = 0) {
-    this.burst({ dur: 0.06, gain: 0.35, freq: 900 + Math.random() * 500, q: 2.5, delay });
-    this.tone({ freq: 180 + Math.random() * 40, to: 90, type: 'triangle', dur: 0.08, gain: 0.18, delay });
+  /** Dado che si ferma sul tavolo: k = ordine di arrivo, value = faccia (dadi musicali). */
+  land(delay = 0, value = null, k = 0, voice = this.voice) {
+    if (!this.ready) return;
+    VOICES.land(this, voice, { delay, value, k });
   }
 
-  hold(on) {
-    this.tone({ freq: on ? 660 : 520, to: on ? 990 : 380, type: 'triangle', dur: 0.09, gain: 0.22 });
+  hold(on, voice = this.voice) {
+    if (!this.ready) return;
+    VOICES.hold(this, voice, on);
   }
 
+  /** Tocco morbido: piccola bolla con un filo di riverbero. */
   tap() {
-    this.tone({ freq: 520, to: 700, type: 'sine', dur: 0.07, gain: 0.18 });
+    this.tone({ freq: 620, to: 880, type: 'sine', dur: 0.06, gain: 0.16, send: 0.15 });
+    this.burst({ dur: 0.012, gain: 0.06, freq: 4200, q: 4 });
   }
 
   select() {
-    this.tone({ freq: 600, to: 900, type: 'sine', dur: 0.1, gain: 0.25 });
-    this.tone({ freq: 1200, type: 'sine', dur: 0.08, gain: 0.08, delay: 0.05 });
+    this.tone({ freq: 660, to: 990, type: 'sine', dur: 0.09, gain: 0.2, send: 0.25 });
+    this.tone({ freq: 1320, type: 'sine', dur: 0.16, gain: 0.06, delay: 0.05, send: 0.4 });
+    this.burst({ dur: 0.01, gain: 0.05, freq: 5000, q: 5 });
   }
 
   denied() {
@@ -170,13 +232,23 @@ class SoundFX {
   }
 
   /* ---------- carte potenziamento ---------- */
-  /** Raschiata sullo strato argentato. */
+  /** Raschiata sullo strato argentato (con il sapore della skin delle carte). */
   scratch() {
     this.burst({ dur: 0.06, gain: 0.12, freq: 5200 + Math.random() * 2500, q: 0.7, type: 'highpass' });
+    VOICES.scratch(this, this.cardVoice);
   }
 
   /** Rivelazione della carta: più rara, più ricca. */
   reveal(rarity) {
+    VOICES.revealFlavor(this, this.cardVoice);
+    if (rarity === 'absurd') {
+      this.yatzyBonus();
+      [130.8, 164.8, 196, 261.6].forEach((f, i) => this.tone({ freq: f, to: f * 2, type: 'sawtooth', dur: 1.2, gain: 0.05, delay: 0.1 + i * 0.05, send: 0.6 }));
+      this.burst({ dur: 1.6, gain: 0.12, freq: 200, sweepTo: 9000, q: 0.6, send: 0.5 });
+      return;
+    }
+    if (rarity === 'mythic') rarity = 'legendary';
+    if (rarity === 'uncommon') rarity = 'rare';
     if (rarity === 'legendary') return this.yatzyBonus();
     if (rarity === 'epic') {
       [392, 494, 587, 784].forEach((f, i) => this.tone({ freq: f, type: 'triangle', dur: 0.3, gain: 0.16, delay: i * 0.07 }));

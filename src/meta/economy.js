@@ -31,7 +31,7 @@ export const CHESTS = {
     items: 2,
     coins: [20, 80],
     guarantee: 'uncommon',
-    odds: { common: 30, uncommon: 34, rare: 22, epic: 10, legendary: 3.4, mythic: 0.6 },
+    odds: { common: 30, uncommon: 34, rare: 22, epic: 10, legendary: 3.2, mythic: 0.6, absurd: 0.2 },
   },
   large: {
     id: 'large',
@@ -40,7 +40,7 @@ export const CHESTS = {
     items: 3,
     coins: [60, 200],
     guarantee: 'rare',
-    odds: { common: 8, uncommon: 22, rare: 34, epic: 22, legendary: 11, mythic: 3 },
+    odds: { common: 8, uncommon: 22, rare: 34, epic: 22, legendary: 10.2, mythic: 3, absurd: 0.8 },
   },
 };
 
@@ -91,7 +91,7 @@ export function rollChest(chestId, owned, rng) {
 }
 
 /* ---------------- OFFERTE DEL GIORNO ---------------- */
-export const PRICE = { common: 90, uncommon: 220, rare: 480, epic: 1100, legendary: 2600, mythic: 6000 };
+export const PRICE = { common: 90, uncommon: 220, rare: 480, epic: 1100, legendary: 2600, mythic: 6000, absurd: 15000 };
 
 /** Chiave del giorno (ora locale): le offerte cambiano a mezzanotte. */
 export function dayKey(now = Date.now()) {

@@ -6,7 +6,10 @@ import { pipsSvg, ICONS } from './icons.js';
 import { MINI } from './cardArt.js';
 import { setDieFace, tumbleDie, play, EASE } from '../anim/animations.js';
 import { TIMING } from '../config.js';
-import { applyDiceSkin, rollStyleOf } from './skins.js';
+import { applyDiceSkin, rollStyleOf, landFx } from './skins.js';
+import { ITEMS } from '../meta/catalog.js';
+import { sound } from '../audio/sound.js';
+import { rollStyleSound } from '../audio/voices.js';
 
 function buildDie() {
   const faces = [1, 2, 3, 4, 5, 6].map((n) => h('div', { class: `face f${n}`, html: pipsSvg(n) }));
@@ -47,12 +50,18 @@ export class TrayView {
     }
     this.el = h('section', { class: 'tray' }, row);
     this.rollStyle = 'classic';
+    this.voice = 'classic';
+    this.landFx = null;
   }
 
   /** Skin dei dadi e stile di lancio (del giocatore di turno). */
   setSkin(diceId, rollId) {
     applyDiceSkin(this.el, diceId);
     this.rollStyle = rollStyleOf(rollId);
+    const it = ITEMS[diceId];
+    this.voice = it?.voice || 'classic';
+    this.landFx = it?.landFx || null;
+    sound.voice = this.voice;
   }
 
   /** Vassoio vuoto (inizio turno). */
@@ -85,14 +94,26 @@ export class TrayView {
    * Anima un lancio. Solo gli indici in `rolled` si muovono.
    * @returns {Promise<void>} risolta quando tutti i dadi sono fermi
    */
-  async roll(values, rolled, { entering = false, onLand } = {}) {
+  async roll(values, rolled, { entering = false, onLand, silent = false } = {}) {
     const order = [...rolled].sort(() => Math.random() - 0.5);
+    let landed = 0;
+    if (!silent) {
+      sound.voice = this.voice;
+      sound.roll(rolled.length, 0.9, this.voice);
+      if (this.rollStyle !== 'classic') rollStyleSound(sound, this.rollStyle);
+    }
+    const land = (i) => {
+      const k = landed++;
+      if (!silent) sound.land(0, values[i], k, this.voice);
+      if (this.landFx) landFx(this.landFx, this.slots[i].el, k);
+      onLand?.(i);
+    };
     const jobs = rolled.map((i) => {
       const s = this.slots[i];
       s.el.classList.remove('is-empty', 'is-out');
       const delay = order.indexOf(i) * TIMING.ROLL_STAGGER;
       const duration = TIMING.ROLL_MIN + Math.random() * (TIMING.ROLL_MAX - TIMING.ROLL_MIN);
-      return tumbleDie(s.die, values[i], { delay, duration, entering, style: this.rollStyle, onLand: () => onLand?.(i) });
+      return tumbleDie(s.die, values[i], { delay, duration, entering, style: this.rollStyle, onLand: () => land(i) });
     });
     await Promise.all(jobs);
   }

@@ -41,7 +41,7 @@ test('casse: le probabilità rispettano le percentuali', () => {
   const seen = Object.fromEntries(RARITY_ORDER.map((r) => [r, 0]));
   for (let k = 0; k < n; k++) seen[rollChest('small', [], rng).items[0].rarity]++;
   for (const r of RARITY_ORDER) {
-    const want = CHESTS.small.odds[r] / 100;
+    const want = (CHESTS.small.odds[r] || 0) / 100;
     assert.ok(Math.abs(seen[r] / n - want) < 0.012, `${r}: ${seen[r] / n} invece di ${want}`);
   }
 });
@@ -133,4 +133,17 @@ test('livello del giocatore dall\'esperienza', () => {
   assert.equal(levelFromXp(0).level, 1);
   assert.equal(levelFromXp(100).level, 2);
   assert.equal(levelFromXp(99).level, 1);
+});
+
+test('rarità Assurda: solo dadi con effetti e suoni speciali, solo nelle casse media e grande', () => {
+  const absurd = ITEM_LIST.filter((i) => i.rarity === 'absurd');
+  assert.ok(absurd.length >= 10);
+  for (const it of absurd) {
+    assert.equal(it.cat, 'dice');
+    assert.ok(it.voice && it.landFx && it.fx, `${it.id} senza effetti`);
+  }
+  assert.ok(!CHESTS.small.odds.absurd && !CHESTS.daily.odds.absurd);
+  assert.ok(CHESTS.large.odds.absurd > CHESTS.medium.odds.absurd);
+  // ogni dado ha una voce
+  for (const it of ITEM_LIST.filter((i) => i.cat === 'dice')) assert.ok(it.voice, `${it.id} senza suono`);
 });
