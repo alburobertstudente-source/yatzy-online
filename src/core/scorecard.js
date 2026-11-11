@@ -56,7 +56,7 @@ export class Scorecard {
     if (!this.isOpen(id)) throw new Error(`Categoria già usata: ${id}`);
     if (!Number.isInteger(value) || value < 0) throw new Error(`Punteggio non valido: ${value}`);
     this.scores[id] = value;
-    if (this.upperTotal() >= RULES.UPPER_BONUS_THRESHOLD) this.upperBonusLocked = true;
+    if (this.upperTotal() >= (this.bonusThreshold || RULES.UPPER_BONUS_THRESHOLD)) this.upperBonusLocked = true;
   }
 
   upperTotal() {
@@ -64,7 +64,7 @@ export class Scorecard {
   }
 
   hasUpperBonus() {
-    return this.upperBonusLocked || this.upperTotal() >= RULES.UPPER_BONUS_THRESHOLD;
+    return this.upperBonusLocked || this.upperTotal() >= (this.bonusThreshold || RULES.UPPER_BONUS_THRESHOLD);
   }
 
   upperBonus() {

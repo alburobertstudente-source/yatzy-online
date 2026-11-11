@@ -23,7 +23,7 @@ import { detectMeme } from './memes.js';
 export { GameError };
 
 const newStatus = () => ({ curse: null, noHoldDie: null });
-const newTurnState = () => ({ foresight: {}, crown: null });
+const newTurnState = () => ({ foresight: {}, crown: null, noHold: [], frozen: [], blocked: [] });
 
 export class Game {
   /**
@@ -32,7 +32,7 @@ export class Game {
    * @param {() => number} [opts.rng] generatore per la pescata delle carte e i dadi delle carte
    * @param {{id:string,name:string}[]} [opts.players]
    */
-  constructor({ roller, rng, players = PLAYERS } = {}) {
+  constructor({ roller, rng, players = PLAYERS, cards = true, hooks = null } = {}) {
     this.rng = rng ?? roller?.rng ?? createCryptoRandom();
     this.roller = roller ?? new FairRoller({ rng: this.rng });
     this.players = players.map((p) => ({ ...p, card: new Scorecard(), hand: [], status: newStatus() }));
@@ -56,6 +56,16 @@ export class Game {
     /** carte forzate (solo per test/debug) */
     this.forcedCards = [];
     this.listeners = new Map();
+    /** false = partita senza carte (sfide della campagna) */
+    this.cardsEnabled = cards;
+    if (!cards) this.pendingDraws = 0;
+    /**
+     * Regole speciali (boss della campagna): turnStart(game), afterRoll(game, res),
+     * afterScore(game, res). Possono cambiare i dadi o i punti e lasciano una nota
+     * in `res.boss` / `game.turnState.boss` per l'interfaccia.
+     */
+    this.hooks = hooks;
+    this.hooks?.turnStart?.(this);
   }
 
   /* ---------------- eventi ---------------- */
@@ -108,12 +118,19 @@ export class Game {
   }
 
   canSelect(categoryId) {
-    return this.phase === 'playing' && !this.scoredThisTurn && !this.mustDraw && this.dice.hasRolled && this.current.card.isOpen(categoryId);
+    return this.phase === 'playing' && !this.scoredThisTurn && !this.mustDraw && this.dice.hasRolled && this.current.card.isOpen(categoryId) && !this.isBlocked(categoryId);
+  }
+
+  /** Casella maledetta per questo turno (boss): non si può usare, a meno che sia l'ultima libera. */
+  isBlocked(categoryId) {
+    const b = this.turnState.blocked;
+    if (!b?.length || !b.includes(categoryId)) return false;
+    return this.current.card.openCategories().some((c) => !b.includes(c));
   }
 
   /** Il dado i si può tenere adesso? */
   canHold(i) {
-    return this.dice.hasRolled && this.dice.rollsLeft > 0 && this.current.status.noHoldDie !== i;
+    return this.dice.hasRolled && this.dice.rollsLeft > 0 && this.current.status.noHoldDie !== i && !this.turnState.noHold?.includes(i) && !this.turnState.frozen?.includes(i);
   }
 
   previewScore(categoryId) {
@@ -257,7 +274,9 @@ export class Game {
     }
 
     this.selected = null;
+    const boss = this.hooks?.afterRoll?.(this, { rolled, rollIndex, rolledValues }) || null;
     const result = {
+      boss,
       playerId: me.id,
       rolledValues,
       values: [...this.dice.values],
@@ -276,7 +295,8 @@ export class Game {
     this.#assertTurnOpen();
     if (!this.dice.hasRolled) throw new GameError('Lancia prima i dadi');
     if (this.dice.rollsLeft <= 0) throw new GameError('Nessun rilancio disponibile');
-    if (!this.dice.held[i] && this.current.status.noHoldDie === i) throw new GameError('Questo dado non può essere conservato');
+    if (!this.dice.held[i] && (this.current.status.noHoldDie === i || this.turnState.noHold?.includes(i))) throw new GameError('Questo dado non può essere conservato');
+    if (this.turnState.frozen?.includes(i)) throw new GameError('Questo dado è congelato');
     const held = this.dice.toggleHold(i);
     this.emit('hold', { index: i, held });
     return held;
@@ -286,6 +306,7 @@ export class Game {
     this.#assertTurnOpen();
     if (!this.dice.hasRolled) throw new GameError('Lancia prima i dadi');
     if (!this.current.card.isOpen(categoryId)) throw new GameError('Categoria già usata');
+    if (this.isBlocked(categoryId)) throw new GameError('Casella maledetta in questo turno');
     this.selected = categoryId;
     const score = this.previewScore(categoryId);
     this.emit('select', { categoryId, score });
@@ -340,6 +361,8 @@ export class Game {
       prevTotal,
       total: card.total(),
     };
+    result.boss = this.hooks?.afterScore?.(this, result) || null;
+    if (result.boss) result.total = card.total();
     this.selected = null;
     this.scoredThisTurn = true;
     this.emit('score', result);
@@ -364,8 +387,9 @@ export class Game {
       this.emit('gameover', res);
       return { over: true, ...res };
     }
-    this.pendingDraws = 1;
+    this.pendingDraws = this.cardsEnabled ? 1 : 0;
     this.pendingDiscard = false;
+    this.hooks?.turnStart?.(this);
     const info = { over: false, playerId: this.current.id, round: this.round, turnId: this.turnId };
     this.emit('turn', info);
     return info;

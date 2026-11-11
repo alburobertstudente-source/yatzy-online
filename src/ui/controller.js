@@ -1097,7 +1097,7 @@ export class Controller {
 
     // anello del bonus superiore
     if (res.section === 'upper') {
-      this.card.setRing(pid, res.upperTotal, g.player(pid).card.hasUpperBonus());
+      this.card.setRing(pid, res.upperTotal, g.player(pid).card.hasUpperBonus(), g.player(pid).card.bonusThreshold || RULES.UPPER_BONUS_THRESHOLD);
       if (res.upperBonusEarned) {
         await wait(ms(450));
         const ring = this.card.ring(pid).el;

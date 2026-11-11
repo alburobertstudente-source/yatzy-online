@@ -192,7 +192,7 @@ export class ScorecardView {
         else if (selected) val.textContent = String(game.previewScore(cat));
         else val.textContent = '';
       }
-      if (holdRingFor !== p.id) this.setRing(p.id, p.card.upperTotal(), p.card.hasUpperBonus());
+      if (holdRingFor !== p.id) this.setRing(p.id, p.card.upperTotal(), p.card.hasUpperBonus(), p.card.bonusThreshold || RULES.UPPER_BONUS_THRESHOLD);
       if (holdChecksFor !== p.id) this.setChecks(p.id, p.card.yatzyBonusCount());
     }
   }
@@ -228,9 +228,8 @@ export class ScorecardView {
   }
 
   /** Anello e binario del bonus superiore. */
-  setRing(pid, upperTotal, done = upperTotal >= RULES.UPPER_BONUS_THRESHOLD) {
+  setRing(pid, upperTotal, done = upperTotal >= RULES.UPPER_BONUS_THRESHOLD, goal = RULES.UPPER_BONUS_THRESHOLD) {
     const r = this.rings.get(pid);
-    const goal = RULES.UPPER_BONUS_THRESHOLD;
     const k = done ? 1 : Math.min(1, upperTotal / goal);
     r.prog.setAttribute('stroke-dashoffset', String(RING_C * (1 - k)));
     r.text.textContent = `${Math.min(upperTotal, 999)}/${goal}`;
