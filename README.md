@@ -8,8 +8,8 @@ Yatzy per due giocatori, rosso contro blu, con **carte potenziamento gratta e vi
 
 ## Link del gioco
 
-- **https://yatzy-duello.onrender.com** (Render, si aggiorna da solo a ogni push su `main`, dalla cartella `dist/`)
-- **https://yatzy-duello.vercel.app** (Vercel, copia di riserva)
+- **https://yatzy-duello.onrender.com** (Render, sito statico dalla cartella `dist/`: dopo un push su `main` va ripubblicato con *Manual Deploy* nel pannello di Render, oppure collegando GitHub a Render)
+- **https://yatzy-duello.vercel.app** (Vercel: gioco + server degli account, costruito da `main`)
 
 Basta mandare uno dei due link agli amici. Per installarlo come app:
 
