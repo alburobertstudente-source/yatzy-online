@@ -4053,3 +4053,51 @@
 .cs-stack em {
   bottom: 2px;
 }
+
+/* schermata "tocca per iniziare" (sblocca l'audio prima dell'intro) */
+.intro-tap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: #fff;
+  text-align: center;
+  cursor: pointer;
+  background: radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 0.18), transparent 55%);
+}
+
+.it-die {
+  width: 96px;
+  height: 96px;
+  filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.35));
+  animation: it-roll 2.4s ease-in-out infinite;
+}
+
+.it-die svg {
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes it-roll {
+  0%,
+  100% {
+    transform: rotate(-8deg) translateY(0);
+  }
+  50% {
+    transform: rotate(8deg) translateY(-10px);
+  }
+}
+
+.intro-tap b {
+  font-size: 26px;
+  letter-spacing: 0.12em;
+  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+  animation: intro-pulse 1.3s ease-in-out infinite;
+}
+
+.intro-tap small {
+  max-width: 260px;
+  font-size: 13px;
+  opacity: 0.85;
+}

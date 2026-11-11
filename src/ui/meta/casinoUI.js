@@ -257,7 +257,7 @@ export class CasinoUI {
       if (won.length) {
         const big = res.payout >= 1000 || won.includes('yatzy') || won.includes('straight');
         say(`${res.sum}! ${won.map((id) => BETS[id].label).join(' e ')}: vinci ${fmt(res.payout)} monete!`, big ? 'wow' : 'happy');
-        sound.win();
+        sound.casinoWin(big);
         for (const id of won) for (let k = 0; k < 3; k++) setTimeout(() => flyChip(boxes[id].stack, pill, 500), ms(k * 90));
         sfx.coins(8);
         const r = localRect(pill, el, false);
@@ -266,7 +266,8 @@ export class CasinoUI {
         await countUp(pill.lastChild, shown, shown + res.payout, 900);
       } else {
         say(`${res.sum}. Il banco vince… ritenta!`, 'sad');
-        sound.lose();
+        sound.casinoLose();
+        shake(dealer, 3);
       }
       shown = this.profile.coins;
       bets = {};

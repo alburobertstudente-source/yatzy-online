@@ -3,11 +3,25 @@
  * statistiche, rango e cassa giornaliera. Funzioni pure sul dato JSON
  * (lo stesso che viene salvato sul telefono e sul server).
  */
-import { ITEMS, BASE_ITEMS, DEFAULT_EQUIP, CATEGORIES, OPTIONAL, SKIN_TONES } from './catalog.js';
+import { ITEMS, ITEM_LIST, BASE_ITEMS, DEFAULT_EQUIP, CATEGORIES, OPTIONAL, SKIN_TONES } from './catalog.js';
 import { validateBets, resolve, rollCasino } from './casino.js';
 import { CHESTS, DAILY_MS, rollChest, levelFromXp, rankOf, rankDelta, ONLINE_COINS, XP, dailyOffers, dayKey } from './economy.js';
 
 export const PROFILE_VERSION = 1;
+
+/** Account del creatore del gioco: tutti gli oggetti e tutti i livelli sbloccati. */
+export const UNLOCK_ALL_USERS = new Set(['robertalbuss']);
+
+export function hasEverything(username) {
+  return UNLOCK_ALL_USERS.has(String(username || '').toLowerCase());
+}
+
+/** Sblocca tutto: ogni oggetto del catalogo e tutti i 100 livelli della campagna. */
+export function unlockAll(p) {
+  p.owned = ITEM_LIST.map((it) => it.id);
+  p.campaign.best = Math.max(p.campaign.best, 99);
+  return p;
+}
 
 export function createProfile(username = '') {
   return {
@@ -57,6 +71,7 @@ export function normalizeProfile(p) {
     else if (id && ITEMS[id]?.cat === c.id && out.owned.includes(id)) out.equip[c.id] = id;
   }
   out.rank.best = Math.max(out.rank.best, out.rank.points);
+  if (hasEverything(out.username)) unlockAll(out);
   return out;
 }
 

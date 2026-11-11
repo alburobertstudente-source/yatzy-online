@@ -113,6 +113,27 @@ export class MetaUI {
     logo.style.opacity = '0';
     go.style.opacity = '0';
     el.querySelector('.intro-sub').style.opacity = '0';
+    // i browser fanno partire l'audio solo dopo un tocco: se è bloccato, prima "tocca per iniziare"
+    sound.unlock();
+    // il contesto audio può impiegare un attimo a partire anche quando è permesso
+    for (let k = 0; k < 6 && sound.ctx && sound.ctx.state !== 'running'; k++) await wait(40);
+    if (sound.ctx && sound.ctx.state !== 'running') {
+      const tap = h(
+        'div',
+        { class: 'screen intro-tap' },
+        h('div', { class: 'it-die', html: '<svg viewBox="0 0 48 48"><rect x="4" y="4" width="40" height="40" rx="10" fill="#fff"/><circle cx="15" cy="15" r="4.4" fill="#ee4655"/><circle cx="33" cy="15" r="4.4" fill="#2f8ae8"/><circle cx="24" cy="24" r="4.4" fill="#262a3d"/><circle cx="15" cy="33" r="4.4" fill="#2f8ae8"/><circle cx="33" cy="33" r="4.4" fill="#ee4655"/></svg>' }),
+        h('b', {}, 'TOCCA PER INIZIARE'),
+        h('small', {}, 'Alza il volume: dadi, musica e sorprese ti aspettano'),
+      );
+      this.stage.app.dataset.screen = 'intro';
+      const tapped = new Promise((resolve) => tap.addEventListener('pointerdown', resolve, { once: true }));
+      await this.screens.open(tap, { dim: false });
+      await tapped;
+      sound.unlock();
+      sound.tap();
+      await play(tap, [{ opacity: 1 }, { opacity: 0 }], { duration: 250, easing: 'linear', fill: 'forwards' });
+    }
+    music.play('intro');
     this.stage.app.dataset.screen = 'intro';
     await this.screens.open(el, { dim: false });
 
@@ -128,6 +149,7 @@ export class MetaUI {
     await Promise.all(dice.map((d, i) => play(d.parentElement, [{ transform: 'none' }, { transform: `translateX(${(2 - i) * 46}px) scale(.6)`, opacity: 0.9 }], { duration: 260, easing: EASE.in, fill: 'forwards' })));
     tray.style.visibility = 'hidden';
     sound.yatzy();
+    music.hit();
     buzz([30, 40, 30]);
     boom.classList.add('is-on');
     const r = boom.getBoundingClientRect();

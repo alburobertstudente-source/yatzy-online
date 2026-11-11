@@ -147,3 +147,16 @@ test('rarità Assurda: solo dadi con effetti e suoni speciali, solo nelle casse 
   // ogni dado ha una voce
   for (const it of ITEM_LIST.filter((i) => i.cat === 'dice')) assert.ok(it.voice, `${it.id} senza suono`);
 });
+
+test('account robertalbuss: tutto sbloccato (oggetti e livelli), anche con maiuscole diverse', async () => {
+  const { ITEM_LIST: all } = await import('../src/meta/catalog.js');
+  const vip = P.normalizeProfile({ username: 'RobertAlbuss', owned: [] });
+  assert.equal(vip.owned.length, all.length);
+  assert.ok(P.levelUnlocked(vip, 100));
+  P.equip(vip, 'dice', 'dice.dj');
+  P.equip(vip, 'hat', 'hat.cosmic');
+  assert.equal(vip.equip.dice, 'dice.dj');
+  const normal = P.normalizeProfile({ username: 'robertalbus', owned: [] });
+  assert.ok(normal.owned.length < 20);
+  assert.ok(!P.levelUnlocked(normal, 2));
+});

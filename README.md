@@ -40,11 +40,12 @@ Per usare un server PeerJS proprio basta aggiungere all'indirizzo `?peerHost=mio
 
 ## Menu, account e progressi
 
-All'apertura i dadi rotolano sul tavolo, la scritta **YATZY** scoppia e compare **GIOCA**; poi il menu principale: campagna, online, 2 giocatori, negozio, personalizza, profilo, classifica, regole, offerte del giorno e statistiche.
+All'apertura i dadi rotolano sul tavolo, la scritta **YATZY** scoppia e compare **GIOCA**, tutto con la sua sigla (vedi *Musica e suoni*); poi il menu principale: campagna, online, 2 giocatori, negozio, personalizza, profilo, classifica, regole, offerte del giorno e statistiche.
 
 - **Account** (nome utente + password): serve per il **negozio** e per giocare **online**. Senza account si gioca come ospite (campagna e 2 giocatori); creando l'account i progressi da ospite passano all'account. Entrando da un altro telefono si ritrovano monete, oggetti, campagna e rango.
 - **Monete**: si guadagnano coi livelli della campagna (di più per quelli difficili e con più stelle; le ripetizioni valgono un quarto), coi boss (da 400 a 1750) e online (vittoria 140, pareggio 60, sconfitta 30).
 - **Livello del giocatore**: l'esperienza sale giocando (livelli, boss, partite online e sullo stesso telefono, casse aperte).
+- **Account `robertalbuss`**: ha tutto sbloccato, cioè tutti i 230 oggetti e tutti i 100 livelli della campagna (il nome vale anche con maiuscole diverse). Lo sblocco avviene in `normalizeProfile`, quindi sia sul telefono sia sul server degli account; l'elenco dei nomi è `UNLOCK_ALL_USERS` in `src/meta/profile.js`.
 
 ## Negozio e casse
 
@@ -66,7 +67,7 @@ Nel negozio c'è l'ingresso del **casinò**: si entra dalle porte, il croupier (
 | SCALA | scala grande | 30× (3,1%) |
 | YATZY | 5 dadi uguali | 1000× (0,08%) |
 
-Il croupier agita la coppa, la sbatte sul tavolo e scopre 5 dadi di marmo rosa: la somma si conta dado per dado, le caselle vincenti si illuminano, le fiche perse vanno al banco e quelle vinte volano sul saldo. La linea SOTTO/SOPRA è a 17,5 perché con 5 dadi la somma va da 5 a 30 ed è simmetrica attorno a 17,5: solo così le due scommesse sono esattamente al 50% (con la linea a 15, SOPRA vincerebbe circa 9 volte su 10). Si usano solo le monete del gioco.
+Il croupier agita la coppa, la sbatte sul tavolo e scopre 5 dadi di marmo rosa: la somma si conta dado per dado, le caselle vincenti si illuminano, le fiche perse vanno al banco e quelle vinte volano sul saldo. Ogni vincita ha il suo suono (scatto della cassa, monete che tintinnano e fanfara; per le vincite grosse una cascata di monete più lunga e campanelli), ogni perdita il suo (fiche spazzate via e un "uà-uà-uà-uààà" triste). La linea SOTTO/SOPRA è a 17,5 perché con 5 dadi la somma va da 5 a 30 ed è simmetrica attorno a 17,5: solo così le due scommesse sono esattamente al 50% (con la linea a 15, SOPRA vincerebbe circa 9 volte su 10). Si usano solo le monete del gioco.
 
 ## Personalizza
 
@@ -86,9 +87,26 @@ In partita ognuno tira con i propri dadi e la propria animazione (online si vedo
 
 Tutto è sintetizzato dal vivo (Web Audio, nessun file audio):
 
-- **musica rilassante** nel menu (lo-fi: piano elettrico, basso morbido, spazzole, fruscio del vinile), **ambient** tranquilla durante le partite, musica **allegra** nella campagna e **musica da scontro** contro i boss (batteria, basso incalzante, accordi minori; più veloce per i boss finali), con dissolvenza tra un brano e l'altro;
+- **sigla dell'intro**: rullo di tamburi che cresce mentre i dadi entrano rotolando, colpo d'orchestra (piatto, ottoni, cassa) quando scoppia la scritta YATZY, poi un tema allegro (marimba, basso, battiti di mani) fino a GIOCA, quando parte la musica del menu. Se il browser blocca l'audio, prima dell'intro compare **TOCCA PER INIZIARE**: il tocco sblocca i suoni e l'intro parte con la musica;
+- **musica rilassante** nel menu (lo-fi: piano elettrico, basso morbido, spazzole, fruscio del vinile), **ambient** tranquilla durante le partite e **musica da scontro** contro i boss (batteria, basso incalzante, accordi minori; più veloce per i boss finali), con dissolvenza tra un brano e l'altro;
+- **ogni mondo della campagna ha la sua canzone** con i rumori del posto, che cambia scorrendo la cartina e resta durante le sfide del mondo:
+
+  | Mondo | Musica | Ambiente |
+  |---|---|---|
+  | 1. Stagno | kalimba e marimba morbide | ruscello, grilli, gocce, ranocchi |
+  | 2. Spiaggia | ukulele, steel drum, shaker | onde e gabbiani |
+  | 3. Bosco nebbioso | arpa, flauto, pad misterioso | vento, gufi, grilli |
+  | 4. Ghiaccio | carillon e celesta | vento gelido, cristalli che tintinnano |
+  | 5. Mari del pirata | canzone marinaresca con fisarmonica | onde, scricchiolii della nave, gabbiani |
+  | 6. Deserto del drago | liuto, tamburo a cornice, bordone | vento |
+  | 7. Torre del caos | arpeggi elettronici, sub basso | ronzio, scintille, folate |
+  | 8. Castello oscuro | organo, clavicembalo, campana | vento, corvi, grilli |
+  | 9. Cieli in tempesta | archi in tremolo, timpani | pioggia e tuoni |
+  | 10. Trono dei dadi | fanfara di ottoni, timpani, clavicembalo | arpa e campanelli |
+
+- **casinò**: jazz in swing (walking bass, spazzole, piano elettrico) con brusio della sala, fiche e slot machine in sottofondo, più i suoni di vincita e perdita;
 - effetti **ASMR**: dadi con colpo nitido, corpo morbido, stereo e un filo di riverbero; tocchi a bolla; ogni skin dei dadi ha agitazione, atterraggio e "tieni" diversi;
-- in Impostazioni ci sono **Musica** e **Suoni** separati (il pulsante audio in partita spegne tutto). La musica parte al primo tocco (GIOCA), come richiedono i browser.
+- in Impostazioni ci sono **Musica** e **Suoni** separati (il pulsante audio in partita spegne tutto). La musica parte al primo tocco, come richiedono i browser.
 
 ## Campagna
 
@@ -204,7 +222,7 @@ src/
   anim/                  animazioni (dadi 3D, voli, rotazione), effetti ed effetti delle carte
   audio/sound.js         effetti sonori sintetizzati (Web Audio, riverbero, stereo)
   audio/voices.js        suoni delle skin: dadi, animazioni di lancio, carte
-  audio/music.js         musica generata dal vivo (menu, partita, campagna, boss) e ambienti dei tavoli
+  audio/music.js         musica generata dal vivo (intro, menu, partita, 10 mondi, boss, casinò) e ambienti
   styles/                CSS
   ui/meta/               intro, menu principale, negozio e casse, casinò, armadio, profilo,
                          classifica, accesso, campagna, sfide, boss
@@ -221,10 +239,10 @@ dist/index.html          versione compilata in un unico file
 npm install          # esbuild, PeerJS e il server PeerJS per i test
 npm run dev          # server locale su http://localhost:5173/
 npm run build        # crea dist/index.html
-npm test             # 90 test: punteggi, regole, carte, partite online allineate, catalogo, casse, profilo, rango, campagna, boss, bot, API account
+npm test             # 91 test: punteggi, regole, carte, partite online allineate, catalogo, casse, profilo, rango, campagna, boss, bot, API account
 npm run test:e2e     # partita completa nel browser su vari schermi (richiede Playwright)
 npm run test:online  # due "telefoni" che giocano online tramite un server PeerJS locale
-npm run test:meta    # intro, account, casse, armadio, campagna, boss, classifica, secondo telefono
+npm run test:meta    # intro con sigla, account, casse, casinò, armadio, campagna, boss, classifica, secondo telefono
 node scripts/gen-levels.mjs   # ritara i 90 livelli normali
 npm run peer         # server PeerJS locale (porta 9000) per provare l'online senza internet
 ```

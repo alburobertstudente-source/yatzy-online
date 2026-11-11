@@ -84,11 +84,28 @@ export class CampaignUI {
       );
     }
     this.stage.app.dataset.screen = 'campaign';
-    music.play('campaign');
+    const startWorld = WORLDS[Math.min(9, Math.floor(((focus ?? current) - 1) / 10))].n;
+    music.play('world', { world: startWorld });
     this.stage.setRotation(0);
     this.stage.setTurnColor('red');
     await this.screens.open(el, { dim: false });
     if (focusEl) focusEl.scrollIntoView({ block: 'center' });
+    // la musica segue il mondo che si sta guardando
+    const worlds = [...body.querySelectorAll('.cmw')];
+    let raf = 0;
+    body.addEventListener(
+      'scroll',
+      () => {
+        if (raf) return;
+        raf = requestAnimationFrame(() => {
+          raf = 0;
+          const mid = body.scrollTop + body.clientHeight / 2;
+          const k = worlds.findIndex((w) => mid >= w.offsetTop && mid < w.offsetTop + w.offsetHeight);
+          if (k >= 0 && this.stage.app.dataset.screen === 'campaign') music.play('world', { world: k + 1 });
+        });
+      },
+      { passive: true },
+    );
   }
 
   #locked(node) {
@@ -235,7 +252,7 @@ export class CampaignUI {
     };
     renderGoals();
     this.stage.app.dataset.screen = 'challenge';
-    music.play('campaign');
+    music.play('world', { world: info.world.n });
     this.stage.setRotation(0);
     this.stage.setTurnColor('red');
     if (new URLSearchParams(location.search).has('debug')) {

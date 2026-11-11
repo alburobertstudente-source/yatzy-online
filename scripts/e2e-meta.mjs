@@ -28,7 +28,8 @@ const check = (cond, msg) => {
   console.log(`  ${cond ? '✓' : '✗'} ${msg}`);
   if (!cond) failures++;
 };
-const browser = await chromium.launch();
+// come su un telefono vero: l'audio parte solo dopo un tocco
+const browser = await chromium.launch({ args: ['--autoplay-policy=user-gesture-required'] });
 const errors = [];
 async function phone() {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, hasTouch: true, isMobile: true });
@@ -44,7 +45,14 @@ try {
   const { page } = await phone();
   console.log('\n[1] Intro e menu principale');
   await page.goto(`${BASE}?debug=1&speed=3`);
+  // se il browser blocca l'audio compare prima "tocca per iniziare"
+  await page.waitForSelector('.intro-tap, .intro-dice .die', { state: 'attached' });
+  if (await page.locator('.intro-tap').count()) {
+    check(true, 'schermata "tocca per iniziare" (sblocca la musica)');
+    await page.click('.intro-tap');
+  }
   await page.waitForSelector('.intro-dice .die');
+  check((await page.evaluate(() => (window.yatzyApp.music.playingKey || '').split(':')[0])) === 'intro', "durante l'intro suona la sigla");
   await page.waitForSelector('.intro-play.is-pulse', { timeout: 15000 });
   check((await page.locator('.intro-logo .logo-die').count()) === 5, 'dadi che rotolano, poi la scritta YATZY');
   await page.screenshot({ path: join(OUT, '01-intro.png') });
@@ -164,7 +172,7 @@ try {
   await page.waitForSelector('.cm-node[data-level="1"]');
   await page.screenshot({ path: join(OUT, '07-campagna.png') });
   check((await page.locator('.cm-node').count()) === 100, 'mappa con 100 livelli');
-  check((await track()) === 'campaign', 'nella campagna cambia musica');
+  check((await page.evaluate(() => window.yatzyApp.music.playingKey)) === 'world:1', 'nella campagna suona la canzone del mondo 1 (stagno)');
   check((await page.locator('.cm-node.boss').count()) === 10, '10 boss');
   check((await page.locator('.cm-node.locked').count()) === 99, 'solo il primo livello è aperto');
   await page.click('.cm-node[data-level="1"]', { force: true });

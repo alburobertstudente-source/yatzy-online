@@ -227,6 +227,27 @@ class SoundFX {
     this.tone({ freq: 1568, type: 'sine', dur: 1.0, gain: 0.08, delay: 0.85 });
   }
 
+  /** Vincita al casinò: cassa che suona, pioggia di monete, fanfara (più ricca se grande). */
+  casinoWin(big = false) {
+    this.burst({ dur: 0.05, gain: 0.25, freq: 2600, q: 3 });
+    [1568, 2093].forEach((f, i) => this.tone({ freq: f, type: 'triangle', dur: 0.5, gain: 0.14, delay: 0.04 + i * 0.09, send: 0.3 }));
+    for (let i = 0; i < (big ? 26 : 12); i++) this.tone({ freq: 1700 + Math.random() * 1500, type: 'triangle', dur: 0.09, gain: 0.06, delay: 0.25 + i * 0.045 + Math.random() * 0.02, pan: Math.random() * 1.4 - 0.7 });
+    const fan = big ? [523, 659, 784, 1047, 784, 1047, 1319, 1568] : [523, 659, 784, 1047];
+    fan.forEach((f, i) => this.tone({ freq: f, type: 'square', dur: 0.14, gain: 0.05, delay: 0.3 + i * 0.09 }));
+    fan.forEach((f, i) => this.tone({ freq: f / 2, type: 'triangle', dur: 0.2, gain: 0.1, delay: 0.3 + i * 0.09 }));
+    if (big) {
+      for (let i = 0; i < 16; i++) this.tone({ freq: i % 2 ? 1319 : 1760, type: 'sine', dur: 0.08, gain: 0.06, delay: 1.1 + i * 0.07, send: 0.4 });
+      this.burst({ dur: 1.6, gain: 0.08, freq: 900, q: 0.4, delay: 1, attack: 0.3, send: 0.4 });
+    }
+  }
+
+  /** Perdita al casinò: fiche spazzate via e un "uà-uà-uà-uààà" triste. */
+  casinoLose() {
+    this.burst({ dur: 0.35, gain: 0.1, freq: 3500, sweepTo: 900, q: 0.8 });
+    [466, 440, 415, 392].forEach((f, i) => this.tone({ freq: f, to: i === 3 ? f * 0.94 : null, type: 'sawtooth', dur: i === 3 ? 0.9 : 0.3, gain: 0.05, delay: 0.25 + i * 0.32, vibrato: i === 3 ? 7 : 0 }));
+    [233, 220, 207, 196].forEach((f, i) => this.tone({ freq: f, type: 'triangle', dur: i === 3 ? 0.9 : 0.3, gain: 0.08, delay: 0.25 + i * 0.32 }));
+  }
+
   lose() {
     [392, 349, 311, 262].forEach((f, i) => this.tone({ freq: f, type: 'triangle', dur: 0.3, gain: 0.16, delay: i * 0.16 }));
   }
