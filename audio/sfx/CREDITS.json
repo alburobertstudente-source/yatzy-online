@@ -1,0 +1,1283 @@
+[
+ {
+  "file": "sfx/chips-4.mp3",
+  "title": "Casino Audio: chipLay1.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/casino-audio",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Casino%20Audio (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/casinoLose-1.mp3",
+  "title": "Casino Audio: chipsCollide2.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/casino-audio",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Casino%20Audio (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/casinoLose-2.mp3",
+  "title": "Casino Audio: chipsCollide4.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/casino-audio",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Casino%20Audio (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/casinoLose-1.mp3",
+  "title": "Casino Audio: chipsHandle3.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/casino-audio",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Casino%20Audio (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/chips-1.mp3",
+  "title": "Casino Audio: chipsStack1.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/casino-audio",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Casino%20Audio (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/chips-2.mp3",
+  "title": "Casino Audio: chipsStack3.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/casino-audio",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Casino%20Audio (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/chips-3.mp3",
+  "title": "Casino Audio: chipsStack5.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/casino-audio",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Casino%20Audio (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/cupShake-1.mp3",
+  "title": "Casino Audio: dieShuffle1.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/casino-audio",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Casino%20Audio (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/cupShake-2.mp3",
+  "title": "Casino Audio: dieShuffle2.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/casino-audio",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Casino%20Audio (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/cupShake-3.mp3",
+  "title": "Casino Audio: dieShuffle3.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/casino-audio",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Casino%20Audio (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/blocked-2.mp3",
+  "title": "Impact Sounds: impactBell_heavy_002.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/impact-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Impact%20Sounds (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/prison-2.mp3",
+  "title": "Impact Sounds: impactMetal_heavy_000.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/impact-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Impact%20Sounds (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/blocked-2.mp3",
+  "title": "Impact Sounds: impactMetal_heavy_001.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/impact-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Impact%20Sounds (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/prison-1.mp3",
+  "title": "Impact Sounds: impactMetal_heavy_003.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/impact-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Impact%20Sounds (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/shieldUp-2.mp3",
+  "title": "Impact Sounds: impactMetal_light_002.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/impact-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Impact%20Sounds (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/cupSlam-1.mp3",
+  "title": "Impact Sounds: impactPlank_medium_000.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/impact-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Impact%20Sounds (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/stamp-2.mp3",
+  "title": "Impact Sounds: impactPlank_medium_001.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/impact-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Impact%20Sounds (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/stamp-2.mp3",
+  "title": "Impact Sounds: impactPunch_heavy_000.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/impact-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Impact%20Sounds (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/cupSlam-2.mp3",
+  "title": "Impact Sounds: impactSoft_heavy_000.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/impact-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Impact%20Sounds (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/stamp-1.mp3",
+  "title": "Impact Sounds: impactSoft_heavy_001.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/impact-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Impact%20Sounds (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/cupSlam-1.mp3",
+  "title": "Impact Sounds: impactWood_heavy_000.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/impact-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Impact%20Sounds (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/stamp-1.mp3",
+  "title": "Impact Sounds: impactWood_heavy_002.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/impact-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Impact%20Sounds (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/cupSlam-2.mp3",
+  "title": "Impact Sounds: impactWood_heavy_003.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/impact-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Impact%20Sounds (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/chestShake-1.mp3",
+  "title": "Impact Sounds: impactWood_light_001.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/impact-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Impact%20Sounds (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/chestShake-1.mp3",
+  "title": "Impact Sounds: impactWood_light_002.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/impact-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Impact%20Sounds (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/chestShake-1.mp3",
+  "title": "Impact Sounds: impactWood_light_003.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/impact-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Impact%20Sounds (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/scored-1.mp3",
+  "title": "Interface Sounds: confirmation_002.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/interface-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Interface%20Sounds (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/denied-1.mp3",
+  "title": "Interface Sounds: error_004.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/interface-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Interface%20Sounds (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/denied-2.mp3",
+  "title": "Interface Sounds: error_006.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/interface-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Interface%20Sounds (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/plink-1.mp3",
+  "title": "Interface Sounds: glass_001.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/interface-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Interface%20Sounds (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/plink-2.mp3",
+  "title": "Interface Sounds: glass_002.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/interface-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Interface%20Sounds (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/plink-3.mp3",
+  "title": "Interface Sounds: glass_004.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/interface-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Interface%20Sounds (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/select-2.mp3",
+  "title": "Interface Sounds: select_002.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/interface-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Interface%20Sounds (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/select-3.mp3",
+  "title": "Interface Sounds: select_005.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/interface-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Interface%20Sounds (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/combo-1.mp3",
+  "title": "Music Jingles: jingles-pizzicato_02.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/music-jingles",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Music%20Jingles (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/zero-1.mp3",
+  "title": "Music Jingles: jingles-pizzicato_03.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/music-jingles",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Music%20Jingles (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/casinoLose-2.mp3",
+  "title": "Music Jingles: jingles-pizzicato_16.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/music-jingles",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Music%20Jingles (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/zero-2.mp3",
+  "title": "Music Jingles: jingles-saxophone_04.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/music-jingles",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Music%20Jingles (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/upperBonus-2.mp3",
+  "title": "Music Jingles: jingles-saxophone_09.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/music-jingles",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Music%20Jingles (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/casinoLose-1.mp3",
+  "title": "Music Jingles: jingles-saxophone_13.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/music-jingles",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Music%20Jingles (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/upperBonus-1.mp3",
+  "title": "Music Jingles: jingles-steel_08.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/music-jingles",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Music%20Jingles (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/combo-2.mp3",
+  "title": "Music Jingles: jingles-steel_13.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/music-jingles",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Music%20Jingles (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/chestOpen-1.mp3",
+  "title": "RPG Audio: creak1.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/rpg-audio",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/RPG%20Audio (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/chestOpen-2.mp3",
+  "title": "RPG Audio: creak3.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/rpg-audio",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/RPG%20Audio (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": [
+   "sfx/casinoWin-2.mp3",
+   "sfx/casinoWinBig-1.mp3",
+   "sfx/chestShake-1.mp3",
+   "sfx/coins-1.mp3"
+  ],
+  "title": "RPG Audio: handleCoins.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/rpg-audio",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/RPG%20Audio (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": [
+   "sfx/buy-2.mp3",
+   "sfx/casinoWinBig-1.mp3",
+   "sfx/coins-2.mp3",
+   "sfx/steal-1.mp3"
+  ],
+  "title": "RPG Audio: handleCoins2.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/rpg-audio",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/RPG%20Audio (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": [
+   "sfx/chestOpen-2.mp3",
+   "sfx/unlock-1.mp3"
+  ],
+  "title": "RPG Audio: metalClick.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/rpg-audio",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/RPG%20Audio (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": [
+   "sfx/chestOpen-1.mp3",
+   "sfx/prison-1.mp3",
+   "sfx/unlock-2.mp3"
+  ],
+  "title": "RPG Audio: metalLatch.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/rpg-audio",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/RPG%20Audio (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/prison-2.mp3",
+  "title": "Sci-Fi Sounds: doorClose_001.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/sci-fi-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Sci-Fi%20Sounds (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/shieldUp-2.mp3",
+  "title": "Sci-Fi Sounds: forceField_001.ogg",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/sci-fi-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Sci-Fi%20Sounds (License.txt: CC0, Kenney)"
+ },
+ {
+  "file": "sfx/win-1.mp3",
+  "title": "Clapping Large Crowd at Choir Concert 4 by pluralz",
+  "author": "pluralz",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/pluralz/sounds/735564/",
+  "via": "https://github.com/MrDesjardins/audiorouter/blob/HEAD/resources/sound-library/applause-crowd-01.flac (NOTICES.md, library.json)"
+ },
+ {
+  "file": "sfx/casinoWinBig-1.mp3",
+  "title": "Clapping Large Crowd at Choir Concert 8 by pluralz",
+  "author": "pluralz",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/pluralz/sounds/735568/",
+  "via": "https://github.com/MrDesjardins/audiorouter/blob/HEAD/resources/sound-library/applause-crowd-02.flac (NOTICES.md, library.json)"
+ },
+ {
+  "file": "sfx/win-2.mp3",
+  "title": "Clapping Large Crowd at Choir Concert 12 by pluralz",
+  "author": "pluralz",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/pluralz/sounds/735572/",
+  "via": "https://github.com/MrDesjardins/audiorouter/blob/HEAD/resources/sound-library/applause-crowd-03.flac (NOTICES.md, library.json)"
+ },
+ {
+  "file": "sfx/satan-3.mp3",
+  "title": "weird laughter 3.wav by AuDRoger",
+  "author": "audroger",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/audroger/sounds/471212/",
+  "via": "https://github.com/MrDesjardins/audiorouter/blob/HEAD/resources/sound-library/evil-laugh-01.flac (NOTICES.md, library.json)"
+ },
+ {
+  "file": "sfx/satan-1.mp3",
+  "title": "laughter-male-modulated-wet-evil-throaty-sinister_029-030 030-046 042-100-1.wav by Gerent",
+  "author": "gerent",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/gerent/sounds/558249/",
+  "via": "https://github.com/MrDesjardins/audiorouter/blob/HEAD/resources/sound-library/evil-laugh-02.flac (NOTICES.md, library.json)"
+ },
+ {
+  "file": "sfx/satan-2.mp3",
+  "title": "Brooding Sinister Laughter by amauri8BIT",
+  "author": "amauri8bit",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/amauri8bit/sounds/786076/",
+  "via": "https://github.com/MrDesjardins/audiorouter/blob/HEAD/resources/sound-library/evil-laugh-03.flac (NOTICES.md, library.json)"
+ },
+ {
+  "file": "sfx/yatzyBonus-2.mp3",
+  "title": "Oh yeah! by pbrechler",
+  "author": "pbrechler",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/pbrechler/sounds/250097/",
+  "via": "https://github.com/MrDesjardins/audiorouter/blob/HEAD/resources/sound-library/oh-yeah.flac (NOTICES.md, library.json)"
+ },
+ {
+  "file": "sfx/yatzy-1.mp3",
+  "title": "Tada Fanfare G by plasterbrain",
+  "author": "plasterbrain",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/plasterbrain/sounds/397353/",
+  "via": "https://github.com/MrDesjardins/audiorouter/blob/HEAD/resources/sound-library/ta-da-01.flac (NOTICES.md, library.json)"
+ },
+ {
+  "file": [
+   "sfx/yatzy-3.mp3",
+   "sfx/yatzyBonus-2.mp3"
+  ],
+  "title": "Tada Fanfare F by plasterbrain",
+  "author": "plasterbrain",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/plasterbrain/sounds/397354/",
+  "via": "https://github.com/MrDesjardins/audiorouter/blob/HEAD/resources/sound-library/ta-da-02.flac (NOTICES.md, library.json)"
+ },
+ {
+  "file": [
+   "sfx/casinoWinBig-1.mp3",
+   "sfx/yatzy-2.mp3"
+  ],
+  "title": "Tada Fanfare A by plasterbrain",
+  "author": "plasterbrain",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/plasterbrain/sounds/397355/",
+  "via": "https://github.com/MrDesjardins/audiorouter/blob/HEAD/resources/sound-library/ta-da-03.flac (NOTICES.md, library.json)"
+ },
+ {
+  "file": "sfx/yatzyBonus-1.mp3",
+  "title": "Tada! by Yoshicakes77",
+  "author": "yoshicakes77",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/yoshicakes77/sounds/850021/",
+  "via": "https://github.com/MrDesjardins/audiorouter/blob/HEAD/resources/sound-library/ta-da-04.flac (NOTICES.md, library.json)"
+ },
+ {
+  "file": "sfx/star-2.mp3",
+  "title": "Chime",
+  "author": "Jofae",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/Jofae/sounds/380482/",
+  "via": "https://github.com/blazejkustra/uncut/blob/HEAD/assets/sfx/chime.m4a (assets/sfx/library.json)"
+ },
+ {
+  "file": "sfx/star-3.mp3",
+  "title": "Ding",
+  "author": "D.S.G.",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/D.S.G./sounds/241288/",
+  "via": "https://github.com/blazejkustra/uncut/blob/HEAD/assets/sfx/ding.m4a (assets/sfx/library.json)"
+ },
+ {
+  "file": "sfx/introHit-2.mp3",
+  "title": "Cinematic impact",
+  "author": "AudioPapkin",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/AudioPapkin/sounds/757898/",
+  "via": "https://github.com/blazejkustra/uncut/blob/HEAD/assets/sfx/impact-cinematic.m4a (assets/sfx/library.json)"
+ },
+ {
+  "file": "sfx/poof-2.mp3",
+  "title": "Bright pop",
+  "author": "D.S.G.",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/D.S.G./sounds/244656/",
+  "via": "https://github.com/blazejkustra/uncut/blob/HEAD/assets/sfx/pop-bright.m4a (assets/sfx/library.json)"
+ },
+ {
+  "file": "sfx/poof-1.mp3",
+  "title": "Cork pop",
+  "author": "deraj",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/deraj/sounds/202230/",
+  "via": "https://github.com/blazejkustra/uncut/blob/HEAD/assets/sfx/pop-cork.m4a (assets/sfx/library.json)"
+ },
+ {
+  "file": "sfx/rewind-2.mp3",
+  "title": "Record scratch",
+  "author": "musicvision31",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/musicvision31/sounds/431773/",
+  "via": "https://github.com/blazejkustra/uncut/blob/HEAD/assets/sfx/record-scratch.m4a (assets/sfx/library.json)"
+ },
+ {
+  "file": "sfx/cast-common-2.mp3",
+  "title": "Sparkle",
+  "author": "Mr._Fritz_",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/Mr._Fritz_/sounds/545238/",
+  "via": "https://github.com/blazejkustra/uncut/blob/HEAD/assets/sfx/sparkle.m4a (assets/sfx/library.json)"
+ },
+ {
+  "file": "sfx/godHand-1.mp3",
+  "title": "Glockenspiel success",
+  "author": "FunWithSound",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/FunWithSound/sounds/456965/",
+  "via": "https://github.com/blazejkustra/uncut/blob/HEAD/assets/sfx/success-glock.m4a (assets/sfx/library.json)"
+ },
+ {
+  "file": "sfx/pageOpen-2.mp3",
+  "title": "Paper swipe",
+  "author": "Frank1100",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/Frank1100/sounds/147285/",
+  "via": "https://github.com/blazejkustra/uncut/blob/HEAD/assets/sfx/swipe-paper.m4a (assets/sfx/library.json)"
+ },
+ {
+  "file": "sfx/turn-3.mp3",
+  "title": "Quick swoosh",
+  "author": "lesaucisson",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/lesaucisson/sounds/585257/",
+  "via": "https://github.com/blazejkustra/uncut/blob/HEAD/assets/sfx/swoosh-quick.m4a (assets/sfx/library.json)"
+ },
+ {
+  "file": [
+   "sfx/pageOpen-1.mp3",
+   "sfx/turn-1.mp3"
+  ],
+  "title": "Soft swoosh",
+  "author": "D4XX",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/D4XX/sounds/607251/",
+  "via": "https://github.com/blazejkustra/uncut/blob/HEAD/assets/sfx/swoosh-soft.m4a (assets/sfx/library.json)"
+ },
+ {
+  "file": "sfx/whoosh-2.mp3",
+  "title": "Short whoosh",
+  "author": "LloydEvans09",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/LloydEvans09/sounds/332003/",
+  "via": "https://github.com/blazejkustra/uncut/blob/HEAD/assets/sfx/whoosh-short.m4a (assets/sfx/library.json)"
+ },
+ {
+  "file": [
+   "sfx/scribble-1.mp3",
+   "sfx/scribble-2.mp3"
+  ],
+  "title": "Pencil, Writing, Close, A",
+  "author": "InspectorJ (www.jshaw.co.uk)",
+  "license": "CC-BY-3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+  "source": "https://freesound.org/people/InspectorJ/sounds/398271/",
+  "via": "https://github.com/flxzt/rnote/tree/HEAD/crates/rnote-engine/data/sounds (LICENSES.md); trimmed to 1 s"
+ },
+ {
+  "file": [
+   "sfx/buy-1.mp3",
+   "sfx/buy-2.mp3",
+   "sfx/casinoWin-1.mp3",
+   "sfx/casinoWin-2.mp3",
+   "sfx/casinoWinBig-1.mp3"
+  ],
+  "title": "Cash Register Fake.wav",
+  "author": "CapsLok",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/CapsLok/sounds/184438/",
+  "via": "https://github.com/frceapp/Warung-Pahlawan/blob/HEAD/public/sfx/laci-kasir.mp3 (docs/kredit-aset.md)"
+ },
+ {
+  "file": "sfx/doctor-2.mp3",
+  "title": "Ryuuzan_shop_door_bell00.wav",
+  "author": "ryuuzan",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/ryuuzan/sounds/192761/",
+  "via": "https://github.com/frceapp/Warung-Pahlawan/blob/HEAD/public/sfx/lonceng-pintu.mp3 (docs/kredit-aset.md)"
+ },
+ {
+  "file": [
+   "sfx/godHand-1.mp3",
+   "sfx/holy-1.mp3",
+   "sfx/holy-2.mp3"
+  ],
+  "title": "Sonic Pi sample ambi_choir",
+  "author": "Exsomniel",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "http://freesound.org/people/Exsomniel/sounds/207809/",
+  "via": "https://github.com/sonic-pi-net/sonic-pi/blob/HEAD/etc/samples/ambi_choir.flac (etc/samples/README.md: all CC0)"
+ },
+ {
+  "file": [
+   "sfx/introHit-2.mp3",
+   "sfx/yatzy-3.mp3"
+  ],
+  "title": "Sonic Pi sample drum_cymbal_hard",
+  "author": "menegass",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "http://www.freesound.org/people/menegass/sounds/100056/",
+  "via": "https://github.com/sonic-pi-net/sonic-pi/blob/HEAD/etc/samples/drum_cymbal_hard.flac (etc/samples/README.md: all CC0)"
+ },
+ {
+  "file": "sfx/introHit-1.mp3",
+  "title": "Sonic Pi sample drum_heavy_kick",
+  "author": "Zajo",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "http://freesound.org/people/Zajo/sounds/4832/",
+  "via": "https://github.com/sonic-pi-net/sonic-pi/blob/HEAD/etc/samples/drum_heavy_kick.flac (etc/samples/README.md: all CC0)"
+ },
+ {
+  "file": [
+   "sfx/introHit-1.mp3",
+   "sfx/yatzy-1.mp3",
+   "sfx/yatzy-2.mp3"
+  ],
+  "title": "Sonic Pi sample drum_splash_hard",
+  "author": "menegass",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "http://www.freesound.org/people/menegass/sounds/100060/",
+  "via": "https://github.com/sonic-pi-net/sonic-pi/blob/HEAD/etc/samples/drum_splash_hard.flac (etc/samples/README.md: all CC0)"
+ },
+ {
+  "file": "sfx/holy-1.mp3",
+  "title": "Sonic Pi sample elec_chime",
+  "author": "looppool",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "http://www.freesound.org/people/looppool/sounds/13138/",
+  "via": "https://github.com/sonic-pi-net/sonic-pi/blob/HEAD/etc/samples/elec_chime.flac (etc/samples/README.md: all CC0)"
+ },
+ {
+  "file": "sfx/crown-2.mp3",
+  "title": "Sonic Pi sample perc_bell",
+  "author": "AlaskaRobotics",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "http://freesound.org/people/AlaskaRobotics/sounds/221515/",
+  "via": "https://github.com/sonic-pi-net/sonic-pi/blob/HEAD/etc/samples/perc_bell.flac (etc/samples/README.md: all CC0)"
+ },
+ {
+  "file": "sfx/godHand-1.mp3",
+  "title": "Sonic Pi sample perc_bell2",
+  "author": "hullum",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/hullum/sounds/415559/",
+  "via": "https://github.com/sonic-pi-net/sonic-pi/blob/HEAD/etc/samples/perc_bell2.flac (etc/samples/README.md: all CC0)"
+ },
+ {
+  "file": "sfx/rewind-1.mp3",
+  "title": "Sonic Pi sample vinyl_rewind",
+  "author": "TasmanianPower",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "http://freesound.org/people/TasmanianPower/sounds/162493/",
+  "via": "https://github.com/sonic-pi-net/sonic-pi/blob/HEAD/etc/samples/vinyl_rewind.flac (etc/samples/README.md: all CC0)"
+ },
+ {
+  "file": "sfx/sadTrombone-1.mp3",
+  "title": "wah wah sad trombone.wav",
+  "author": "kirbydx",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/kirbydx/sounds/175409/",
+  "via": "https://github.com/victorrentea/victor-effects/blob/HEAD/starter-pack/19_fail.mp3 (starter-pack/CREDITS.md)"
+ },
+ {
+  "file": "sfx/satan-1.mp3",
+  "title": "Gong Brilliant Paiste 32\"",
+  "author": "JensZygar",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/JensZygar/sounds/486629/",
+  "via": "https://github.com/victorrentea/victor-effects/blob/HEAD/starter-pack/50_gong.mp3 (starter-pack/CREDITS.md)"
+ },
+ {
+  "file": "sfx/godHand-2.mp3",
+  "title": "Messiah Hallelujah Chorus 1916 (Edison Diamond Disc)",
+  "author": "Edison (1916), Handel composer",
+  "license": "PD",
+  "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+  "source": "https://commons.wikimedia.org/wiki/File:Messiah_Hallelujah_Chorus_1916.ogg",
+  "via": "https://github.com/victorrentea/victor-effects/blob/HEAD/starter-pack/61_hallelujah.mp3 (starter-pack/CREDITS.md)"
+ },
+ {
+  "file": "sfx/doctor-1.mp3",
+  "title": "DoorBell Shortened",
+  "author": "jwheeler91",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/jwheeler91/sounds/442280/",
+  "via": "https://github.com/victorrentea/victor-effects/blob/HEAD/starter-pack/86_doorbell.mp3 (starter-pack/CREDITS.md)"
+ },
+ {
+  "file": "sfx/lose-1.mp3",
+  "title": "failure 2",
+  "author": "Leszek_Szary",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/Leszek_Szary/sounds/171672/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/battle-defeat-a.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/lose-2.mp3",
+  "title": "Game Knocked Out",
+  "author": "Jofae",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/Jofae/sounds/370791/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/battle-defeat-b.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/curse-2.mp3",
+  "title": "Dark Chords",
+  "author": "Scrampunk",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/Scrampunk/sounds/344722/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/battle-defeat-c.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/lose-3.mp3",
+  "title": "Drop (dramatic strings)",
+  "author": "burlyegg",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/burlyegg/sounds/391095/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/battle-defeat-d.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": [
+   "sfx/turn-2.mp3",
+   "sfx/whoosh-1.mp3"
+  ],
+  "title": "quick woosh",
+  "author": "florianreichelt",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/florianreichelt/sounds/683101/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/battle-fly-c.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/steal-1.mp3",
+  "title": "Whoosh Fast Pass-By",
+  "author": "Qvantor",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/Qvantor/sounds/877978/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/battle-fly-d.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/win-2.mp3",
+  "title": "Fanfare 2 - Rpg",
+  "author": "colorsCrimsonTears",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/colorsCrimsonTears/sounds/580310/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/battle-victory-a.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/win-1.mp3",
+  "title": "Fanfare 3 - Rpg",
+  "author": "colorsCrimsonTears",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/colorsCrimsonTears/sounds/607407/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/battle-victory-b.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/crown-2.mp3",
+  "title": "victory chime",
+  "author": "1bob",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/1bob/sounds/717771/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/battle-victory-c.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/win-3.mp3",
+  "title": "Inception Horn Victory",
+  "author": "Kubatko",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/Kubatko/sounds/336725/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/battle-victory-d.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/introHit-1.mp3",
+  "title": "Cinematic Hit With Horns",
+  "author": "DeVern",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/DeVern/sounds/427803/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/battle-victory-e.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/curse-1.mp3",
+  "title": "Spell Cast / Buff / Deep Tone",
+  "author": "SypherZent",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/SypherZent/sounds/420677/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/card-absorb-a.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/cast-rare-2.mp3",
+  "title": "Whoosh Magic Sparkle",
+  "author": "Qvantor",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/Qvantor/sounds/877981/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/card-absorb-b.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/cast-legendary-2.mp3",
+  "title": "Magic Wand Glitter",
+  "author": "qubodup",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/qubodup/sounds/211624/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/card-absorb-d.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/shieldUp-1.mp3",
+  "title": "Magic Circle Shield",
+  "author": "adr1911",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/adr1911/sounds/542584/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/card-absorb-e.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": [
+   "sfx/levelUp-1.mp3",
+   "sfx/upperBonus-1.mp3"
+  ],
+  "title": "victory chime",
+  "author": "1bob",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/1bob/sounds/717771/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/card-level-up-a.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/levelUp-2.mp3",
+  "title": "Glockenspiel_46_f4_04",
+  "author": "cabled_mess",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/cabled_mess/sounds/348924/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/card-level-up-b.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": [
+   "sfx/casinoWin-1.mp3",
+   "sfx/coins-3.mp3"
+  ],
+  "title": "Money Bag",
+  "author": "PhilSavlem",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/PhilSavlem/sounds/338260/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/coins-reward-a.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": [
+   "sfx/casinoWinBig-1.mp3",
+   "sfx/coin-2.mp3"
+  ],
+  "title": "Coin Splash",
+  "author": "KaysonArgyle",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/KaysonArgyle/sounds/547603/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/coins-reward-b.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": [
+   "sfx/casinoWinBig-1.mp3",
+   "sfx/coin-1.mp3",
+   "sfx/steal-2.mp3"
+  ],
+  "title": "1_Coins",
+  "author": "jalastram",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/jalastram/sounds/223343/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/coins-reward-c.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/poof-2.mp3",
+  "title": "swosh-22",
+  "author": "qubodup",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/qubodup/sounds/60009/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/element-air-d.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/whoosh-3.mp3",
+  "title": "Whoosh",
+  "author": "qubodup",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/qubodup/sounds/60013/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/fly-air-a.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/steal-2.mp3",
+  "title": "Whoosh Short",
+  "author": "FartCTO",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/FartCTO/sounds/789840/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/fly-air-b.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/poof-1.mp3",
+  "title": "SWOSH-01",
+  "author": "qubodup",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/qubodup/sounds/59988/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/fly-air-c.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/blocked-1.mp3",
+  "title": "Anvil Hit 2",
+  "author": "michorvath",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/michorvath/sounds/270588/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/forge-strike-a.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/curseHit-1.mp3",
+  "title": "magicProjectile_impact",
+  "author": "rafaelzimrp",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/rafaelzimrp/sounds/570855/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/hit-normal-c.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/curseHit-2.mp3",
+  "title": "Low_Mid_End_Void_Energy_Blast_Punch_02",
+  "author": "The_Elementus",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/The_Elementus/sounds/873746/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/hit-strong-a.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/cast-legendary-1.mp3",
+  "title": "Creation Magic Blast",
+  "author": "qubodup",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/qubodup/sounds/814044/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/hit-strong-c.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/pageOpen-3.mp3",
+  "title": "fliping a page in a book",
+  "author": "1skyland",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/1skyland/sounds/543168/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/nav-page-a.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/rip-1.mp3",
+  "title": "Fast Paper Rip",
+  "author": "sgrowe",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/sgrowe/sounds/342541/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/pack-tear-a.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/rip-2.mp3",
+  "title": "Paper Rip 4",
+  "author": "omgitsjo",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/omgitsjo/sounds/710163/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/pack-tear-b.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/rip-3.mp3",
+  "title": "Fast Paper Rip",
+  "author": "sgrowe",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/s/342541/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/pack-tear-c.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": [
+   "sfx/scored-2.mp3",
+   "sfx/star-1.mp3"
+  ],
+  "title": "ShiningRinging",
+  "author": "NoisyRedFox",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/NoisyRedFox/sounds/759840/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/power-tick-a.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/cast-common-1.mp3",
+  "title": "cartoon_wink_magic_sparkle",
+  "author": "MLaudio",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/MLaudio/sounds/511485/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/reveal-common-b.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/cast-epic-1.mp3",
+  "title": "Magic Wand Glitter",
+  "author": "qubodup",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/qubodup/sounds/211624/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/reveal-epic-b.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/cast-legendary-2.mp3",
+  "title": "anime gong 1",
+  "author": "Logicogonist",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/Logicogonist/sounds/264047/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/reveal-epic-c.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/cast-legendary-1.mp3",
+  "title": "Mysterious Magical Bell Flourish",
+  "author": "SkySpeira",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/SkySpeira/sounds/848847/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/reveal-epic-d.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/cast-epic-2.mp3",
+  "title": "Cliche Magic Spell Sound",
+  "author": "qubodup",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/qubodup/sounds/817466/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/reveal-epic-e.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": [
+   "sfx/holy-2.mp3",
+   "sfx/levelUp-2.mp3",
+   "sfx/yatzyBonus-1.mp3"
+  ],
+  "title": "GLEAM-GLOW-SFX-CHIME",
+  "author": "newagesoup",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/newagesoup/sounds/351408/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/reward-claim-a.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/crown-1.mp3",
+  "title": "Fanfare 2 - Rpg",
+  "author": "colorsCrimsonTears",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/colorsCrimsonTears/sounds/580310/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/reward-claim-c.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/cast-rare-1.mp3",
+  "title": "Spell Cast / Buff / High Tone",
+  "author": "SypherZent",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/SypherZent/sounds/420676/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/seal-open-c.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/tap-1.mp3",
+  "title": "UI Click Wooden",
+  "author": "Qvantor",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/Qvantor/sounds/878238/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/ui-tap-a.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/tap-2.mp3",
+  "title": "Wooden Click",
+  "author": "BenjaminNelan",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/BenjaminNelan/sounds/321083/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/ui-tap-b.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": [
+   "sfx/scored-1.mp3",
+   "sfx/select-1.mp3"
+  ],
+  "title": "User Interface Elegant Wooden Confirmation",
+  "author": "qubodup",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/qubodup/sounds/822568/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/ui-tap-d.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": [
+   "sfx/scored-2.mp3",
+   "sfx/tap-3.mp3"
+  ],
+  "title": "Woodblock-soft",
+  "author": "hollandm",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/hollandm/sounds/692828/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/ui-tap-e.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ },
+ {
+  "file": "sfx/tap-4.mp3",
+  "title": "SingleKnock_Wood",
+  "author": "NoisyRedFox",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://freesound.org/people/NoisyRedFox/sounds/742356/",
+  "via": "https://github.com/zhuravskayyar/tgCard/blob/HEAD/docs/audio-review/audio/round-4/ui-tap-f.mp3 (docs/audio-review/licenses/round-4/freesound-cc0.md)"
+ }
+]

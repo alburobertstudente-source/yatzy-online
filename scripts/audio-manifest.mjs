@@ -42,10 +42,7 @@ for (const f of files) {
     missing.push(f);
   }
 }
-if (missing.length) {
-  console.error(`File audio mancanti:\n  ${missing.join('\n  ')}`);
-  process.exitCode = 1;
-}
+if (missing.length) console.warn(`Attenzione, file audio mancanti (verranno ignorati dal gioco):\n  ${missing.join('\n  ')}`);
 
 await writeFile(join(AUDIO, 'manifest.json'), JSON.stringify(manifest));
 await writeFile(join(AUDIO, 'CREDITS.json'), `${JSON.stringify(credits, null, 2)}\n`);

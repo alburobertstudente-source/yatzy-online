@@ -36,6 +36,7 @@ let html = await readFile(join(ROOT, 'index.html'), 'utf8');
 html = html
   .replace(/\s*<link rel="preload"[^>]*>/, '')
   .replace(/\s*<link rel="stylesheet"[^>]*>/g, '')
+  .replace(/\s*<script type="importmap">[\s\S]*?<\/script>/, '')
   .replace('</head>', `    <style>${css}</style>\n  </head>`)
   .replace(/<script type="module" src="src\/main\.js"><\/script>/, () => `<script>${peerjs}</script>\n    <script>${script}</script>`);
 

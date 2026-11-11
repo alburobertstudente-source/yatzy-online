@@ -23,6 +23,7 @@ import { XP } from './meta/economy.js';
 import { botMove } from './ai/bot.js';
 import { music } from './audio/music.js';
 import { lib as audioLib } from './audio/library.js';
+import './three/core.js';
 
 const params = new URLSearchParams(location.search);
 
