@@ -53,6 +53,21 @@ All'apertura i dadi rotolano sul tavolo, la scritta **YATZY** scoppia e compare 
 - **Offerte del giorno**: 4 oggetti comprabili direttamente, cambiano a mezzanotte.
 - Gli oggetti doppi diventano monete.
 
+## Casinò Yatzy
+
+Nel negozio c'è l'ingresso del **casinò**: si entra dalle porte, il croupier (occhiali, baffi, gilet e coppa d'oro) accoglie, si sceglie una fiche (10, 50, 100, 500, 1000) e si punta sul panno verde:
+
+| Puntata | Vince se | Paga |
+|---|---|---|
+| SOTTO | somma dei 5 dadi da 5 a 17 | 2× (50%) |
+| SOPRA | somma da 18 a 30 | 2× (50%) |
+| PARI / DISPARI | somma pari / dispari | 2× (50%) |
+| TRIS | almeno 3 dadi uguali | 4× (21%) |
+| SCALA | scala grande | 30× (3,1%) |
+| YATZY | 5 dadi uguali | 1000× (0,08%) |
+
+Il croupier agita la coppa, la sbatte sul tavolo e scopre 5 dadi di marmo rosa: la somma si conta dado per dado, le caselle vincenti si illuminano, le fiche perse vanno al banco e quelle vinte volano sul saldo. La linea SOTTO/SOPRA è a 17,5 perché con 5 dadi la somma va da 5 a 30 ed è simmetrica attorno a 17,5: solo così le due scommesse sono esattamente al 50% (con la linea a 15, SOPRA vincerebbe circa 9 volte su 10). Si usano solo le monete del gioco.
+
 ## Personalizza
 
 230 oggetti in 7 rarità (Comune, Non comune, Rara, Epica, Leggendaria, Mitica e **Assurda**):
@@ -77,7 +92,9 @@ Tutto è sintetizzato dal vivo (Web Audio, nessun file audio):
 
 ## Campagna
 
-100 livelli in 10 mondi. I livelli normali sono sfide "realizza qualcosa in tot lanci" (per esempio *Full + Scala grande in 15 lanci*): si tengono i dadi come nel gioco, si tocca l'obiettivo quando è pronto e i dadi ripartono; le stelle dipendono dai lanci avanzati. I lanci di ogni livello sono tarati con un giocatore automatico: si passa dal 97% di vittorie dei primi livelli al 45% circa dell'ultimo mondo (`scripts/gen-levels.mjs`).
+100 livelli in 10 mondi, ognuno con la sua **cartina disegnata vista dall'alto**: lo stagno del Re Ranocchio (ninfee sotto ogni livello, canne, fiori di loto, girini, libellule), la spiaggia del granchio (mare, isolotti di sabbia, conchiglie, ombrelloni), il bosco nebbioso (ceppi, funghi, lucciole), le montagne di ghiaccio (lastre di ghiaccio, pupazzi di neve), i mari del pirata (isolotti, nave, tesoro), il deserto del drago (piramide, oasi, oro), la torre del caos (rocce volanti, cristalli), il castello oscuro (lastre di pietra, lapidi, pipistrelli), i cieli in tempesta (nuvole, fulmini, pioggia) e il trono dei dadi (marmo, tappeto rosso). Ogni livello è una moneta d'oro con 3 stelle, il tuo avatar sta sul livello attuale e il boss aspetta in fondo dentro una grande moneta.
+
+I livelli normali sono sfide "realizza qualcosa in tot lanci" (per esempio *Full + Scala grande in 15 lanci*): si tengono i dadi come nel gioco, si tocca l'obiettivo quando è pronto e i dadi ripartono; le stelle dipendono dai lanci avanzati. I lanci di ogni livello sono tarati con un giocatore automatico: si passa dal 97% di vittorie dei primi livelli al 45% circa dell'ultimo mondo (`scripts/gen-levels.mjs`).
 
 Ogni 10 livelli c'è un **boss**: una partita intera (13 round, senza carte) contro il computer, sempre più bravo, con un potere strano:
 
@@ -173,7 +190,7 @@ src/
     memes.js             tradizioni della casa (Dottore, Satana)
     turns.js             ordine dei turni e round
     game.js              motore di gioco (eventi, salvataggio, impronta dello stato)
-  meta/                  catalogo degli oggetti, casse ed economia, profilo del giocatore
+  meta/                  catalogo degli oggetti, casse ed economia, casinò, profilo del giocatore
   campaign/              livelli (levelData.js generato), sfide in tot lanci, boss e loro poteri
   ai/bot.js              avversario automatico dei boss (Monte Carlo, bravura regolabile)
   net/                   modalità online e account
@@ -189,7 +206,7 @@ src/
   audio/voices.js        suoni delle skin: dadi, animazioni di lancio, carte
   audio/music.js         musica generata dal vivo (menu, partita, campagna, boss) e ambienti dei tavoli
   styles/                CSS
-  ui/meta/               intro, menu principale, negozio e casse, armadio, profilo,
+  ui/meta/               intro, menu principale, negozio e casse, casinò, armadio, profilo,
                          classifica, accesso, campagna, sfide, boss
 api/                     funzioni Vercel: register, login, profile, leaderboard, health
 scripts/                 build, server di sviluppo (anche API), test e2e, taratura livelli
@@ -204,7 +221,7 @@ dist/index.html          versione compilata in un unico file
 npm install          # esbuild, PeerJS e il server PeerJS per i test
 npm run dev          # server locale su http://localhost:5173/
 npm run build        # crea dist/index.html
-npm test             # 87 test: punteggi, regole, carte, partite online allineate, catalogo, casse, profilo, rango, campagna, boss, bot, API account
+npm test             # 90 test: punteggi, regole, carte, partite online allineate, catalogo, casse, profilo, rango, campagna, boss, bot, API account
 npm run test:e2e     # partita completa nel browser su vari schermi (richiede Playwright)
 npm run test:online  # due "telefoni" che giocano online tramite un server PeerJS locale
 npm run test:meta    # intro, account, casse, armadio, campagna, boss, classifica, secondo telefono
@@ -217,5 +234,8 @@ npm run peer         # server PeerJS locale (porta 9000) per provare l'online se
 `npm run test:e2e` controlla: layout su 7 dimensioni di schermo, carte grattate col dito, una partita completa giocata toccando l'interfaccia e usando le carte con verifica di dadi, caselle e totali, rotazione del tavolo, furti, scudi, maledizioni, prigione, Dottore e Satana, +35, +100 con spunte, salvataggio e ripresa, fluidità a 60 fps con CPU rallentata 4×. Per verificare la versione compilata: `E2E_PAGE=dist/index.html npm run test:e2e`.
 
 ## Note
+
+I disegni (avatar, boss, croupier, casse, cartine) passano tutti dalla stessa rifinitura cartoon (`src/ui/toon.js`): contorno scuro dello stesso colore, sfumatura di volume e piccole luci.
+
 
 La grafica (icone, dadi, colori, logo) è originale: riprende flusso di gioco, disposizione della tabella e animazioni del riferimento, senza copiarne le immagini. Il font è [Fredoka](https://fonts.google.com/specimen/Fredoka) (SIL Open Font License, vedi `assets/fonts/OFL.txt`).

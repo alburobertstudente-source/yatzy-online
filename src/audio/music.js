@@ -4,6 +4,7 @@
  *   game      ambient tranquilla per giocare (pad, kalimba)
  *   campaign  allegra e leggera (marimba, shaker)
  *   boss      scontro: batteria, basso incalzante, accordi minori, crescendo ogni 8 battute
+ *   casino    jazz da casinò: walking bass, spazzole, piano elettrico in swing
  * Più un sottofondo d'ambiente legato al tema del tavolo (onde, uccellini, grilli…).
  */
 import { sound } from './sound.js';
@@ -69,6 +70,26 @@ const TRACKS = {
       if (s === 4 || s === 12) m.clap(t, 0.08);
       m.shaker(t, s % 2 ? 0.012 : 0.02);
       if (s === 0 && bar % 4 === 3) m.bell(t, ch.notes[3] + 12, 0.05);
+    },
+  },
+  casino: {
+    bpm: 112,
+    swing: 0.33,
+    gain: 0.8,
+    chords: [
+      { bass: 43, notes: [62, 65, 69, 72], walk: [43, 46, 50, 53] },
+      { bass: 36, notes: [60, 64, 67, 70], walk: [36, 40, 43, 46] },
+      { bass: 41, notes: [64, 65, 69, 72], walk: [41, 45, 48, 52] },
+      { bass: 38, notes: [61, 66, 69, 72], walk: [38, 42, 45, 49] },
+    ],
+    step(m, t, s, bar, ch) {
+      if (s % 4 === 0) m.bass(t, ch.walk[s / 4], 0.3, 0.32);
+      if (s === 6 || s === 14 || (s === 3 && bar % 2)) m.ep(t, ch.notes, 0.06, 0.35);
+      if (s % 4 === 0) m.hat(t, 0.03);
+      if (s % 4 === 3) m.shaker(t, 0.025);
+      if (s === 4 || s === 12) m.rim(t, 0.05);
+      if (s === 0 && bar % 2 === 0) m.kick(t, 0.18);
+      if ([0, 2, 5, 9, 10].includes(s) && bar % 4 >= 2 && Math.random() < 0.45) m.bell(t, ch.notes[Math.floor(Math.random() * 4)] + 12, 0.035);
     },
   },
   boss: {

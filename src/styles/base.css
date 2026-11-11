@@ -163,7 +163,8 @@ svg {
 #app[data-screen='intro'] .table,
 #app[data-screen='hub'] .table,
 #app[data-screen='campaign'] .table,
-#app[data-screen='challenge'] .table {
+#app[data-screen='challenge'] .table,
+#app[data-screen='casino'] .table {
   visibility: hidden;
 }
 
@@ -244,4 +245,11 @@ svg {
   .bg-blue {
     transition: none;
   }
+}
+
+/* nessun contenitore deve scorrere di lato (click, scrollIntoView, tastiera) */
+#app,
+.safe,
+.stage {
+  overflow: clip;
 }

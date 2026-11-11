@@ -4,6 +4,7 @@
  * (lo stesso che viene salvato sul telefono e sul server).
  */
 import { ITEMS, BASE_ITEMS, DEFAULT_EQUIP, CATEGORIES, OPTIONAL, SKIN_TONES } from './catalog.js';
+import { validateBets, resolve, rollCasino } from './casino.js';
 import { CHESTS, DAILY_MS, rollChest, levelFromXp, rankOf, rankDelta, ONLINE_COINS, XP, dailyOffers, dayKey } from './economy.js';
 
 export const PROFILE_VERSION = 1;
@@ -18,7 +19,7 @@ export function createProfile(username = '') {
     equip: { ...DEFAULT_EQUIP },
     skinTone: 0,
     campaign: { best: 0, stars: {} },
-    stats: { games: 0, wins: 0, onlineGames: 0, onlineWins: 0, yatzys: 0, bosses: 0, levels: 0, chests: 0, bestScore: 0, coinsEarned: 0 },
+    stats: { games: 0, wins: 0, onlineGames: 0, onlineWins: 0, yatzys: 0, bosses: 0, levels: 0, chests: 0, bestScore: 0, coinsEarned: 0, casinoRounds: 0, casinoWon: 0, casinoBiggest: 0 },
     rank: { points: 0, best: 0, streak: 0 },
     daily: { last: 0 },
     bought: {},
@@ -224,4 +225,23 @@ export function publicCard(p) {
     wins: p.stats.onlineWins,
     campaign: p.campaign.best,
   };
+}
+
+/* ---------------- casinò ---------------- */
+/**
+ * Una giocata al casinò: paga le puntate, lancia i dadi (o usa quelli dati),
+ * accredita la vincita. Le monete non possono andare sotto zero.
+ */
+export function casinoRound(p, bets, { rng = Math.random, dice = null } = {}) {
+  const err = validateBets(bets, p.coins);
+  if (err) throw new Error(err);
+  const res = resolve(bets, dice || rollCasino(rng));
+  p.coins += res.net;
+  p.stats.casinoRounds++;
+  if (res.payout > 0) {
+    p.stats.casinoWon += res.payout;
+    p.stats.casinoBiggest = Math.max(p.stats.casinoBiggest, res.payout);
+  }
+  touch(p);
+  return res;
 }

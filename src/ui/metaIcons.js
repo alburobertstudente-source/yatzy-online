@@ -1,3 +1,4 @@
+import { toon } from './toon.js';
 /** Icone del menu principale, del negozio e della campagna (SVG originali). */
 const s = (body, vb = '0 0 24 24') => `<svg viewBox="${vb}" aria-hidden="true">${body}</svg>`;
 const st = 'fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"';
@@ -27,6 +28,10 @@ export const MI = {
 
 /** Cassa disegnata (stile per tipo) con il coperchio separato per l'animazione. */
 export function chestSvg(type = 'small', size = 120) {
+  return toon(chestRaw(type, size), { outline: 1.6 });
+}
+
+function chestRaw(type, size) {
   const pal = {
     daily: ['#35c46a', '#1f8a48', '#ffe14d', '#ffffff'],
     small: ['#b9773f', '#7a4a22', '#d9dee8', '#8b94a8'],
@@ -35,7 +40,7 @@ export function chestSvg(type = 'small', size = 120) {
   }[type] || ['#b9773f', '#7a4a22', '#d9dee8', '#8b94a8'];
   const [a, b, c, d] = pal;
   return `<svg class="chest-svg chest-${type}" viewBox="0 0 120 110" width="${size}" height="${Math.round(size * 0.92)}" aria-hidden="true">
-<ellipse cx="60" cy="104" rx="46" ry="5" fill="rgba(0,0,0,.25)"/>
+<ellipse cx="60" cy="104" rx="46" ry="5" fill="rgba(0,0,0,.25)" data-flat/>
 <g class="chest-body"><rect x="14" y="52" width="92" height="50" rx="8" fill="${a}"/><rect x="14" y="52" width="92" height="12" fill="${b}" opacity=".45"/>
 <rect x="24" y="52" width="10" height="50" fill="${c}"/><rect x="86" y="52" width="10" height="50" fill="${c}"/><rect x="14" y="94" width="92" height="8" rx="4" fill="${b}"/>
 <rect x="50" y="58" width="20" height="22" rx="4" fill="${c}" stroke="${d}" stroke-width="2.5"/><circle cx="60" cy="67" r="3.4" fill="${b}"/><rect x="58.5" y="68" width="3" height="7" fill="${b}"/></g>

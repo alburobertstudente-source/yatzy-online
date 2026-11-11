@@ -99,6 +99,33 @@ try {
   check(p1.coins <= p0.coins - 1200 + 3 * 1000 + 200 && p1.coins >= p0.coins - 1200, `cassa grande pagata 1200 monete (${p0.coins} → ${p1.coins})`);
   check(p1.owned.length + 0 >= p0.owned.length + 1, `la cassa grande dà fino a 3 oggetti nuovi (${p1.owned.length - p0.owned.length})`);
 
+  console.log('\n[3b] Casinò');
+  await page.click('.shop-casino');
+  await page.waitForSelector('.cs-bubble:not(:empty)', { timeout: 10000 });
+  check((await track()) === 'casino', 'nel casinò parte la musica jazz');
+  await page.evaluate(() => window.yatzyApp.account.update((p) => (p.coins = Math.max(p.coins, 500))));
+  await page.click('.page-back').catch(() => {});
+  await page.click('.cs-head .icon-btn');
+  await page.waitForSelector('.shop-casino');
+  await page.click('.shop-casino');
+  await page.waitForSelector('.cs-bubble:not(:empty)', { timeout: 10000 });
+  const c0 = (await prof(page)).coins;
+  await page.click('.cs-rackchip[data-chip="100"]');
+  await page.click('.cs-bet.b-over');
+  await page.click('.cs-rackchip[data-chip="50"]');
+  await page.click('.cs-bet.b-odd');
+  check((await page.locator('.cs-total b').innerText()) === '150', 'fiche messe sul tavolo: puntata 150');
+  await page.click('.cs-btn.go');
+  await page.waitForFunction(() => !window.yatzyCasino.busy, null, { timeout: 20000 });
+  await page.screenshot({ path: join(OUT, '04c-casino.png') });
+  const c1 = await prof(page);
+  const sumShown = Number(await page.locator('.cs-sum b').innerText());
+  const expect = c0 - 150 + (sumShown >= 18 ? 200 : 0) + (sumShown % 2 ? 100 : 0);
+  check(c1.coins === expect, `il croupier paga giusto: somma ${sumShown}, monete ${c0} → ${c1.coins}`);
+  check(c1.stats.casinoRounds === 1, 'giocata registrata nel profilo');
+  await page.click('.cs-head .icon-btn');
+  await page.waitForSelector('.shop-daily');
+
   console.log('\n[4] Armadio e skin in partita');
   await page.click('.page-back');
   await page.click('.hub-btn.wardrobe');

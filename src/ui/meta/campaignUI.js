@@ -13,10 +13,13 @@ import { WORLDS, levelInfo } from '../../campaign/campaign.js';
 import { Challenge, goalLabel } from '../../campaign/challenge.js';
 import * as P from '../../meta/profile.js';
 import { pageShell, sheet, fmt } from './common.js';
+import { worldScene, MAP_W, MAP_H } from '../worldArt.js';
+import { avatarSvg } from '../avatar.js';
 import { music } from '../../audio/music.js';
 
 const XS = [18, 50, 78, 62, 30, 14, 42, 74, 56, 50];
-const PATH = XS.map((x, k) => `${k ? 'L' : 'M'}${x} ${28 + k * 62}`).join(' ');
+const NODE_Y = (k) => (k < 9 ? k * 64 : 640);
+const PATH = XS.map((x, k) => `${k ? 'L' : 'M'}${x} ${NODE_Y(k) + 26 + (k === 9 ? 6 : 0)}`).join(' ');
 const starsHtml = (n, total = 3) => Array.from({ length: total }, (_, i) => `<span class="st${i < n ? ' on' : ''}">${MI.star}</span>`).join('');
 
 export class CampaignUI {
@@ -43,6 +46,8 @@ export class CampaignUI {
     let focusEl = null;
     for (const w of WORLDS) {
       const unlockedWorld = P.levelUnlocked(p, w.first);
+      const pts = XS.map((x, k) => ({ x: (x / 100) * MAP_W, y: k < 9 ? 128 + k * 68 : 770 }));
+      const art = worldScene(w.n, pts);
       const nodes = [];
       for (let n = w.first; n <= w.last; n++) {
         const info = levelInfo(n);
@@ -55,14 +60,14 @@ export class CampaignUI {
           {
             class: `cm-node${info.boss ? ' boss' : ''}${open ? '' : ' locked'}${done ? ' done' : ''}${n === current ? ' current' : ''}`,
             type: 'button',
-            style: { '--x': `${XS[k]}%`, top: `${k * 62 - (info.boss ? 18 : 0)}px` },
+            style: { left: `${((pts[k].x / MAP_W) * 100).toFixed(2)}%`, top: `${((pts[k].y / MAP_H) * 100).toFixed(2)}%` },
             dataset: { level: String(n) },
             onclick: () => (open ? this.levelSheet(n, el) : this.#locked(node)),
           },
-          info.boss ? h('span', { class: 'cm-boss-art', html: bossSvg(info.bossData, 70) }) : h('b', {}, String(n)),
-          info.boss ? h('span', { class: 'cm-boss-name' }, info.title) : null,
-          done && !info.boss ? h('span', { class: 'cm-stars', html: starsHtml(st) }) : null,
+          info.boss ? h('span', { class: 'cm-boss-art', html: bossSvg(info.bossData, 96) }) : h('b', {}, String(n)),
+          info.boss ? h('span', { class: 'cm-boss-name' }, info.title) : h('span', { class: 'cm-stars', html: starsHtml(st) }),
           open ? null : h('span', { class: 'cm-lock', html: MI.lock }),
+          n === current ? h('span', { class: 'cm-me', html: avatarSvg(p, { size: 44 }) }) : null,
         );
         if (n === (focus ?? current)) focusEl = node;
         nodes.push(node);
@@ -70,9 +75,11 @@ export class CampaignUI {
       body.append(
         h(
           'section',
-          { class: `cm-world${unlockedWorld ? '' : ' locked'}`, style: { '--w1': w.colors[0], '--w2': w.colors[1], '--w3': w.colors[2] } },
-          h('header', { class: 'cm-whead' }, h('small', {}, `MONDO ${w.n}`), h('b', {}, w.name), h('span', { class: 'cm-wstars' }, `${[...Array(10)].reduce((s, _, i) => s + (p.campaign.stars[w.first + i] || 0), 0)}/27 ★`)),
-          h('div', { class: 'cm-path' }, h('svg', { class: 'cm-line', viewBox: '0 0 100 640', preserveAspectRatio: 'none', html: `<path d="${PATH}"/>` }), ...nodes),
+          { class: `cm-world cmw t-${art.theme}${unlockedWorld ? '' : ' locked'}` },
+          h('div', { class: 'cmw-art', html: art.scene + art.fx }),
+          h('header', { class: 'cmw-head' }, h('small', {}, `MONDO ${w.n}`), h('b', {}, w.name), h('span', {}, `${[...Array(10)].reduce((s, _, i) => s + (p.campaign.stars[w.first + i] || 0), 0)}/27 ★`)),
+          ...nodes,
+          unlockedWorld ? null : h('div', { class: 'cm-wlock' }, h('span', { html: MI.lock }), `Batti il boss del mondo ${w.n - 1}`),
         ),
       );
     }

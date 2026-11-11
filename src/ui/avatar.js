@@ -3,6 +3,7 @@
  * oggetti equipaggiati (cappello, viso, maglietta, pantaloni, scarpe, schiena).
  */
 import { ITEMS, SKIN_TONES } from '../meta/catalog.js';
+import { toon } from './toon.js';
 
 const shade = (hex, k) => {
   const n = parseInt(hex.slice(1), 16);
@@ -206,7 +207,14 @@ export function avatarSvg({ equip = {}, skinTone = 0 } = {}, { size = 120, bust 
   const get = (cat) => (equip[cat] ? ITEMS[equip[cat]] : null);
   const it = { hat: get('hat'), face: get('face'), shirt: get('shirt') || ITEMS['shirt.basic'], pants: get('pants') || ITEMS['pants.basic'], shoes: get('shoes') || ITEMS['shoes.basic'], back: get('back') };
   const hideHair = it.hat && ['cap', 'beanie', 'bandana', 'bucket', 'tophat', 'cowboy', 'viking', 'pirate', 'chef', 'wizard'].includes(it.hat.type);
-  const hair = hideHair ? '' : `<path d="M30 36 Q28 14 50 14 Q72 14 70 36 Q66 24 56 22 Q50 28 40 24 Q33 27 30 36 Z" fill="#4a2c17"/>`;
+  // capelli a ciocche con riflesso, ombra della frangia sulla fronte
+  const hair = hideHair
+    ? ''
+    : `<path d="M29.5 37 Q27 13 50 13 Q73 13 70.5 37 Q68 27 62 24 Q60 30 54 27 Q50 32 44 27 Q39 31 36 26 Q32 29 29.5 37 Z" fill="#5a3418"/>` +
+      `<path d="M37 18 Q44 14.5 52 15.5" fill="none" stroke="rgba(255,220,180,.55)" stroke-width="1.6" stroke-linecap="round"/>` +
+      `<path d="M47 14 Q45 19 47.5 22 M56 15 Q56 19 58.5 21.5" fill="none" stroke="#3a1f0c" stroke-width=".9" stroke-linecap="round" opacity=".7"/>`;
+  const brows = `<path d="M38.8 32.6 Q42.5 30.6 46 32.4" fill="none" stroke="#4a2a14" stroke-width="1.5" stroke-linecap="round"/><path d="M54 32.4 Q57.5 30.6 61.2 32.6" fill="none" stroke="#4a2a14" stroke-width="1.5" stroke-linecap="round"/>`;
+  const faceShade = `<path d="M31 42 Q34 56 50 58 Q66 56 69 42 Q66 53 50 54.5 Q34 53 31 42 Z" fill="rgba(120,60,40,.13)"/>`;
   const id = `av${++gid}`;
   const parts = [
     it.back ? `<g${fxClass(it.back)}>${back(it.back)}</g>` : '',
@@ -215,16 +223,23 @@ export function avatarSvg({ equip = {}, skinTone = 0 } = {}, { size = 120, bust 
     `<g${fxClass(it.shirt)}>${shirt(it.shirt, skin)}</g>`,
     `<circle cx="29.5" cy="90" r="4.5" fill="${skin}"/><circle cx="70.5" cy="90" r="4.5" fill="${skin}"/>`,
     `<rect x="45" y="52" width="10" height="9" fill="${shade(skin, 0.9)}"/>`,
-    `<circle cx="30" cy="40" r="4" fill="${skin}"/><circle cx="70" cy="40" r="4" fill="${skin}"/><circle cx="50" cy="38" r="20" fill="${skin}"/>`,
+    `<circle cx="30" cy="40" r="4" fill="${skin}"/><circle cx="70" cy="40" r="4" fill="${skin}"/><path d="M28.6 39.5 Q30 37.6 31.4 40" fill="none" stroke="rgba(120,60,40,.35)" stroke-width="1" stroke-linecap="round"/><path d="M71.4 39.5 Q70 37.6 68.6 40" fill="none" stroke="rgba(120,60,40,.35)" stroke-width="1" stroke-linecap="round"/><circle cx="50" cy="38" r="20" fill="${skin}"/>${faceShade}`,
     hair,
-    `<ellipse cx="42.5" cy="38.5" rx="2.6" ry="3.2" fill="#262a3d"/><ellipse cx="57.5" cy="38.5" rx="2.6" ry="3.2" fill="#262a3d"/><circle cx="43.3" cy="37.4" r=".9" fill="#fff"/><circle cx="58.3" cy="37.4" r=".9" fill="#fff"/>`,
-    `<path d="M44 46 Q50 51 56 46" stroke="#8a3a2a" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="38" cy="45" r="2.6" fill="#ff8a8a" opacity=".45"/><circle cx="62" cy="45" r="2.6" fill="#ff8a8a" opacity=".45"/>`,
+    brows,
+    // occhi: bianco, iride, pupilla, due luci e palpebra (sbatte le ciglia)
+    `<g class="av-eyes"><ellipse cx="42.5" cy="38.6" rx="3.3" ry="3.9" fill="#ffffff" data-flat stroke="#3a2418" stroke-width=".8"/><ellipse cx="57.5" cy="38.6" rx="3.3" ry="3.9" fill="#ffffff" data-flat stroke="#3a2418" stroke-width=".8"/>` +
+      `<circle cx="42.9" cy="39" r="2.3" fill="#5a3a22" data-flat/><circle cx="57.9" cy="39" r="2.3" fill="#5a3a22" data-flat/><circle cx="42.9" cy="39.2" r="1.25" fill="#1c1210" data-flat/><circle cx="57.9" cy="39.2" r="1.25" fill="#1c1210" data-flat/>` +
+      `<circle cx="43.8" cy="37.9" r=".85" fill="#fff" data-flat/><circle cx="58.8" cy="37.9" r=".85" fill="#fff" data-flat/><circle cx="42.1" cy="40.1" r=".4" fill="#fff" data-flat/><circle cx="57.1" cy="40.1" r=".4" fill="#fff" data-flat/></g>`,
+    `<path d="M49.2 41.5 Q48 45 50.2 45.4" fill="none" stroke="rgba(120,60,40,.55)" stroke-width="1.1" stroke-linecap="round"/>`,
+    `<path d="M44.2 47.6 Q50 52.6 55.8 47.6 Q50 50 44.2 47.6 Z" fill="#9a3a2c" data-flat stroke="#6a2418" stroke-width=".9" stroke-linejoin="round"/><path d="M47 50 Q50 51.4 53 50" fill="none" stroke="#ff8f8f" stroke-width="1.2" stroke-linecap="round"/>`,
+    `<ellipse cx="37.6" cy="45.2" rx="3" ry="1.9" fill="#ff7a7a" opacity=".35" data-flat/><ellipse cx="62.4" cy="45.2" rx="3" ry="1.9" fill="#ff7a7a" opacity=".35" data-flat/>`,
     it.face ? `<g${fxClass(it.face)}>${face(it.face)}</g>` : '',
     it.hat ? `<g${fxClass(it.hat)}>${hat(it.hat)}</g>` : '',
   ];
   const vb = bust ? '14 -10 72 82' : '0 -14 100 142';
   const h = bust ? size : Math.round((size * 142) / 100);
-  return `<svg class="avatar-svg" id="${id}" viewBox="${vb}" width="${size}" height="${h}" aria-hidden="true">${parts.join('')}</svg>`;
+  const ground = bust ? '' : `<ellipse cx="50" cy="123" rx="24" ry="3.6" fill="rgba(30,20,50,.22)" data-flat/>`;
+  return toon(`<svg class="avatar-svg" id="${id}" viewBox="${vb}" width="${size}" height="${h}" aria-hidden="true">${ground}${parts.join('')}</svg>`, { outline: 1.1 });
 }
 
 /** Disegno di un singolo oggetto (per le caselle dell'armadio e del negozio). */

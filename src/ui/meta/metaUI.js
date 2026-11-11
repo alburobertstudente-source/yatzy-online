@@ -20,6 +20,8 @@ import { openChestAnimation, catLabel } from './chestOpen.js';
 import { Account } from '../../net/account.js';
 import { music } from '../../audio/music.js';
 import { previewSound } from '../../audio/voices.js';
+import { CasinoUI } from './casinoUI.js';
+import { dealerSvg } from '../dealerArt.js';
 
 const toggle = (label, on, onChange) => {
   const input = h('input', { type: 'checkbox', checked: on, onchange: (e) => onChange(e.target.checked) });
@@ -50,6 +52,7 @@ export class MetaUI {
     this.settings = settings;
     this.actions = actions;
     this.timers = new Set();
+    this.casinoUI = new CasinoUI({ stage, screens, account, onBack: () => this.shop() });
     account.onChange(() => {
       this.applySkins();
       this.refresh?.();
@@ -284,8 +287,15 @@ export class MetaUI {
           extra: owned ? h('span', { class: 'it-price owned' }, 'POSSEDUTO') : h('span', { class: `it-price${p.coins >= o.price ? '' : ' is-poor'}` }, h('span', { html: MI.coin }), fmt(o.price)),
         });
       });
+      const casino = h(
+        'button',
+        { class: 'shop-casino', type: 'button', onclick: () => this.casino() },
+        h('span', { class: 'sc-dealer', html: dealerSvg(96) }),
+        h('span', { class: 'sc-text' }, h('b', {}, 'CASINÒ YATZY'), h('small', {}, 'Il croupier lancia i dadi: punta su SOTTO o SOPRA, PARI o DISPARI… e raddoppia le monete!'), h('span', { class: 'sc-go' }, 'ENTRA')),
+      );
       body.replaceChildren(
         daily,
+        casino,
         h('h3', { class: 'sec-title' }, 'CASSE'),
         h('div', { class: 'shop-chests' }, ...chests),
         h('button', { class: 'link-btn', type: 'button', onclick: () => this.#oddsSheet(this.stage.top) }, 'Probabilità delle casse'),
@@ -300,6 +310,13 @@ export class MetaUI {
       this.#clearTimersOnly();
       render();
     };
+  }
+
+  /** Casinò (solo con account, come il negozio). */
+  async casino() {
+    this.#clearTimers();
+    sound.tap();
+    await this.casinoUI.open();
   }
 
   #clearTimersOnly() {
