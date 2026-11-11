@@ -5,15 +5,19 @@ Yatzy per due giocatori, rosso contro blu, con **carte potenziamento gratta e vi
 - **sullo stesso telefono** (NUOVA PARTITA): a ogni cambio turno il tavolo ruota di 180° verso l'altro giocatore;
 - **online da due telefoni** (GIOCA ONLINE): uno crea la partita e manda il codice o il link, l'altro entra. Ognuno gioca dal proprio telefono e vede l'altro giocare in tempo reale.
 
-## Mettere il gioco online (una volta sola)
+## Link del gioco
 
-Il repository è già pronto per **GitHub Pages**, senza compilare nulla:
+- **https://yatzy-duello.onrender.com** (Render, si aggiorna da solo a ogni push su `main`, dalla cartella `dist/`)
+- **https://yatzy-duello.vercel.app** (Vercel, copia di riserva)
 
-1. Su GitHub apri **Settings → Pages**.
-2. In *Build and deployment* scegli **Deploy from a branch**, branch **main**, cartella **/ (root)**, e salva.
-3. Dopo un minuto il gioco è su `https://alburobertstudente-source.github.io/yatzy-online/`.
+Basta mandare uno dei due link agli amici. Per installarlo come app:
 
-Quell'indirizzo va aperto su entrambi i telefoni (serve `https`, che GitHub Pages fornisce già).
+- **Android / Chrome**: apri il link, tocca **INSTALLA** nel menu del gioco, oppure ⋮ → **Installa app** / **Aggiungi a schermata Home**.
+- **iPhone / Safari**: apri il link, tocca **Condividi** → **Aggiungi alla schermata Home**.
+
+L'app installata si apre a schermo intero, con la sua icona; per giocare online serve internet.
+
+Il repository va bene anche per **GitHub Pages** (Settings → Pages → Deploy from a branch, `main`, `/ (root)`).
 
 ## Come giocare online
 
