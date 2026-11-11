@@ -42,8 +42,9 @@ export async function openChestAnimation(host, chestId, result) {
   const el = h('div', { class: 'chest-open', style: { '--rc': color } }, title, stageEl, hint, fx);
   host.append(el);
   await play(el, [{ opacity: 0 }, { opacity: 1 }], { duration: 220, easing: 'linear' });
+  sound.whoosh();
   await play(chest, [{ transform: 'translateY(-260px) scale(.6)' }, { transform: 'translateY(0) scale(1.08,.9)', offset: 0.7 }, { transform: 'none' }], { duration: 650, easing: EASE.out });
-  sound.land();
+  if (!sound.fx('cupSlam', { rate: 0.85 })) sound.land();
   buzz(20);
 
   // scuote: più a lungo per le casse con oggetti rari
@@ -51,12 +52,13 @@ export async function openChestAnimation(host, chestId, result) {
   hint.textContent = '';
   const shakes = 2 + rarityRank(best);
   for (let k = 0; k < shakes; k++) {
-    sound.tone({ freq: 180 + k * 40, type: 'square', dur: 0.08, gain: 0.12 });
+    if (!sound.fx('chestShake', { rate: 1 + k * 0.06 })) sound.tone({ freq: 180 + k * 40, type: 'square', dur: 0.08, gain: 0.12 });
     buzz(15);
     await play(chest, [{ transform: 'rotate(0)' }, { transform: `rotate(${k % 2 ? 7 : -7}deg) scale(${1 + k * 0.02})` }, { transform: 'rotate(0)' }], { duration: 170, easing: 'ease-in-out' });
   }
   chest.classList.add('is-open');
   rays.classList.add('is-on');
+  sound.chestOpen();
   sound.reveal(best);
   buzz([30, 40, 60]);
   const r = chest.getBoundingClientRect();

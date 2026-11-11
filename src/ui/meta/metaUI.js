@@ -68,6 +68,7 @@ export class MetaUI {
   applySkins() {
     applyTheme(this.stage.app, this.profile.equip);
     sound.cardVoice = ITEMS[this.profile.equip.cards]?.skin || 'silver';
+    sound.prepareCards(sound.cardVoice);
     music.setAmbient(ITEMS[this.profile.equip.table]?.theme || 'classic');
   }
 
@@ -398,6 +399,7 @@ export class MetaUI {
             onclick: () => {
               try {
                 this.account.update((pp) => P.buyOffer(pp, o.id));
+                sound.buy();
                 sound.reveal(it.rarity === 'mythic' ? 'legendary' : it.rarity);
                 s.close();
                 this.refresh?.();
@@ -644,6 +646,48 @@ export class MetaUI {
   /* ------------------------------------------------------------ */
   /* IMPOSTAZIONI                                                  */
   /* ------------------------------------------------------------ */
+  /** Autori della musica e dei suoni registrati (le licenze CC-BY chiedono di citarli). */
+  async creditsPage() {
+    const { el, body } = pageShell({ title: 'CREDITI AUDIO', onBack: () => this.hub(), cls: 'credits-page', icon: MI.rules });
+    this.stage.app.dataset.screen = 'hub';
+    await this.screens.open(el, { dim: false });
+    body.append(h('p', { class: 'cr-intro' }, 'Musica, ambienti ed effetti sono registrazioni con licenza libera. Grazie a tutti gli autori!'));
+    let list = [];
+    try {
+      list = await (await fetch(new URL('audio/CREDITS.json', location.href), { cache: 'no-cache' })).json();
+    } catch {
+      body.append(h('p', { class: 'cr-intro' }, 'Elenco non disponibile senza connessione.'));
+      return;
+    }
+    const groups = { music: 'MUSICA', amb: 'AMBIENTI', sfx: 'EFFETTI', voices: 'DADI E CARTE' };
+    for (const [g, label] of Object.entries(groups)) {
+      const items = list.filter((c) => c.group === g);
+      if (!items.length) continue;
+      // un autore e una fonte compaiono una volta sola per gruppo
+      const seen = new Map();
+      for (const c of items) {
+        const k = `${c.title || ''}|${c.author || ''}|${c.license || ''}`;
+        if (!seen.has(k)) seen.set(k, c);
+      }
+      body.append(
+        h('h4', { class: 'cr-head' }, label),
+        h(
+          'ul',
+          { class: 'cr-list' },
+          ...[...seen.values()].map((c) =>
+            h(
+              'li',
+              {},
+              h('b', {}, c.title || c.file || ''),
+              c.author ? h('span', {}, ` di ${c.author}`) : null,
+              h('small', {}, ' · ', c.licenseUrl ? h('a', { href: c.licenseUrl, target: '_blank', rel: 'noopener' }, c.license) : c.license || '', c.source ? h('span', {}, ' · ', h('a', { href: c.source, target: '_blank', rel: 'noopener' }, 'fonte')) : null),
+            ),
+          ),
+        ),
+      );
+    }
+  }
+
   settingsSheet() {
     const set = this.settings;
     const up = (patch) => this.actions.updateSettings(patch);
@@ -660,6 +704,7 @@ export class MetaUI {
         this.account.loggedIn
           ? h('div', { class: 'set-account' }, h('span', {}, 'Account: ', h('b', {}, this.account.username)), h('button', { class: 'btn btn-menu ghost', type: 'button', onclick: () => (s.close(), this.#logout()) }, 'ESCI'))
           : h('button', { class: 'btn btn-menu secondary', type: 'button', onclick: () => (s.close(), this.auth({})) }, 'CREA ACCOUNT O ACCEDI'),
+        h('button', { class: 'btn btn-menu ghost set-credits', type: 'button', onclick: () => (s.close(), this.creditsPage()) }, 'CREDITI AUDIO'),
         h('button', { class: 'btn btn-menu primary', type: 'button', onclick: () => s.close() }, 'FATTO'),
       ),
       { cls: 'settings-sheet' },

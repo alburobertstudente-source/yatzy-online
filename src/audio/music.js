@@ -8,6 +8,85 @@
  * Più un sottofondo d'ambiente legato al tema del tavolo (onde, uccellini, grilli…).
  */
 import { sound } from './sound.js';
+import { lib } from './library.js';
+
+/** File WAV vuoto: serve a "sbloccare" i lettori audio dentro il primo tocco (iOS). */
+const SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
+/** Volume della musica e degli ambienti registrati rispetto al resto. */
+const STREAM_LEVEL = 1;
+
+/** Lettore in streaming (musica o ambiente) con dissolvenza, collegato a Web Audio. */
+class Stream {
+  constructor(ctx, dest) {
+    this.ctx = ctx;
+    this.el = new Audio();
+    this.el.preload = 'auto';
+    this.el.loop = true;
+    this.el.setAttribute('playsinline', '');
+    this.gain = ctx.createGain();
+    this.gain.gain.value = 0;
+    try {
+      ctx.createMediaElementSource(this.el).connect(this.gain);
+    } catch {
+      /* lettore non collegabile: resterà muto */
+    }
+    this.gain.connect(dest);
+    this.key = null;
+    this.timer = null;
+  }
+
+  /** Dentro un gesto dell'utente: dopo, il lettore può partire da solo. */
+  prime() {
+    this.el.src = SILENT;
+    const p = this.el.play();
+    if (p && p.then) p.then(() => this.key || this.el.pause()).catch(() => {});
+  }
+
+  start(url, key, level, fade = 1.6) {
+    clearTimeout(this.timer);
+    this.key = key;
+    this.level = level;
+    if (!this.el.src.endsWith(url)) this.el.src = url;
+    try {
+      this.el.currentTime = 0;
+    } catch {
+      /* non ancora caricato */
+    }
+    const p = this.el.play();
+    if (p && p.catch) p.catch(() => {});
+    const t = this.ctx.currentTime;
+    this.gain.gain.cancelScheduledValues(t);
+    this.gain.gain.setValueAtTime(this.gain.gain.value, t);
+    this.gain.gain.linearRampToValueAtTime(level, t + fade);
+  }
+
+  stop(fade = 1.4) {
+    if (!this.key) return;
+    this.key = null;
+    const t = this.ctx.currentTime;
+    this.gain.gain.cancelScheduledValues(t);
+    this.gain.gain.setValueAtTime(this.gain.gain.value, t);
+    this.gain.gain.linearRampToValueAtTime(0, t + fade);
+    clearTimeout(this.timer);
+    this.timer = setTimeout(() => {
+      if (!this.key) this.el.pause();
+    }, fade * 1000 + 200);
+  }
+
+  pause() {
+    if (this.key) this.el.pause();
+  }
+
+  resume() {
+    if (this.key && this.el.paused) {
+      const p = this.el.play();
+      if (p && p.catch) p.catch(() => {});
+    }
+  }
+}
+
+/** Ambienti: dal tipo di ambiente (mondo o tema del tavolo) al file registrato. */
+const AMB_FILE = { tBirds: 'birds', tWaves: 'waves', tChimes: 'chimes', tCrickets: 'crickets', tWind: 'wind', tRumble: 'rumble', tShimmer: 'shimmer', tHum: 'hum', tHarp: 'harp' };
 
 const midi = (m) => 440 * 2 ** ((m - 69) / 12);
 const rnd = (a, b) => a + Math.random() * (b - a);
@@ -364,12 +443,14 @@ class Music {
 
   #start() {
     if (!this.#build()) return;
+    this.#streams();
     if (this.want) this.play(this.want.name, this.want.opts);
     if (this.ambientWant) this.setAmbient(this.ambientWant);
   }
 
   setEnabled(on) {
     this.enabled = on;
+    for (const st of this.streams || []) (on ? st.resume() : st.pause());
     if (!this.out) return;
     const t = this.ctx.currentTime;
     this.out.gain.cancelScheduledValues(t);
@@ -387,8 +468,29 @@ class Music {
     const key = name ? `${name}:${opts.intensity ?? opts.world ?? ''}` : null;
     if (key === this.playingKey) return;
     this.playingKey = key;
+    if (lib.state === 'idle' || lib.state === 'loading') {
+      // aspetta di sapere se ci sono i brani registrati
+      lib.ready().then(() => {
+        if (this.playingKey !== key) return;
+        this.playingKey = null;
+        this.play(name, opts);
+      });
+      return;
+    }
     const ctx = this.ctx;
     const t = ctx.currentTime;
+    const fileKey = !name ? null : name === 'world' ? `w${opts.world || 1}` : name === 'boss' && (opts.intensity ?? 0) >= 0.7 && lib.music('bossFinal') ? 'bossFinal' : name;
+    const file = fileKey ? lib.music(fileKey) : null;
+    // brano registrato: dissolvenza fra i due lettori
+    const [a, b] = this.#streams();
+    const cur = a.key ? a : b.key ? b : null;
+    if (file && this.streams) {
+      if (cur?.key !== fileKey) {
+        cur?.stop(1.4);
+        const next = cur === a ? b : a;
+        next.start(lib.url(file.file), fileKey, (file.gain ?? 1) * STREAM_LEVEL, cur ? 1.8 : 1.2);
+      }
+    } else cur?.stop(1.4);
     if (this.trackGain) {
       const old = this.trackGain;
       old.gain.cancelScheduledValues(t);
@@ -398,8 +500,9 @@ class Music {
     }
     this.trackGain = null;
     this.track = name ? TRACKS[name === 'world' ? `w${opts.world || 1}` : name] : null;
+    this.fileMode = Boolean(file && this.streams);
     this.#refreshBed();
-    if (!this.track) {
+    if (!this.track || this.fileMode) {
       clearInterval(this.timer);
       this.timer = null;
       return;
@@ -624,6 +727,7 @@ class Music {
 
   /** Colpo d'orchestra (piatto, accordo di ottoni, cassa): quando esplode la scritta YATZY. */
   hit() {
+    if (sound.introHit()) return;
     if (!this.out || !this.trackGain) return;
     const t = this.ctx.currentTime + 0.01;
     this.crash(t, 0.12);
@@ -640,6 +744,38 @@ class Music {
 
   /* ---------------- ambienti ---------------- */
   /** Tema del tavolo: vale solo durante le partite (brano "game"). */
+  /** Quattro lettori (due per la musica, due per gli ambienti), creati al primo tocco. */
+  #streams() {
+    if (!this.streams && this.ctx && typeof Audio !== 'undefined') {
+      this.musicBus = this.ctx.createGain();
+      this.musicBus.gain.value = 1;
+      this.musicBus.connect(this.out);
+      this.streams = [new Stream(this.ctx, this.musicBus), new Stream(this.ctx, this.musicBus), new Stream(this.ctx, this.ambBus), new Stream(this.ctx, this.ambBus)];
+      this.streams.forEach((st) => st.prime());
+      document.addEventListener('visibilitychange', () => {
+        for (const st of this.streams) (document.hidden || !this.enabled ? st.pause() : st.resume());
+      });
+    }
+    return this.streams || [{}, {}];
+  }
+
+  /** Ambiente registrato in loop; false se manca il file (allora quello sintetizzato). */
+  #fileAmbience(kind) {
+    if (!this.streams) return false;
+    const [, , a, b] = this.streams;
+    const ak = kind ? AMB_FILE[kind] || kind : null;
+    const file = ak && lib.usable ? lib.amb(ak) : null;
+    const cur = a.key ? a : b.key ? b : null;
+    if (!file) {
+      cur?.stop(1.5);
+      return false;
+    }
+    if (cur?.key === ak) return true;
+    cur?.stop(1.5);
+    (cur === a ? b : a).start(lib.url(file.file), ak, file.gain ?? 1, 2.2);
+    return true;
+  }
+
   setAmbient(theme) {
     this.ambientWant = theme;
     this.tableAmbient = AMBIENT[theme] || null;
@@ -655,7 +791,9 @@ class Music {
     const kind = this.ambientKind;
     if (kind === this.ambient) return;
     this.ambient = kind;
-    const bed = AMB[kind]?.bed || null;
+    const recorded = this.#fileAmbience(kind);
+    this.recordedAmb = recorded;
+    const bed = recorded ? null : AMB[kind]?.bed || null;
     if (bed === this.bedKind) return;
     this.bedKind = bed;
     if (this.ambNode) {
@@ -717,6 +855,7 @@ class Music {
   }
 
   #ambientStep(t) {
+    if (this.recordedAmb) return;
     const amb = AMB[this.ambientKind];
     if (!amb) return;
     const to = this.ambBus;

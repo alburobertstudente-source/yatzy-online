@@ -62,6 +62,7 @@ export class TrayView {
     this.voice = it?.voice || 'classic';
     this.landFx = it?.landFx || null;
     sound.voice = this.voice;
+    sound.prepareVoice(this.voice);
   }
 
   /** Vassoio vuoto (inizio turno). */

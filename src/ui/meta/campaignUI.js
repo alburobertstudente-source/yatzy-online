@@ -316,7 +316,7 @@ export class CampaignUI {
         for (let k = 1; k <= stars; k++) {
           await wait(ms(260));
           starsEl.innerHTML = starsHtml(k);
-          sound.plink(k);
+          sound.star(k - 1);
           pop(starsEl.children[k - 1], 1.5, 380);
         }
       }

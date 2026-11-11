@@ -4,7 +4,8 @@
  *   node scripts/build.mjs
  */
 import { build, transform } from 'esbuild';
-import { readFile, writeFile, mkdir, copyFile } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, copyFile, cp, rm, access } from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -43,5 +44,12 @@ await writeFile(join(ROOT, 'dist/index.html'), html);
 // file per installare il gioco come app (dist/ si può pubblicare così com'è)
 for (const f of ['manifest.webmanifest', 'sw.js', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/maskable-512.png', 'icons/apple-touch-icon.png']) {
   await copyFile(join(ROOT, f), join(ROOT, 'dist', f));
+}
+// suoni registrati (musica, ambienti, effetti): si caricano dalla cartella audio/ accanto alla pagina
+const hasAudio = await access(join(ROOT, 'audio')).then(() => true, () => false);
+if (hasAudio) {
+  execFileSync(process.execPath, [join(ROOT, 'scripts/audio-manifest.mjs')], { stdio: 'inherit' });
+  await rm(join(ROOT, 'dist/audio'), { recursive: true, force: true });
+  await cp(join(ROOT, 'audio'), join(ROOT, 'dist/audio'), { recursive: true, filter: (src) => !/index\.json$|CREDITS\.json$/.test(src) || /audio[\\/]CREDITS\.json$/.test(src) });
 }
 console.log(`dist/index.html creato (${(html.length / 1024).toFixed(0)} KB)`);

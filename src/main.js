@@ -22,6 +22,7 @@ import * as P from './meta/profile.js';
 import { XP } from './meta/economy.js';
 import { botMove } from './ai/bot.js';
 import { music } from './audio/music.js';
+import { lib as audioLib } from './audio/library.js';
 
 const params = new URLSearchParams(location.search);
 
@@ -625,6 +626,7 @@ if (params.has('debug')) {
     campaign,
     startBoss,
     botMove,
+    audioLib,
     music,
     sound,
     get session() {

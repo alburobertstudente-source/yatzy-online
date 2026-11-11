@@ -53,6 +53,7 @@ try {
   }
   await page.waitForSelector('.intro-dice .die');
   check((await page.evaluate(() => (window.yatzyApp.music.playingKey || '').split(':')[0])) === 'intro', "durante l'intro suona la sigla");
+  check((await page.evaluate(() => window.yatzyApp.audioLib.ready())) === true, 'suoni registrati disponibili (audio/manifest.json)');
   await page.waitForSelector('.intro-play.is-pulse', { timeout: 15000 });
   check((await page.locator('.intro-logo .logo-die').count()) === 5, 'dadi che rotolano, poi la scritta YATZY');
   await page.screenshot({ path: join(OUT, '01-intro.png') });

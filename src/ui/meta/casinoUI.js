@@ -33,16 +33,19 @@ function buildDie(v) {
 /** suoni del casinò (fiche, bicchiere, sbattuta, monete) */
 const sfx = {
   chip: () => {
+    if (sound.fx('chips')) return;
     sound.burst({ dur: 0.02, gain: 0.22, freq: 3800, q: 6 });
     sound.burst({ dur: 0.02, gain: 0.16, freq: 4600, q: 6, delay: 0.035 });
     sound.tone({ freq: 2400, type: 'sine', dur: 0.05, gain: 0.05, delay: 0.01 });
   },
-  shake: () => sound.roll(5, 0.9, 'glass'),
+  shake: () => sound.cupShake(),
   slam: () => {
+    if (sound.fx('cupSlam')) return;
     sound.tone({ freq: 120, to: 50, type: 'sine', dur: 0.2, gain: 0.45 });
     sound.burst({ dur: 0.06, gain: 0.3, freq: 900, q: 2 });
   },
   coins: (n = 6) => {
+    if (sound.fx(n > 6 ? 'coins' : 'coin')) return;
     for (let i = 0; i < n; i++) sound.tone({ freq: 1800 + Math.random() * 900, type: 'triangle', dur: 0.08, gain: 0.07, delay: i * 0.06 });
   },
 };
@@ -312,7 +315,7 @@ export class CasinoUI {
     music.play('casino');
     await this.screens.open(el, { dim: false });
     // ingresso: le porte si aprono
-    sound.burst({ dur: 0.6, gain: 0.1, freq: 300, sweepTo: 1200, q: 0.7 });
+    if (!sound.fx('chestOpen', { rate: 0.8 })) sound.burst({ dur: 0.6, gain: 0.1, freq: 300, sweepTo: 1200, q: 0.7 });
     await Promise.all([
       play(doorL, [{ transform: 'translateX(0)' }, { transform: 'translateX(-102%)' }], { duration: 700, easing: EASE.inOut, fill: 'forwards' }),
       play(doorR, [{ transform: 'translateX(0)' }, { transform: 'translateX(102%)' }], { duration: 700, easing: EASE.inOut, fill: 'forwards' }),

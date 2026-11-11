@@ -337,12 +337,13 @@ const ABSURD = {
 };
 
 /** Per le voci assurde l'agitazione e il "tieni" usano una famiglia vicina. */
-const BASE_OF = { dj: 'synth', blackhole: 'space', unicorn: 'gem', phoenix: 'lava', infinity: 'gem', disco: 'synth', tnt: 'stone', cosmiccat: 'cat', tsunami: 'bubble', party: 'popit', divine: 'gem', cosmic: 'space', fire: 'lava' };
+export const BASE_OF = { dj: 'synth', blackhole: 'space', unicorn: 'gem', phoenix: 'lava', infinity: 'gem', disco: 'synth', tnt: 'stone', cosmiccat: 'cat', tsunami: 'bubble', party: 'popit', divine: 'gem', cosmic: 'space', fire: 'lava' };
 const family = (voice) => FAMILIES[voice] || FAMILIES[BASE_OF[voice]] || FAMILIES.classic;
 
 export const VOICES = {
   /** Agitazione e lancio: una raffica di colpi distribuiti nello stereo. */
   shake(s, voice, count = 5, duration = 0.9) {
+    if (s.sampleVoice(voice, 'shake', { count, duration })) return;
     const fam = family(voice);
     const hits = 5 + count * 3;
     for (let i = 0; i < hits; i++) {
@@ -350,11 +351,13 @@ export const VOICES = {
     }
   },
   land(s, voice, { delay = 0, value = null, k = 0 }) {
+    if (s.sampleVoice(voice, 'land', { delay, value, k })) return;
     const o = { delay, value, k, gain: k === 0 ? 0.44 : 0.32, pan: [-0.5, 0.5, -0.2, 0.25, 0][k % 5] };
     if (ABSURD[voice]) ABSURD[voice](s, o);
     else family(voice).land(s, o);
   },
   hold(s, voice, on) {
+    if (s.sampleVoice(voice, 'hold', { on })) return;
     family(voice).hold(s, on);
   },
   /** Sapore della skin delle carte mentre si gratta. */
@@ -368,6 +371,7 @@ export const VOICES = {
     else if (cv === 'ocean') s.tone({ freq: rnd(400, 600), to: rnd(1000, 1400), type: 'sine', dur: 0.05, gain: 0.05 });
   },
   revealFlavor(s, cv) {
+    if (s.sampleCard('revealFlavor', cv)) return;
     if (cv === 'holo' || cv === 'rainbow' || cv === 'prism') [72, 76, 79, 84, 88, 91].forEach((m, i) => bell(s, { freq: midi(m), gain: 0.05, dur: 0.6, delay: i * 0.04 }));
     else if (cv === 'gold') FAMILIES.coin.land(s, { gain: 0.3, k: 0 });
     else if (cv === 'galaxy') FAMILIES.space.land(s, { gain: 0.3, k: 0 });
@@ -380,6 +384,7 @@ export const VOICES = {
 /** Rumore delle animazioni di lancio. */
 export function rollStyleSound(s, style) {
   if (!s.ready) return;
+  if (s.sampleStyle(style)) return;
   switch (style) {
     case 'bounce':
     case 'hop':
@@ -431,6 +436,15 @@ export function rollStyleSound(s, style) {
 /** Anteprima sonora di un oggetto (armadio, negozio). */
 export function previewSound(s, item) {
   if (!s.ready || !item) return;
+  if (item.cat === 'dice' && s.whenVoiceReady) {
+    // aspetta un attimo che i suoni registrati della skin siano caricati
+    s.whenVoiceReady(item.voice || 'classic').then(() => {
+      VOICES.shake(s, item.voice || 'classic', 3, 0.5);
+      [0, 1, 2].forEach((k) => VOICES.land(s, item.voice || 'classic', { delay: 0.45 + k * 0.12, value: [5, 3, 6][k], k }));
+    });
+    return;
+  }
+  if (item.cat === 'cards' && s.prepareCards) s.prepareCards(item.skin);
   if (item.cat === 'dice') {
     VOICES.shake(s, item.voice || 'classic', 3, 0.5);
     [0, 1, 2].forEach((k) => VOICES.land(s, item.voice || 'classic', { delay: 0.45 + k * 0.12, value: [5, 3, 6][k], k }));
