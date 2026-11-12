@@ -134,7 +134,7 @@ class Library {
   voice(id, baseOf = {}) {
     const v = this.manifest.voices || {};
     const own = v.absurd?.[id] || v.families?.[id] || null;
-    const base = v.families?.[baseOf[id]] || null;
+    const base = v.families?.[own?.base || baseOf[id]] || null;
     if (!own && !base) return v.families?.classic || null;
     return { ...(base || {}), ...(own || {}), extra: own?.extra || null };
   }
@@ -142,7 +142,7 @@ class Library {
   voiceFiles(id, baseOf = {}) {
     const d = this.voice(id, baseOf);
     if (!d) return [];
-    return [...(d.shake || []), ...(d.land || []), ...(d.notes || []), ...(d.hold || []), ...(d.extra || [])];
+    return [...(d.shake || []), ...(d.land || []), ...(d.notes || []), ...(d.hold || []), ...(d.release || []), ...(d.extra || [])];
   }
 
   style(id) {

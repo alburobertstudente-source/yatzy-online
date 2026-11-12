@@ -173,9 +173,10 @@ class SoundFX {
       return ok;
     }
     if (kind === 'hold') {
-      const file = pick(d.hold);
+      // "tieni" e "lascia" hanno suoni propri; senza "lascia" si usa il "tieni" più grave
+      const file = o.on ? pick(d.hold) : pick(d.release) || pick(d.hold);
       if (!file) return false;
-      return this.sample(file, { gain: gain * 0.7, rate: o.on ? 1.08 : 0.9 });
+      return this.sample(file, { gain: gain * 0.75, rate: o.on || d.release ? rate : 0.88 });
     }
     return false;
   }
@@ -184,7 +185,7 @@ class SoundFX {
   sampleStyle(style) {
     const d = lib.usable ? lib.style(style) : null;
     if (!d) return false;
-    return this.sample(pick(d.files), { gain: d.gain ?? 1, send: 0.2 });
+    return this.sample(pick(d.files), { gain: d.gain ?? 1, send: 0.2, delay: d.delay || 0 });
   }
 
   /** Carte: kind 'scratch' | 'reveal' | 'revealFlavor'. */

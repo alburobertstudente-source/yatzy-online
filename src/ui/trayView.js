@@ -10,6 +10,7 @@ import { applyDiceSkin, rollStyleOf, landFx } from './skins.js';
 import { ITEMS } from '../meta/catalog.js';
 import { sound } from '../audio/sound.js';
 import { rollStyleSound } from '../audio/voices.js';
+import { DiceLayer3D } from '../three/diceTray.js';
 
 function buildDie() {
   const faces = [1, 2, 3, 4, 5, 6].map((n) => h('div', { class: `face f${n}`, html: pipsSvg(n) }));
@@ -52,6 +53,26 @@ export class TrayView {
     this.rollStyle = 'classic';
     this.voice = 'classic';
     this.landFx = null;
+    this.skinId = 'dice.classic';
+  }
+
+  /**
+   * Dadi 3D (WebGL) sopra il vassoio, creati appena il vassoio è visibile.
+   * null = si usano i dadi CSS (niente WebGL, ?no3d o contesto perso).
+   */
+  get d3() {
+    if (this._d3 && !this._d3.alive) {
+      if (this._d3.lost) this.no3d = true;
+      this._d3 = null;
+    }
+    if (!this._d3 && !this.no3d && this.el.isConnected && this.el.offsetWidth) {
+      this._d3 = DiceLayer3D.attach(
+        this.el,
+        this.slots.map((s) => ({ el: s.el, die: s.die })),
+      );
+      if (this._d3) this._d3.setSkin(this.skinId, this.rollStyle);
+    }
+    return this._d3;
   }
 
   /** Skin dei dadi e stile di lancio (del giocatore di turno). */
@@ -61,8 +82,10 @@ export class TrayView {
     const it = ITEMS[diceId];
     this.voice = it?.voice || 'classic';
     this.landFx = it?.landFx || null;
+    this.skinId = diceId;
     sound.voice = this.voice;
     sound.prepareVoice(this.voice);
+    this.d3?.setSkin(diceId, this.rollStyle);
   }
 
   /** Vassoio vuoto (inizio turno). */
@@ -72,6 +95,7 @@ export class TrayView {
       s.el.classList.remove('is-held', 'is-out');
       s.die.style.opacity = '';
     }
+    this.d3?.syncFromDom();
   }
 
   /** Mostra subito i valori (es. ripresa di una partita salvata). */
@@ -83,12 +107,14 @@ export class TrayView {
         s.el.classList.remove('is-empty', 'is-out');
       } else s.el.classList.add('is-empty');
     });
+    this.d3?.syncFromDom();
   }
 
   /** Stato "tenuto" + interattività. */
   setHeld(held, interactive) {
     held.forEach((on, i) => this.slots[i].el.classList.toggle('is-held', on));
     this.el.classList.toggle('is-interactive', interactive);
+    this.d3?.syncFromDom();
   }
 
   /**
@@ -103,12 +129,25 @@ export class TrayView {
       sound.roll(rolled.length, 0.9, this.voice);
       if (this.rollStyle !== 'classic') rollStyleSound(sound, this.rollStyle);
     }
+    const layer = this.d3;
     const land = (i) => {
       const k = landed++;
       if (!silent) sound.land(0, values[i], k, this.voice);
-      if (this.landFx) landFx(this.landFx, this.slots[i].el, k);
+      // nel vassoio 3D gli effetti dell'atterraggio li disegna la scena 3D
+      if (this.landFx && !layer) landFx(this.landFx, this.slots[i].el, k);
       onLand?.(i);
     };
+    if (layer) {
+      const timing = {};
+      for (const i of rolled) {
+        const s = this.slots[i];
+        s.el.classList.remove('is-empty', 'is-out');
+        setDieFace(s.die, values[i]);
+        timing[i] = { delay: order.indexOf(i) * TIMING.ROLL_STAGGER, duration: TIMING.ROLL_MIN + Math.random() * (TIMING.ROLL_MAX - TIMING.ROLL_MIN) };
+      }
+      await layer.roll(values, rolled, { entering, timing, onLand: land });
+      return;
+    }
     const jobs = rolled.map((i) => {
       const s = this.slots[i];
       s.el.classList.remove('is-empty', 'is-out');
@@ -121,11 +160,21 @@ export class TrayView {
 
   /** Nasconde un dado (è "volato" nella tabella). */
   hideDie(i) {
+    this._d3?.hide(i);
     this.slots[i].el.classList.add('is-out');
   }
 
   /** I dadi rimasti scivolano via a fine turno. */
   async clearRemaining() {
+    const layer = this.d3;
+    if (layer) {
+      const idx = this.slots.map((s, i) => (!s.el.classList.contains('is-out') && !s.el.classList.contains('is-empty') ? i : -1)).filter((i) => i >= 0);
+      await layer.clear(idx);
+      idx.forEach((i) => this.slots[i].el.classList.add('is-out'));
+      this.slots.forEach((s) => s.el.classList.remove('is-held'));
+      layer.syncFromDom();
+      return;
+    }
     const jobs = this.slots
       .filter((s) => !s.el.classList.contains('is-out') && !s.el.classList.contains('is-empty'))
       .map((s, k) =>
@@ -176,5 +225,6 @@ export class TrayView {
     const s = this.slots[i];
     s.el.classList.remove('is-empty', 'is-out');
     setDieFace(s.die, v);
+    this.d3?.flipTo(i, v);
   }
 }

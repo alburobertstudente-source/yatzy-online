@@ -12,7 +12,7 @@
  * Le cornici vere attorno agli avatar (.av-frame) ricevono l'anello 3D
  * sopra, tramite un foglio di stile generato (classe .frames3d su <html>).
  */
-import { THREE, has3D, registerArt, renderThumb, studioLights, shadowCatcher } from './core.js';
+import { THREE, has3D, registerArt, renderThumb, studioLights, shadowCatcher, disposeScene } from './core.js';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import { FOIL } from '../ui/skins.js';
 import { THEME_PAL, makeCanvas, seeded, woodCanvas, shade, hexA } from './cosmTextures.js';
@@ -100,9 +100,12 @@ function fitCamera(obj, { fov = 24, elev = 0.5, azim = 0.5, pad = 1, lift = 0 } 
 function thumb(key, size, make, opts = {}) {
   return renderThumb(
     key,
-    () => {
+    (_T, renderer) => {
+      // esposizione un po' più bassa del renderer condiviso: colori pieni, niente bianchi bruciati
+      const prevExposure = renderer.toneMappingExposure;
       const scene = new THREE.Scene();
-      studioLights(scene, { shadows: opts.ground !== false, intensity: opts.light ?? 1 });
+      scene.environmentIntensity = opts.env ?? 0.55;
+      studioLights(scene, { shadows: opts.ground !== false, intensity: opts.light ?? 0.82 });
       if (opts.accent) {
         const a = new THREE.PointLight(opts.accent, opts.accentPower ?? 6, 8, 1.6);
         a.position.set(...(opts.accentPos || [1.6, 1.2, 1.6]));
@@ -124,7 +127,15 @@ function thumb(key, size, make, opts = {}) {
         scene.add(sc);
       }
       const camera = opts.camera ? opts.camera(obj) : fitCamera(obj, opts.cam);
-      return { scene, camera };
+      renderer.toneMappingExposure = opts.exposure ?? 0.86;
+      return {
+        scene,
+        camera,
+        dispose: () => {
+          renderer.toneMappingExposure = prevExposure;
+          disposeScene(scene);
+        },
+      };
     },
     size,
   );
@@ -464,7 +475,7 @@ function cardCanvases(skin) {
   // lucentezza diagonale (dà subito l'idea di superficie lucida)
   const sh = g.createLinearGradient(0, 0, W, H);
   sh.addColorStop(0.28, 'rgba(255,255,255,0)');
-  sh.addColorStop(0.4, 'rgba(255,255,255,0.32)');
+  sh.addColorStop(0.4, 'rgba(255,255,255,0.16)');
   sh.addColorStop(0.5, 'rgba(255,255,255,0)');
   g.fillStyle = sh;
   g.fillRect(0, 0, W, H);
@@ -480,8 +491,8 @@ function cardMaterials(skin) {
     map: tex(face),
     roughness: metal ? 0.3 : skin === 'kraft' ? 0.85 : 0.42,
     metalness: metal ? 0.85 : skin === 'carbon' ? 0.4 : 0.05,
-    clearcoat: skin === 'kraft' ? 0.1 : 1,
-    clearcoatRoughness: 0.1,
+    clearcoat: skin === 'kraft' ? 0.1 : 0.7,
+    clearcoatRoughness: 0.14,
     iridescence: iri ? 1 : skin === 'galaxy' || skin === 'frost' ? 0.5 : 0,
     iridescenceIOR: 1.7,
     iridescenceThicknessRange: [180, 820],
@@ -510,8 +521,9 @@ function cardModel(skin) {
 
 export function cardThumb(skin, size = 96) {
   return thumb(`card:${skin}`, size, () => cardModel(skin), {
-    cam: { fov: 22, elev: 0.22, azim: 0.18, pad: 0.86 },
-    shadow: 0.26,
+    cam: { fov: 22, elev: 0.3, azim: 0.2, pad: 0.74, lift: -0.05 },
+    shadow: 0.22,
+    env: 0.5,
     accent: skin === 'neon' ? '#5dff9c' : skin === 'lava' ? '#ff7a1a' : skin === 'galaxy' ? '#b38bff' : null,
   });
 }
@@ -527,8 +539,8 @@ function feltCanvas(theme) {
   const g = c.getContext('2d');
   const half = (y0, cols, flip) => {
     const gr = g.createRadialGradient(W / 2, flip ? y0 + H / 2 - 30 : y0 + 30, 20, W / 2, flip ? y0 + H / 2 - 30 : y0 + 30, W * 0.75);
-    gr.addColorStop(0, cols[0]);
-    gr.addColorStop(0.5, cols[1]);
+    gr.addColorStop(0, shade(cols[1], 0.12));
+    gr.addColorStop(0.55, cols[1]);
     gr.addColorStop(1, cols[2]);
     g.fillStyle = gr;
     g.fillRect(0, y0, W, H / 2);
@@ -695,7 +707,7 @@ function tableModel(theme) {
   const TW = 2.5;
   const TH = 1.7;
   // piano di gioco (panno con il tema)
-  const top = new THREE.Mesh(slabGeometry(TW, TH, 0.08, 0.16, 0.01), [phys({ map: tex(feltCanvas(theme)), roughness: 0.82, sheen: 1, sheenRoughness: 0.6, sheenColor: color('#ffffff') }), phys({ color: color(pal.red[2]), roughness: 0.8 })]);
+  const top = new THREE.Mesh(slabGeometry(TW, TH, 0.08, 0.16, 0.01), [phys({ map: tex(feltCanvas(theme)), roughness: 0.9, sheen: 0.6, sheenRoughness: 0.7, sheenColor: color(pal.red[0]), envMapIntensity: 0.4 }), phys({ color: color(pal.red[2]), roughness: 0.8 })]);
   top.rotation.x = -Math.PI / 2;
   top.position.y = 0.04;
   group.add(top);
@@ -990,7 +1002,7 @@ function rollModel(style) {
     }
     case 'bubbles': {
       const bub = (r, x, y, z) => {
-        const m = new THREE.Mesh(new THREE.SphereGeometry(r, 32, 24), phys({ color: color('#ffffff'), roughness: 0, transmission: 0.95, thickness: 0.05, ior: 1.1, iridescence: 1, iridescenceIOR: 1.3, iridescenceThicknessRange: [250, 700], clearcoat: 1 }));
+        const m = new THREE.Mesh(new THREE.SphereGeometry(r, 32, 24), phys({ color: color('#dff6ff'), roughness: 0.05, transparent: true, opacity: 0.28, depthWrite: false, iridescence: 1, iridescenceIOR: 1.3, iridescenceThicknessRange: [250, 700], clearcoat: 1, specularIntensity: 1 }));
         m.position.set(x, y, z);
         m.userData.noShadow = true;
         return m;

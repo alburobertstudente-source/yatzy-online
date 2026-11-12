@@ -22,6 +22,7 @@ import { music } from '../../audio/music.js';
 import { previewSound } from '../../audio/voices.js';
 import { CasinoUI } from './casinoUI.js';
 import { dealerSvg } from '../dealerArt.js';
+import { introRoll } from '../../three/diceTray.js';
 
 const toggle = (label, on, onChange) => {
   const input = h('input', { type: 'checkbox', checked: on, onchange: (e) => onChange(e.target.checked) });
@@ -144,7 +145,9 @@ export class MetaUI {
     // 1. i dadi entrano rotolando
     const voice = ITEMS[this.profile.equip.dice]?.voice || 'classic';
     sound.roll(5, 1.1, voice);
-    await Promise.all(dice.map((d, i) => tumbleDie(d, [6, 1, 5, 2, 6][i], { delay: i * 90, duration: 1100, entering: true, onLand: () => sound.land(0, [6, 1, 5, 2, 6][i], i, voice) })));
+    const vals = [6, 1, 5, 2, 6];
+    const css = () => Promise.all(dice.map((d, i) => tumbleDie(d, vals[i], { delay: i * 90, duration: 1100, entering: true, onLand: () => sound.land(0, vals[i], i, voice) })));
+    await introRoll(tray, dice, vals, { diceId: this.profile.equip.dice, onLand: (i) => sound.land(0, vals[i], i, voice), fallback: css });
     if (!skip) await wait(ms(250));
     // 2. i dadi si stringono e scoppiano nella scritta
     await Promise.all(dice.map((d, i) => play(d.parentElement, [{ transform: 'none' }, { transform: `translateX(${(2 - i) * 46}px) scale(.6)`, opacity: 0.9 }], { duration: 260, easing: EASE.in, fill: 'forwards' })));

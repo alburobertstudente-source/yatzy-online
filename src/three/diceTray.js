@@ -13,7 +13,7 @@
  */
 import * as THREE from 'three';
 import { has3D, setupRenderer, studioEnv, studioLights, shadowCatcher } from './core.js';
-import * as Dice from './diceModel.stub.js';
+import * as Dice from './diceModel.js';
 import { ms } from '../anim/animations.js';
 import { buildMotion, throwStart } from './trayPaths.js';
 import { Particles, contactShadow, holdGlow, vortexDisc, dust, landBurst, bigOverlay, trail, styleLand, yatzyBurst } from './trayFx.js';
@@ -23,7 +23,7 @@ const UP = new THREE.Vector3(0, 1, 0);
 const rnd = (a, b) => a + Math.random() * (b - a);
 const clamp01 = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
 const smooth = (k) => k * k * (3 - 2 * k);
-const ROUND = 0.12; // raggio degli spigoli arrotondati (in lati di dado)
+const ROUND = 0.17; // raggio degli spigoli arrotondati (in lati di dado, come in diceModel.js)
 
 const _m = new THREE.Matrix4();
 const _q = new THREE.Quaternion();
@@ -119,6 +119,7 @@ export class DiceLayer3D {
     this.renderer.setClearColor(0x000000, 0);
     this.canvas.addEventListener('webglcontextlost', (e) => {
       e.preventDefault();
+      this.lost = true;
       this.dispose();
     });
 
@@ -271,33 +272,50 @@ export class DiceLayer3D {
       if (d.obj) {
         d.holder.remove(d.obj);
         d.obj.userData.dispose?.();
+        d.clones?.forEach((m) => m.dispose());
+        d.clones = null;
       }
       const obj = Dice.createDie(id, { size: 1 });
       obj.traverse((o) => {
-        if (o.isMesh) {
-          o.castShadow = true;
-          o.receiveShadow = true;
-        }
+        if (o.isMesh) o.castShadow = true;
       });
       d.obj = obj;
-      d.mats = [];
-      obj.traverse((o) => {
-        const list = Array.isArray(o.material) ? o.material : o.material ? [o.material] : [];
-        for (const m of list) d.mats.push({ m, transparent: m.transparent, opacity: m.opacity });
-      });
+      d.mats = null;
       d.opacity = 1;
-      if (obj.userData.update) this.animatedSkin = true;
+      if (obj.userData.spec ? obj.userData.spec.fx : obj.userData.animated) this.animatedSkin = true;
       d.holder.add(obj);
     }
+  }
+
+  /** Materiali propri del dado (i dadi della stessa skin li condividono: per la trasparenza servono copie). */
+  #ownMaterials(d) {
+    if (d.mats) return d.mats;
+    const others = new Set();
+    for (const x of this.dice) if (x !== d && x.obj) x.obj.traverse((o) => (Array.isArray(o.material) ? o.material : o.material ? [o.material] : []).forEach((m) => others.add(m)));
+    d.mats = [];
+    d.obj.traverse((o) => {
+      if (!o.material) return;
+      const list = Array.isArray(o.material) ? o.material : [o.material];
+      const own = list.map((m) => {
+        if (!others.has(m)) return m;
+        const c = m.clone();
+        d.clones = d.clones || [];
+        d.clones.push(c);
+        return c;
+      });
+      o.material = Array.isArray(o.material) ? own : own[0];
+      for (const m of own) d.mats.push({ m, transparent: m.transparent, opacity: m.opacity, depthWrite: m.depthWrite });
+    });
+    return d.mats;
   }
 
   #setOpacity(d, k) {
     if (Math.abs(d.opacity - k) < 0.01) return;
     d.opacity = k;
-    for (const e of d.mats) {
+    for (const e of this.#ownMaterials(d)) {
       e.m.transparent = k < 1 ? true : e.transparent;
       e.m.opacity = e.opacity * k;
-      e.m.depthWrite = k > 0.6;
+      e.m.depthWrite = k < 1 ? k > 0.6 : e.depthWrite;
     }
   }
 
@@ -623,7 +641,7 @@ export class DiceLayer3D {
     }
     h.visible = show;
     h.scale.set(scale * (1 + squash * 0.5), scale * (1 - squash), scale * (1 + squash * 0.5));
-    if (d.mats) this.#setOpacity(d, op);
+    if (op < 1 || d.opacity < 1) this.#setOpacity(d, op);
 
     // ombra di contatto (più larga e chiara quando il dado è in alto)
     const sh = d.shadow;
