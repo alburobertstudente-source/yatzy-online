@@ -10,7 +10,7 @@
  *   4. endTurn passa all'avversario
  */
 import { PLAYERS, RULES, CARD_RULES } from '../config.js';
-import { DiceSet } from './dice.js';
+import { DiceSet, ROLL_CAP } from './dice.js';
 import { Scorecard } from './scorecard.js';
 import { TurnManager, TOTAL_ROUNDS } from './turns.js';
 import { FairRoller, createCryptoRandom, rollDie } from './probability.js';
@@ -22,8 +22,8 @@ import { detectMeme } from './memes.js';
 
 export { GameError };
 
-const newStatus = () => ({ curse: null, noHoldDie: null });
-const newTurnState = () => ({ foresight: {}, crown: null, noHold: [], frozen: [], blocked: [] });
+const newStatus = () => ({ curse: null, noHoldDie: null, sabotage: null, halve: null, lessRolls: null, blessTurns: 0 });
+const newTurnState = () => ({ foresight: {}, crown: null, noHold: [], frozen: [], blocked: [], bonuses: [], blessed: false, blessAll: false, cardNotes: null });
 
 export class Game {
   /**
@@ -251,6 +251,15 @@ export class Game {
       }
     }
     const rolled = this.dice.applyRoll(values);
+    // Lancio Benedetto / Benedizione Eterna: gli 1 e i 2 appena lanciati si rilanciano da soli
+    let blessed = null;
+    if (this.turnState.blessed || this.turnState.blessAll) {
+      this.turnState.blessed = false;
+      const idx = rolled.filter((i) => this.dice.values[i] <= 2);
+      const before = idx.map((i) => this.dice.values[i]);
+      for (const i of idx) this.dice.setValue(i, this.randomDie());
+      blessed = { dice: idx, before, after: idx.map((i) => this.dice.values[i]) };
+    }
     const rolledValues = [...this.dice.values];
 
     // maledizioni dell'avversario: scattano a questo lancio
@@ -259,8 +268,18 @@ export class Game {
       const c = me.status.curse;
       me.status.curse = null;
       let idx = rolled.filter((i) => !this.dice.held[i]);
+      let frozen = null;
       if (c.type === 'chaos') {
         idx = shuffle(idx, this.rng).slice(0, 2).sort((a, b) => a - b);
+      } else if (c.type === 'apocalypse') {
+        // l'Apocalisse travolge anche i dadi conservati
+        idx = [0, 1, 2, 3, 4];
+        idx.forEach((i) => this.dice.release(i));
+      } else if (c.type === 'freeze') {
+        frozen = shuffle(idx.length ? idx : [0, 1, 2, 3, 4], this.rng).slice(0, 2).sort((a, b) => a - b);
+        frozen.forEach((i) => this.dice.release(i));
+        this.turnState.frozen = [...(this.turnState.frozen || []), ...frozen];
+        idx = [];
       }
       const before = idx.map((i) => this.dice.values[i]);
       for (const i of idx) this.dice.setValue(i, this.randomDie());
@@ -270,7 +289,7 @@ export class Game {
         me.status.noHoldDie = noHold;
         this.dice.release(noHold);
       }
-      curse = { type: c.type, cardId: c.cardId, dice: idx, before, after: idx.map((i) => this.dice.values[i]), noHoldDie: noHold };
+      curse = { type: c.type, cardId: c.cardId, dice: idx, before, after: idx.map((i) => this.dice.values[i]), noHoldDie: noHold, frozen };
     }
 
     this.selected = null;
@@ -286,6 +305,7 @@ export class Game {
       combo: notableCombo(this.dice.values),
       yatzyBonusReady: me.card.qualifiesForYatzyBonus(this.dice.values),
       curse,
+      blessed,
     };
     this.emit('roll', result);
     return result;
@@ -344,6 +364,37 @@ export class Game {
       if (log) Object.assign(log, { amount: crownExtra, cat: id });
     }
 
+    // carte bonus del turno (Spicciolo Fortunato, Moltiplicatore, Rete di Salvataggio)
+    let cardExtra = 0;
+    const extras = [];
+    for (const b of this.turnState.bonuses || []) {
+      const def = CARDS[b.cardId]?.bonus;
+      if (!def) continue;
+      let amount = 0;
+      if (def.kind === 'plus') amount = score > 0 ? def.amount : 0;
+      else if (def.kind === 'mult') amount = Math.min(Math.floor(score / 2), def.cap);
+      else if (def.kind === 'net') amount = score === 0 ? def.amount : 0;
+      if (amount > 0) {
+        card.addCardPoints({ id: b.effectId, amount, kind: 'bonus', cat: id });
+        cardExtra += amount;
+        extras.push({ cardId: b.cardId, amount });
+      }
+      const log = this.effectLog.find((e) => e.id === b.effectId);
+      if (log) Object.assign(log, { amount, cat: id });
+    }
+
+    // Mezza Luna dell'avversario: il punteggio segnato si dimezza (lo scudo la ferma)
+    let halved = null;
+    if (me.status.halve) {
+      const hv = me.status.halve;
+      me.status.halve = null;
+      const blocked = card.consumeShield(id);
+      const taken = blocked ? 0 : card.applyDebit(id, Math.floor((card.value(id) ?? 0) / 2));
+      halved = { cat: id, taken, blocked };
+      const log = this.effectLog.find((e) => e.id === hv.effectId);
+      if (log) Object.assign(log, { fired: true, cat: id, taken, blocked });
+    }
+
     const result = {
       playerId: me.id,
       turnId: this.turnId,
@@ -357,6 +408,9 @@ export class Game {
       yatzyBonus,
       yatzyBonusCount: card.yatzyBonusCount(),
       crownExtra,
+      cardExtra,
+      extras,
+      halved,
       meme: detectMeme({ category: id, score, dice, fullHouseOpen: card.scores.fullHouse === null }),
       prevTotal,
       total: card.total(),
@@ -390,9 +444,33 @@ export class Game {
     this.pendingDraws = this.cardsEnabled ? 1 : 0;
     this.pendingDiscard = false;
     this.hooks?.turnStart?.(this);
+    this.#turnStartCards();
     const info = { over: false, playerId: this.current.id, round: this.round, turnId: this.turnId };
     this.emit('turn', info);
     return info;
+  }
+
+  /** Effetti delle carte che scattano all'inizio del turno del giocatore. */
+  #turnStartCards() {
+    const me = this.current;
+    const notes = {};
+    if (me.status.sabotage) {
+      const { cat } = me.status.sabotage;
+      me.status.sabotage = null;
+      this.turnState.blocked = [...(this.turnState.blocked || []), cat];
+      notes.sabotage = cat;
+    }
+    if (me.status.lessRolls) {
+      me.status.lessRolls = null;
+      notes.lessRolls = this.dice.removeRoll();
+    }
+    if (me.status.blessTurns > 0) {
+      me.status.blessTurns--;
+      this.turnState.blessAll = true;
+      if (this.dice.maxRolls < ROLL_CAP) this.dice.addRoll();
+      notes.bless = me.status.blessTurns + 1;
+    }
+    this.turnState.cardNotes = Object.keys(notes).length ? notes : null;
   }
 
   results() {
@@ -421,7 +499,7 @@ export class Game {
   toJSON() {
     return {
       v: 2,
-      players: this.players.map((p) => ({ id: p.id, card: p.card.toJSON(), hand: p.hand.map((c) => ({ ...c })), status: { ...p.status } })),
+      players: this.players.map((p) => ({ id: p.id, card: p.card.toJSON(), hand: p.hand.map((c) => ({ ...c })), status: JSON.parse(JSON.stringify(p.status)) })),
       turns: this.turns.toJSON(),
       dice: this.dice.toJSON(),
       selected: this.selected,
@@ -429,8 +507,16 @@ export class Game {
       phase: this.phase,
       pendingDraws: this.pendingDraws,
       pendingDiscard: this.pendingDiscard,
-      turnState: { foresight: { ...this.turnState.foresight }, crown: this.turnState.crown },
-      effectLog: this.effectLog.map((e) => ({ ...e, cats: e.cats ? [...e.cats] : undefined })),
+      turnState: {
+        foresight: { ...this.turnState.foresight },
+        crown: this.turnState.crown,
+        bonuses: (this.turnState.bonuses || []).map((b) => ({ ...b })),
+        blessed: Boolean(this.turnState.blessed),
+        blessAll: Boolean(this.turnState.blessAll),
+        frozen: [...(this.turnState.frozen || [])],
+        blocked: [...(this.turnState.blocked || [])],
+      },
+      effectLog: this.effectLog.map((e) => ({ ...e, cats: e.cats ? [...e.cats] : undefined, swallowed: e.swallowed ? e.swallowed.map((c) => ({ ...c })) : undefined })),
       nextUid: this.nextUid,
       nextEffectId: this.nextEffectId,
       rngState: typeof this.rng.getState === 'function' ? this.rng.getState() : undefined,
@@ -465,7 +551,17 @@ export class Game {
     g.scoredThisTurn = Boolean(data.scoredThisTurn);
     g.pendingDraws = Number.isInteger(data.pendingDraws) ? Math.max(0, data.pendingDraws) : 0;
     g.pendingDiscard = Boolean(data.pendingDiscard);
-    g.turnState = { foresight: { ...(data.turnState?.foresight || {}) }, crown: data.turnState?.crown ?? null };
+    const ts = data.turnState || {};
+    g.turnState = {
+      ...newTurnState(),
+      foresight: { ...(ts.foresight || {}) },
+      crown: ts.crown ?? null,
+      bonuses: Array.isArray(ts.bonuses) ? ts.bonuses.map((b) => ({ ...b })) : [],
+      blessed: Boolean(ts.blessed),
+      blessAll: Boolean(ts.blessAll),
+      frozen: Array.isArray(ts.frozen) ? [...ts.frozen] : [],
+      blocked: Array.isArray(ts.blocked) ? [...ts.blocked] : [],
+    };
     g.effectLog = Array.isArray(data.effectLog) ? data.effectLog.map((e) => ({ ...e })) : [];
     const maxUid = Math.max(0, ...g.players.flatMap((p) => p.hand.map((c) => c.uid)));
     g.nextUid = Math.max(Number(data.nextUid) || 1, maxUid + 1);

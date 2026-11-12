@@ -4135,3 +4135,11 @@
 .cr-list a {
   color: inherit;
 }
+
+/* apertura casse in 3D */
+.chest-open .co-stage { position: relative; }
+.chest-open .co-canvas { position: absolute; left: 50%; top: 50%; width: 360px; height: 420px; transform: translate(-50%, -54%); pointer-events: none; }
+.chest-open.is-3d .co-rays { display: none; }
+.co-item { transform-style: preserve-3d; }
+.co-item .co-art { animation: co-float 2.6s ease-in-out infinite; }
+@keyframes co-float { 50% { transform: translateY(-6px) rotate(-2deg); } }

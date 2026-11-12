@@ -179,18 +179,24 @@ All'inizio di **ogni turno** il giocatore di turno gratta col dito una carta arg
 
 I dadi sono **equi per entrambi i giocatori**: nessun vantaggio nascosto. Anche le probabilità delle carte sono le stesse per tutti.
 
+36 carte in 5 rarità. Ci sono carte d'**attacco** contro l'avversario, carte che cambiano i **lanci** e carte che aumentano i **punteggi**.
+
 | Rarità | Probabilità | Carte |
 |---|---|---|
-| Comune | 52% | **Ritira Fortuna** – rilancia fino a 2 dadi (senza consumare lanci) · **Scudo di Legno** – protegge una casella da un attacco · **Occhio del Destino** – rivela il prossimo risultato di un dado prima di decidere · **Mano Veloce** – pesca una carta aggiuntiva |
-| Rara | 28% | **Dado Truccato** – un dado +1 o −1 · **Furto di Fortuna** – ruba 10 punti da una casella avversaria · **Scudo Arcano** – protegge due caselle · **Doppio Lancio** – un lancio in più nel turno |
-| Epica | 14% | **Maledizione del Caos** – al prossimo lancio l'avversario rilancia per forza due dadi non conservati · **Riscrittura del Destino** – trasforma un dado in un altro numero · **Saccheggio Reale** – ruba 25 punti · **Prigione Temporale** – blocca una carta avversaria per un turno |
-| Leggendaria | 6% | **Mano degli Dei** – scegli il valore di tutti e cinque i dadi · **Rewind Temporale** – annulla l'ultimo effetto di una carta avversaria · **Apocalisse dei Dadi** – al prossimo lancio l'avversario rilancia tutti i dadi non conservati e un dado non si può conservare · **Corona del Destino** – raddoppia il punteggio del turno (massimo +50) |
+| Comune (7) | 45% | **Ritira Fortuna** – rilancia fino a 2 dadi · **Scudo di Legno** – protegge una casella da un attacco · **Occhio del Destino** – rivela il prossimo risultato di un dado · **Mano Veloce** – pesca una carta · **Dado Gemello** – un dado diventa uguale a un altro · **Sabotaggio** – blocca una casella libera dell'avversario per il suo prossimo turno · **Spicciolo Fortunato** – +8 al punteggio del turno |
+| Rara (9) | 28% | **Dado Truccato** – un dado +1 o −1 · **Furto di Fortuna** – ruba 10 punti · **Scudo Arcano** – protegge due caselle · **Doppio Lancio** – un lancio in più · **Gelo Eterno** – al prossimo lancio dell'avversario due dadi si congelano (non si possono conservare) · **Mano Lesta** – ruba una carta dalla mano avversaria · **Lancio Benedetto** – al prossimo lancio gli 1 e i 2 si rilanciano da soli · **Calamita** – un altro dado a caso diventa uguale a quello scelto · **Rete di Salvataggio** – se segni 0 ricevi 15 punti |
+| Epica (9) | 16% | **Maledizione del Caos** – l'avversario rilancia per forza due dadi · **Riscrittura del Destino** – trasforma un dado in un altro numero · **Saccheggio Reale** – ruba 25 punti · **Prigione Temporale** – blocca una carta avversaria per un turno · **Mezza Luna** – il prossimo punteggio dell'avversario si dimezza · **Lancio Rubato** – l'avversario ha un lancio in meno nel suo turno · **Scambio di Sorte** – in una casella dove l'avversario è davanti, gli rubi la differenza · **Tempesta di Lanci** – due lanci in più · **Moltiplicatore** – punteggio del turno ×1,5 (fino a +40) |
+| Leggendaria (6) | 9% | **Mano degli Dei** – scegli tutti e cinque i dadi **e** hai un lancio in più · **Rewind Temporale** – annulla l'ultimo effetto avversario **e** peschi una carta · **Apocalisse dei Dadi** – al prossimo lancio l'avversario rilancia **tutti** i dadi, anche quelli conservati, e un dado non si può conservare · **Corona del Destino** – raddoppia il punteggio del turno (fino a **+100**) · **Re dei Ladri** – ruba 50 punti · **Scudo Divino** – uno scudo su tutte le tue caselle |
+| **Mitica** (5) | 2% | **Big Bang** – tutti i dadi diventano 6 (Yatzy!) e un lancio in più · **Furto Cosmico** – ruba tutti i punti della casella migliore dell'avversario, ignorando gli scudi · **Tempo Infinito** – otto lanci in più · **Benedizione Eterna** – per questo turno e i 3 successivi un lancio in più e gli 1 e i 2 si rilanciano da soli · **Buco Nero** – inghiotte tutte le carte dell'avversario e lo maledice con l'Apocalisse |
+
+Le carte mitiche hanno una rivelazione tutta loro: carta cosmica che cambia colore, lampo, terremoto, pioggia di coriandoli e colpo d'orchestra.
 
 Dettagli delle regole:
 
-- **Furti**: si sceglie una casella avversaria già segnata; i punti tolti (al massimo il valore della casella) passano al ladro. Una casella con scudo blocca il furto e perde una carica di scudo. I furti non tolgono il bonus +35 già ottenuto né il diritto ai bonus +100 degli Yatzy.
-- **Maledizioni**: una alla volta; il giocatore colpito la vede arrivare (segno viola) e può annullarla con Rewind Temporale prima di lanciare.
-- **Rewind Temporale** annulla l'ultimo effetto avversario ancora annullabile: un furto (i punti tornano indietro), una maledizione non ancora scattata, una prigione, la Corona, gli scudi.
+- **Furti** (Furto, Saccheggio, Re dei Ladri, Scambio di Sorte): si sceglie una casella avversaria già segnata; i punti tolti (al massimo il valore della casella) passano al ladro. Una casella con scudo blocca il furto e perde una carica di scudo (tranne il Furto Cosmico). I furti non tolgono il bonus +35 già ottenuto né il diritto ai bonus +100 degli Yatzy.
+- **Maledizioni** (Caos, Apocalisse, Gelo Eterno, Buco Nero): una alla volta; il giocatore colpito la vede arrivare (segno viola) e può annullarla con Rewind Temporale prima di lanciare.
+- **Sabotaggio** e **Mezza Luna** si fermano con uno scudo sulla casella colpita. Una casella sabotata si può usare comunque se è l'ultima libera.
+- **Rewind Temporale** annulla l'ultimo effetto avversario ancora annullabile: un furto (i punti tornano indietro), una maledizione non ancora scattata, una prigione, la Corona e le carte bonus, gli scudi, un sabotaggio o un lancio rubato non ancora scattati, la Mezza Luna (anche dopo), una carta rubata, le carte inghiottite dal Buco Nero.
 - Le probabilità e i limiti si cambiano in `src/config.js` (`CARD_RULES`).
 
 ## Struttura del progetto
@@ -239,7 +245,7 @@ dist/index.html          versione compilata in un unico file
 npm install          # esbuild, PeerJS e il server PeerJS per i test
 npm run dev          # server locale su http://localhost:5173/
 npm run build        # crea dist/index.html
-npm test             # 91 test: punteggi, regole, carte, partite online allineate, catalogo, casse, profilo, rango, campagna, boss, bot, API account
+npm test             # 109 test: punteggi, regole, carte, partite online allineate, catalogo, casse, profilo, rango, campagna, boss, bot, API account
 npm run test:e2e     # partita completa nel browser su vari schermi (richiede Playwright)
 npm run test:online  # due "telefoni" che giocano online tramite un server PeerJS locale
 npm run test:meta    # intro con sigla, account, casse, casinò, armadio, campagna, boss, classifica, secondo telefono

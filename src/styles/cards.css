@@ -14,6 +14,9 @@
   --r-legendary: #ffb21e;
   --r-legendary-d: #cf7c00;
   --r-legendary-l: #fff1c6;
+  --r-mythic: #ff3fa4;
+  --r-mythic-d: #5a1fb0;
+  --r-mythic-l: #ffd6f0;
   --shield: #5b7bd5;
   --curse: #9a5ae0;
   --curse-d: #3b1f5e;
@@ -23,6 +26,7 @@
 .r-rare { --rc: var(--r-rare); --rd: var(--r-rare-d); --rl: var(--r-rare-l); }
 .r-epic { --rc: var(--r-epic); --rd: var(--r-epic-d); --rl: var(--r-epic-l); }
 .r-legendary { --rc: var(--r-legendary); --rd: var(--r-legendary-d); --rl: var(--r-legendary-l); }
+.r-mythic { --rc: var(--r-mythic); --rd: var(--r-mythic-d); --rl: var(--r-mythic-l); }
 
 /* ---------- faccia grande ---------- */
 .card-face {
@@ -55,7 +59,8 @@
 }
 
 .card-face.big.r-epic::after,
-.card-face.big.r-legendary::after {
+.card-face.big.r-legendary::after,
+.card-face.big.r-mythic::after {
   content: '';
   position: absolute;
   inset: -50%;
@@ -1242,4 +1247,50 @@
   border-radius: 6px;
   background: rgba(255, 255, 255, 0.92);
   color: var(--ink);
+}
+
+/* ---------- rarità MITICA: cosmo che cambia colore ---------- */
+.card-face.big.r-mythic {
+  background: linear-gradient(165deg, #ff3fa4, #7a5cff 45%, #1a0b3a 75%, #2fd0ff);
+  background-size: 220% 220%;
+  animation: mythic-flow 4s ease-in-out infinite;
+  box-shadow: 0 0 0 4px #fff, 0 0 30px rgba(255, 63, 164, 0.75), 0 0 60px rgba(47, 208, 255, 0.45), 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+.card-face.big.r-mythic::after {
+  animation-duration: 1.4s;
+  background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.65) 48%, rgba(255, 214, 240, 0.4) 52%, transparent 60%);
+}
+.card-face.mini.r-mythic {
+  background: linear-gradient(160deg, #ff3fa4, #7a5cff 55%, #2fd0ff);
+  background-size: 200% 200%;
+  animation: mythic-flow 3s ease-in-out infinite;
+  box-shadow: 0 0 0 2px #fff, 0 0 12px rgba(255, 63, 164, 0.8);
+}
+.sc-glow.r-mythic {
+  background: conic-gradient(from 0deg, #ff3fa4, #7a5cff, #2fd0ff, #ffd23f, #ff3fa4);
+  -webkit-mask: radial-gradient(circle, #000 0%, transparent 66%);
+  mask: radial-gradient(circle, #000 0%, transparent 66%);
+  animation: mythic-spin 2.4s linear infinite;
+}
+.sc-sub.sc-rarity.r-mythic {
+  background: linear-gradient(90deg, #ff3fa4, #7a5cff, #2fd0ff, #ffd23f);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: none;
+  filter: drop-shadow(0 0 8px rgba(255, 63, 164, 0.8));
+}
+.scratch-screen.is-mythic {
+  animation: mythic-flash 0.6s ease-out;
+}
+@keyframes mythic-flow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+@keyframes mythic-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes mythic-flash {
+  0% { background-color: rgba(255, 255, 255, 0.9); }
+  100% { background-color: transparent; }
 }

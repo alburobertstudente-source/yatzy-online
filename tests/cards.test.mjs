@@ -13,19 +13,23 @@ function give(game, id) {
   return entry.uid;
 }
 
-test('16 carte, 4 per rarità, con i nomi richiesti', () => {
-  assert.equal(CARD_IDS.length, 16);
-  for (const r of RARITIES) assert.equal(cardsOfRarity(r).length, 4, r);
+test('36 carte in 5 rarità (comprese le mitiche), con i nomi richiesti', () => {
+  assert.equal(CARD_IDS.length, 36);
+  const per = { common: 7, rare: 9, epic: 9, legendary: 6, mythic: 5 };
+  for (const r of RARITIES) assert.equal(cardsOfRarity(r).length, per[r], r);
+  assert.equal(Object.values(CARD_RULES.RARITY_WEIGHTS).reduce((a, b) => a + b, 0), 100);
   const names = CARD_IDS.map((id) => CARDS[id].name);
   for (const n of ['Ritira Fortuna', 'Scudo di Legno', 'Occhio del Destino', 'Mano Veloce', 'Dado Truccato', 'Furto di Fortuna', 'Scudo Arcano', 'Doppio Lancio',
-    'Maledizione del Caos', 'Riscrittura del Destino', 'Saccheggio Reale', 'Prigione Temporale', 'Mano degli Dei', 'Rewind Temporale', 'Apocalisse dei Dadi', 'Corona del Destino']) {
+    'Maledizione del Caos', 'Riscrittura del Destino', 'Saccheggio Reale', 'Prigione Temporale', 'Mano degli Dei', 'Rewind Temporale', 'Apocalisse dei Dadi', 'Corona del Destino',
+    'Dado Gemello', 'Sabotaggio', 'Spicciolo Fortunato', 'Gelo Eterno', 'Mano Lesta', 'Lancio Benedetto', 'Calamita', 'Rete di Salvataggio', 'Mezza Luna', 'Lancio Rubato',
+    'Scambio di Sorte', 'Tempesta di Lanci', 'Moltiplicatore', 'Re dei Ladri', 'Scudo Divino', 'Big Bang', 'Furto Cosmico', 'Tempo Infinito', 'Benedizione Eterna', 'Buco Nero']) {
     assert.ok(names.includes(n), n);
   }
 });
 
 test('pescata: rarità secondo le probabilità configurate', () => {
   const rng = createSeededRandom(42);
-  const counts = { common: 0, rare: 0, epic: 0, legendary: 0 };
+  const counts = Object.fromEntries(RARITIES.map((r) => [r, 0]));
   const N = 40000;
   for (let i = 0; i < N; i++) counts[CARDS[drawCardId(rng)].rarity]++;
   for (const r of RARITIES) {
@@ -307,7 +311,7 @@ test('Mano degli Dei: imposta tutti e cinque i dadi (anche uno Yatzy con bonus)'
   assert.equal(game.player('red').card.total(), 50 + 30 + 100);
 });
 
-test('Corona del Destino: raddoppia il punteggio del turno, massimo +50', () => {
+test('Corona del Destino: raddoppia il punteggio del turno, fino a +100', () => {
   const { game, roller } = scriptedGame();
   drawAll(game);
   game.useCard(give(game, 'coronaDestino'));
@@ -327,9 +331,7 @@ test('Corona del Destino: raddoppia il punteggio del turno, massimo +50', () => 
   const r2 = game.confirm();
   assert.equal(r2.score, 29);
   assert.equal(r2.crownExtra, 29);
-  // limite: 60 punti → +50 al massimo
-  const capped = Math.min(60, CARD_RULES.CROWN_CAP);
-  assert.equal(capped, 50);
+  assert.equal(CARD_RULES.CROWN_CAP, 100);
 });
 
 test('Corona: due Corone nello stesso turno non si sommano', () => {
@@ -389,6 +391,8 @@ test('Rewind Temporale: annulla una maledizione prima che scatti', () => {
   playTurn(game, roller, [1, 2, 3, 4, 5], 'chance');
   drawAll(game);
   const r = game.useCard(give(game, 'rewindTemporale'));
+  assert.equal(r.draw, true, 'il Rewind fa pescare una carta');
+  drawAll(game);
   assert.equal(r.undone.kind, 'curse');
   assert.equal(game.player('blue').status.curse, null);
   roller.push([6, 6, 6, 6, 6]);
@@ -413,7 +417,9 @@ test('Rewind Temporale: libera una carta imprigionata e toglie i punti della Cor
   let r = game.useCard(give(game, 'rewindTemporale'));
   assert.equal(r.undone.kind, 'crown');
   assert.equal(game.player('red').card.total(), 50);
+  drawAll(game);
   r = game.useCard(give(game, 'rewindTemporale'));
+  drawAll(game);
   assert.equal(r.undone.kind, 'prison');
   assert.equal(game.cardAvailability(777).ok, true);
   assert.equal(game.cardAvailability(give(game, 'rewindTemporale')).ok, false, 'niente altro da annullare');

@@ -8,7 +8,7 @@ import { Game } from '../src/core/game.js';
 import { createSeededRandom } from '../src/core/probability.js';
 import { CARDS } from '../src/core/cards.js';
 import { ALL_CATEGORIES } from '../src/core/scoring.js';
-import { stealableBoxes, shieldableBoxes } from '../src/core/powers.js';
+import { autoParams } from '../src/core/powers.js';
 
 /** Sceglie la prossima azione guardando solo lo stato (uguale sui due telefoni). */
 function nextAction(game, pick) {
@@ -19,16 +19,7 @@ function nextAction(game, pick) {
   const usable = me.hand.filter((c) => game.cardAvailability(c.uid).ok);
   if (usable.length && pick() < 0.35) {
     const c = usable[Math.floor(pick() * usable.length)];
-    const t = CARDS[c.id].target;
-    const params = {};
-    if (t?.kind === 'dice') {
-      params.dice = [0, 1, 2, 3, 4].filter((i) => game.turnState.foresight[i] === undefined || !t.foresight).slice(0, t.max === 2 ? 2 : 1);
-      if (CARDS[c.id].choice === 'plusMinus') params.delta = game.dice.values[params.dice[0]] > 1 ? -1 : 1;
-      if (CARDS[c.id].choice === 'face') params.value = (game.dice.values[params.dice[0]] % 6) + 1;
-    } else if (t?.kind === 'allDice') params.values = [6, 6, 6, 6, 6];
-    else if (t?.kind === 'ownBoxes') params.cats = shieldableBoxes(me).slice(0, t.count);
-    else if (t?.kind === 'oppBox') params.cat = stealableBoxes(game, me)[0];
-    else if (t?.kind === 'oppCard') params.uid = game.opponent.hand.find((x) => !game.isCardLocked(x))?.uid;
+    const params = autoParams(game, c);
     return { type: 'useCard', uid: c.uid, params };
   }
   if (game.canRoll() && (!game.dice.hasRolled || pick() < 0.6)) {
@@ -38,7 +29,7 @@ function nextAction(game, pick) {
     }
     return { type: 'roll' };
   }
-  const open = me.card.openCategories();
+  const open = me.card.openCategories().filter((c) => !game.isBlocked(c));
   if (game.selected === null) return { type: 'select', cat: open[Math.floor(pick() * open.length)] };
   return { type: 'confirm' };
 }

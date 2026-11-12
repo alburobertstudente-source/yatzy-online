@@ -51,7 +51,7 @@ try {
     check(true, 'schermata "tocca per iniziare" (sblocca la musica)');
     await page.click('.intro-tap');
   }
-  await page.waitForSelector('.intro-dice .die');
+  await page.waitForSelector('.intro-dice .die', { state: 'attached' });
   check((await page.evaluate(() => (window.yatzyApp.music.playingKey || '').split(':')[0])) === 'intro', "durante l'intro suona la sigla");
   check((await page.evaluate(() => window.yatzyApp.audioLib.ready())) === true, 'suoni registrati disponibili (audio/manifest.json)');
   await page.waitForSelector('.intro-play.is-pulse', { timeout: 15000 });

@@ -9,12 +9,13 @@ import { CARDS } from '../core/cards.js';
 import { play, EASE, ms, pop, shake } from './animations.js';
 import { sparkle, toast } from './effects.js';
 
-export const RARITY_HEX = { common: '#8e98ad', rare: '#22a6d8', epic: '#9a5ae0', legendary: '#ffb21e' };
+export const RARITY_HEX = { common: '#8e98ad', rare: '#22a6d8', epic: '#9a5ae0', legendary: '#ffb21e', mythic: '#ff3fa4' };
 const RARITY_SPARK = {
   common: ['#ffffff', '#c9d0dd'],
   rare: ['#ffffff', '#7fd6f5', '#22a6d8'],
   epic: ['#ffffff', '#d6b8ff', '#9a5ae0'],
   legendary: ['#fff6c2', '#ffd23f', '#ffffff'],
+  mythic: ['#ff3fa4', '#7a5cff', '#2fd0ff', '#fff6c2', '#ffffff'],
 };
 
 export class CardFx {
@@ -196,8 +197,8 @@ export class CardFx {
 
   /** Banner della maledizione quando scatta sul lancio del giocatore. */
   async curseBanner(type) {
-    const name = type === 'apocalypse' ? 'APOCALISSE DEI DADI!' : 'MALEDIZIONE DEL CAOS!';
-    const sub = type === 'apocalypse' ? 'Tutti i dadi liberi vengono rilanciati' : 'Due dadi liberi vengono rilanciati';
+    const name = type === 'apocalypse' ? 'APOCALISSE DEI DADI!' : type === 'freeze' ? 'GELO ETERNO!' : 'MALEDIZIONE DEL CAOS!';
+    const sub = type === 'apocalypse' ? 'Tutti i dadi vengono rilanciati, anche quelli conservati' : type === 'freeze' ? 'Due dadi si congelano' : 'Due dadi liberi vengono rilanciati';
     const el = h('div', { class: `curse-banner ${type}` }, h('div', { class: 'cb-icon', html: MINI.curse }), h('div', {}, h('b', {}, name), h('small', {}, sub)));
     this.fx.append(el);
     shake(this.table.querySelector('.play-area'), 7, 500);

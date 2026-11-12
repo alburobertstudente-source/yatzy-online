@@ -177,7 +177,9 @@ async function landscapeTest(browser) {
 async function tryUseCard(page) {
   const plan = await page.evaluate(() => {
     const g = window.yatzyDebug.game;
-    const order = ['coronaDestino', 'doppioLancio', 'furtoFortuna', 'saccheggioReale', 'scudoLegno', 'scudoArcano', 'maledizioneCaos', 'apocalisseDadi', 'rewindTemporale', 'dadoTruccato', 'ritiraFortuna', 'riscritturaDestino', 'prigioneTemporale'];
+    const order = ['bigBang', 'furtoCosmico', 'bucoNero', 'tempoInfinito', 'benedizioneEterna', 'reDeiLadri', 'scudoDivino', 'coronaDestino', 'moltiplicatore', 'scambioSorte', 'sabotaggio', 'manoLesta', 'dadoGemello', 'calamita',
+      'mezzaLuna', 'lancioRubato', 'geloEterno', 'tempestaLanci', 'spiccioloFortunato', 'reteSalvataggio', 'lancioBenedetto',
+      'doppioLancio', 'furtoFortuna', 'saccheggioReale', 'scudoLegno', 'scudoArcano', 'maledizioneCaos', 'apocalisseDadi', 'rewindTemporale', 'dadoTruccato', 'ritiraFortuna', 'riscritturaDestino', 'prigioneTemporale'];
     for (const id of order) {
       const c = g.current.hand.find((x) => x.id === id);
       if (c && g.cardAvailability(c.uid).ok) return { id, uid: c.uid };
@@ -191,8 +193,42 @@ async function tryUseCard(page) {
   await page.waitForTimeout(250);
   const g = (fn, arg) => page.evaluate(fn, arg);
   switch (plan.id) {
+    case 'sabotaggio':
+    case 'scambioSorte': {
+      const cat = await g((id) => {
+        const gm = window.yatzyDebug.game;
+        const me = gm.current;
+        const opp = gm.opponent;
+        if (id === 'sabotaggio') return opp.card.openCategories()[0];
+        return Object.keys(opp.card.scores).find((c) => me.card.value(c) !== null && opp.card.value(c) !== null && opp.card.value(c) > me.card.value(c));
+      }, plan.id);
+      const opp = await g(() => window.yatzyDebug.game.opponent.id);
+      await pd(page, `.cell.${opp}[data-cat="${cat}"]`);
+      await pd(page, '.tb-btn.ok');
+      break;
+    }
+    case 'dadoGemello': {
+      const [a, b] = await g(() => {
+        const v = window.yatzyDebug.game.dice.values;
+        const b2 = 0;
+        return [v.findIndex((x) => x !== v[b2]), b2];
+      });
+      await pd(page, `.slot >> nth=${a}`);
+      await pd(page, `.slot >> nth=${b}`);
+      await pd(page, '.tb-btn.ok');
+      break;
+    }
+    case 'calamita':
+      await pd(page, '.slot >> nth=0');
+      await pd(page, '.tb-btn.ok');
+      break;
+    case 'manoLesta':
+      await page.waitForSelector('.cp-pick-row .card-face.mini');
+      await pd(page, '.cp-pick-row .card-face.mini');
+      break;
     case 'furtoFortuna':
-    case 'saccheggioReale': {
+    case 'saccheggioReale':
+    case 'reDeiLadri': {
       const cat = await g(() => {
         const gm = window.yatzyDebug.game;
         return Object.keys(gm.opponent.card.scores).find((c) => (gm.opponent.card.value(c) ?? 0) > 0);
@@ -294,7 +330,8 @@ async function fullGameTest(browser) {
       }
     }
     const cat = await page.evaluate(() => {
-      const open = window.yatzyDebug.game.current.card.openCategories();
+      const gm = window.yatzyDebug.game;
+      const open = gm.current.card.openCategories().filter((c) => !gm.isBlocked(c));
       return open[Math.floor(Math.random() * open.length)];
     });
     await pd(page, `.cell.${pid}[data-cat="${cat}"]`);

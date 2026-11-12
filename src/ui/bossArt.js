@@ -1,3 +1,4 @@
+import { bossArtHtml } from '../three/boss3d.js';
 /**
  * I 10 boss disegnati come personaggi cartoon (SVG originali): corpo con
  * volume, dettagli, espressione; la rifinitura toon aggiunge contorni e ombre.
@@ -156,6 +157,11 @@ ${eye(50, 56, 5.5, { look: 0.2, angry: true, iris: '#ff3d7f' })}${eye(70, 56, 5.
 };
 
 export function bossSvg(boss, size = 120) {
+  return bossArtHtml(boss, size, bossSvgFlat(boss, size));
+}
+
+/** Disegno piatto (riserva senza WebGL). */
+export function bossSvgFlat(boss, size = 120) {
   const draw = LOOKS[boss.look] || LOOKS.frog;
   return toon(`<svg class="boss-svg boss-${boss.look}" viewBox="0 -6 120 126" width="${size}" height="${size}" aria-hidden="true">${draw(boss.colors)}</svg>`, { outline: 1.5 });
 }

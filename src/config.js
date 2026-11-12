@@ -42,13 +42,13 @@ export const RULES = {
  */
 export const CARD_RULES = {
   /** Probabilità di ogni rarità (in percentuale, somma 100). */
-  RARITY_WEIGHTS: { common: 52, rare: 28, epic: 14, legendary: 6 },
+  RARITY_WEIGHTS: { common: 45, rare: 28, epic: 16, legendary: 9, mythic: 2 },
   /** Carte massime in mano: oltre, se ne scarta una. */
   HAND_MAX: 5,
   /** Cariche di scudo massime su una casella. */
   MAX_SHIELDS: 2,
   /** Punti extra massimi della Corona del Destino. */
-  CROWN_CAP: 50,
+  CROWN_CAP: 100,
 };
 
 /** Tempi delle animazioni (ms). ANIM_SPEED > 1 accelera tutto (usato nei test). */

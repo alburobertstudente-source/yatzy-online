@@ -60,13 +60,14 @@ export function confetti(layer, { colors, count = 60, duration = 2600, fromTop =
         p,
         fromTop
           ? [
-              { transform: `translate(0,0) rotate(0deg)`, opacity: 1 },
-              { transform: `translate(${drift}px, ${fall}px) rotate(${rnd(360, 1080)}deg)`, opacity: 0.9 },
+              { transform: `perspective(400px) translate3d(0,0,0) rotateX(0deg) rotateY(0deg) rotate(0deg)`, opacity: 1 },
+              { transform: `perspective(400px) translate3d(${drift * 0.5}px, ${fall * 0.5}px, ${rnd(-60, 60)}px) rotateX(${rnd(360, 900)}deg) rotateY(${rnd(180, 540)}deg) rotate(${rnd(180, 540)}deg)`, opacity: 1, offset: 0.5 },
+              { transform: `perspective(400px) translate3d(${drift}px, ${fall}px, 0) rotateX(${rnd(900, 1800)}deg) rotateY(${rnd(540, 1080)}deg) rotate(${rnd(360, 1080)}deg)`, opacity: 0.9 },
             ]
           : [
-              { transform: 'translate(0,0) scale(.3)', opacity: 1 },
-              { transform: `translate(${drift * 1.6}px, ${-Math.abs(fall)}px) scale(1) rotate(${rnd(200, 600)}deg)`, opacity: 1, offset: 0.45 },
-              { transform: `translate(${drift * 2}px, ${hgt * 0.6}px) rotate(${rnd(600, 1200)}deg)`, opacity: 0 },
+              { transform: 'perspective(400px) translate(0,0) scale(.3)', opacity: 1 },
+              { transform: `perspective(400px) translate(${drift * 1.6}px, ${-Math.abs(fall)}px) scale(1) rotateX(${rnd(300, 700)}deg) rotate(${rnd(200, 600)}deg)`, opacity: 1, offset: 0.45 },
+              { transform: `perspective(400px) translate(${drift * 2}px, ${hgt * 0.6}px) rotateX(${rnd(900, 1500)}deg) rotate(${rnd(600, 1200)}deg)`, opacity: 0 },
             ],
         { duration: duration * rnd(0.7, 1.2), delay: rnd(0, fromTop ? 900 : 120), easing: fromTop ? 'cubic-bezier(.3,.1,.6,1)' : EASE.out },
       ).then(() => p.remove()),

@@ -5,7 +5,9 @@
  */
 import { RULES } from '../config.js';
 
-const MAX_EXTRA_ROLLS = 5;
+const MAX_EXTRA_ROLLS = 12;
+/** Lanci massimi in un turno, comprese le carte. */
+export const ROLL_CAP = RULES.MAX_ROLLS + MAX_EXTRA_ROLLS;
 
 export class DiceSet {
   constructor() {
@@ -31,6 +33,13 @@ export class DiceSet {
 
   canRoll() {
     return this.rollsUsed < this.maxRolls && !this.held.every(Boolean);
+  }
+
+  /** Toglie un lancio (Lancio Rubato): ne resta sempre almeno uno. */
+  removeRoll() {
+    if (this.maxRolls <= Math.max(1, this.rollsUsed)) return false;
+    this.maxRolls--;
+    return true;
   }
 
   addRoll() {
@@ -88,7 +97,7 @@ export class DiceSet {
 
   static fromJSON(data) {
     const d = new DiceSet();
-    if (Number.isInteger(data?.maxRolls)) d.maxRolls = Math.max(RULES.MAX_ROLLS, Math.min(RULES.MAX_ROLLS + MAX_EXTRA_ROLLS, data.maxRolls));
+    if (Number.isInteger(data?.maxRolls)) d.maxRolls = Math.max(1, Math.min(RULES.MAX_ROLLS + MAX_EXTRA_ROLLS, data.maxRolls));
     if (Array.isArray(data?.values) && data.values.length === RULES.DICE_COUNT) d.values = data.values.map((v) => (v >= 1 && v <= 6 ? v : 0));
     if (Array.isArray(data?.held) && data.held.length === RULES.DICE_COUNT) d.held = data.held.map(Boolean);
     if (Number.isInteger(data?.rollsUsed)) d.rollsUsed = Math.max(0, Math.min(d.maxRolls, data.rollsUsed));

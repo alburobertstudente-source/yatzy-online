@@ -20,6 +20,7 @@ const RARITY_COLORS = {
   rare: ['#ffffff', '#7fd6f5', '#22a6d8'],
   epic: ['#ffffff', '#d6b8ff', '#9a5ae0'],
   legendary: ['#fff6c2', '#ffd23f', '#ffffff', '#ffb21e'],
+  mythic: ['#ff3fa4', '#7a5cff', '#2fd0ff', '#ffd23f', '#ffffff'],
 };
 
 export class ScratchView {
@@ -156,7 +157,15 @@ export class ScratchView {
         const colors = RARITY_COLORS[def.rarity];
         sparkle(screen, cx, cy, { colors, count: def.rarity === 'common' ? 10 : 22, spread: def.rarity === 'common' ? 120 : 170, size: 11 });
         if (def.rarity === 'legendary') confetti(screen, { colors: ['#ffd23f', '#ffb21e', '#ffffff', '#fff2a8'], count: 60 });
-        if (def.rarity === 'epic' || def.rarity === 'legendary') sparkle(screen, cx, cy, { colors, count: 16, spread: 230, size: 8, duration: 1100 });
+        if (def.rarity === 'epic' || def.rarity === 'legendary' || def.rarity === 'mythic') sparkle(screen, cx, cy, { colors, count: 16, spread: 230, size: 8, duration: 1100 });
+        if (def.rarity === 'mythic') {
+          // MITICA: lampo, terremoto, pioggia di coriandoli cosmici
+          screen.classList.add('is-mythic');
+          sound.introHit();
+          confetti(screen, { colors, count: 120, duration: 2600 });
+          sparkle(screen, cx, cy, { colors, count: 40, spread: 320, size: 14, duration: 1500 });
+          play(box, [{ transform: 'translate(0,0)' }, { transform: 'translate(-6px,4px) rotate(-1.5deg)' }, { transform: 'translate(6px,-4px) rotate(1.5deg)' }, { transform: 'translate(-4px,2px)' }, { transform: 'translate(0,0)' }], { duration: 520, easing: 'linear', fill: 'none' });
+        }
         sub.textContent = `${RARITY_INFO[def.rarity].label.toUpperCase()}!`;
         sub.className = `sc-sub sc-rarity r-${def.rarity}`;
         await wait(ms(380));

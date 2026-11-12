@@ -1259,7 +1259,7 @@ const CHEST_STYLE = {
   large: { wood: ['#a54dff', '#5e1fa8'], metal: '#ffc83a', metalRough: 0.18, gem: '#ff3d7f' },
 };
 
-function chestModel(type) {
+export function chestModel(type) {
   const st = CHEST_STYLE[type] || CHEST_STYLE.small;
   const g = new THREE.Group();
   const W = 1.7;
@@ -1345,6 +1345,7 @@ function chestModel(type) {
     g.add(knot);
   }
   g.rotation.y = -0.18;
+  g.userData.lid = lid;
   return g;
 }
 

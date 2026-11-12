@@ -204,7 +204,7 @@ export class TrayView {
    */
   setDecor({ foresight = {}, noHold = null, frozen = null } = {}) {
     this.slots.forEach((s, i) => {
-      s.el.classList.toggle('is-frozen', frozen === i);
+      s.el.classList.toggle('is-frozen', Array.isArray(frozen) ? frozen.includes(i) : frozen === i);
       const f = foresight[i];
       s.el.classList.toggle('has-foresight', f !== undefined);
       s.eye.lastChild.textContent = f !== undefined ? String(f) : '';

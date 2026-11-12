@@ -38,8 +38,8 @@ export class Screens {
     this.host.classList.add('is-open');
     this.stage.setDim(dim);
     const panel = el.querySelector('.anim-in') || el;
-    await play(panel, [{ transform: 'scale(.9) translateY(14px)', opacity: 0 }, { transform: 'scale(1) translateY(0)', opacity: 1 }], {
-      duration: 320,
+    await play(panel, [{ transform: 'perspective(900px) translateY(26px) rotateX(10deg) scale(.92)', opacity: 0 }, { transform: 'perspective(900px) translateY(-3px) rotateX(-1deg) scale(1.01)', opacity: 1, offset: 0.7 }, { transform: 'perspective(900px) translateY(0) rotateX(0deg) scale(1)', opacity: 1 }], {
+      duration: 380,
       easing: EASE.back,
     });
   }
@@ -53,7 +53,7 @@ export class Screens {
     const el = this.current;
     if (!el) return;
     this.current = null;
-    await play(el, [{ opacity: 1 }, { opacity: 0 }], { duration: 180, easing: 'linear' });
+    await play(el, [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'perspective(900px) translateY(-12px) rotateX(-6deg) scale(.97)' }], { duration: 200, easing: 'ease-in' });
     el.remove();
     if (!this.current) {
       this.host.classList.remove('is-open');

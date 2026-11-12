@@ -23,7 +23,7 @@ import { TIMING, RULES } from '../config.js';
 import { TOTAL_ROUNDS } from '../core/turns.js';
 import { ALL_CATEGORIES, notableCombo } from '../core/scoring.js';
 import { CARDS } from '../core/cards.js';
-import { stealableBoxes } from '../core/powers.js';
+import { stealableBoxes, boxTargets } from '../core/powers.js';
 
 const COMBO_TEXT = {
   largeStraight: 'SCALA GRANDE!',
@@ -375,7 +375,7 @@ export class Controller {
     this.card.render(g, { interactive: live });
     this.hand.render(g, { interactive: live && this.isMyTurn, player: this.#handOwner() });
     this.hud.setCardInfo(g.players);
-    this.tray.setDecor({ foresight: g.turnState.foresight, noHold: g.current.status.noHoldDie ?? g.turnState.noHold?.[0] ?? null, frozen: g.turnState.frozen?.[0] ?? null });
+    this.tray.setDecor({ foresight: g.turnState.foresight, noHold: g.current.status.noHoldDie ?? g.turnState.noHold?.[0] ?? null, frozen: g.turnState.frozen?.length ? g.turnState.frozen : null });
     this.tray.setHeld(g.dice.held, live && this.isMyTurn && g.dice.hasRolled && g.dice.rollsLeft > 0 && !g.scoredThisTurn);
     this.updateControls();
     if (this.targeting) this.#refreshTargeting();
@@ -545,6 +545,11 @@ export class Controller {
       await this.tray.roll(res.rolledValues, res.rolled, {
         entering: res.rollIndex === 0,
       });
+      if (res.blessed?.dice.length) {
+        const tr = this.#rect(this.tray.el);
+        res.blessed.dice.forEach((i) => this.cardFx.glowDie(this.tray.slotEl(i), 'legendary'));
+        toast(this.fx, 'BENEDETTI: 1 E 2 RILANCIATI', { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'gold' });
+      }
       if (res.curse) await this.#curseStrikes(res);
       if (res.boss && g === this.game) await this.mode?.afterRoll?.(this, res);
       if (g !== this.game) return;
@@ -566,7 +571,14 @@ export class Controller {
     if (c.dice.length) {
       await this.tray.roll(res.values, c.dice);
     }
-    if (c.noHoldDie !== null) {
+    if (c.frozen?.length) {
+      this.tray.setHeld(this.game.dice.held, false);
+      this.tray.setDecor({ foresight: this.game.turnState.foresight, frozen: c.frozen });
+      c.frozen.forEach((i) => shake(this.tray.slotEl(i), 4));
+      const tr = this.#rect(this.tray.el);
+      toast(this.fx, 'DUE DADI CONGELATI: NON SI POSSONO CONSERVARE', { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'hint' });
+    }
+    if (c.noHoldDie !== null && c.noHoldDie !== undefined) {
       this.tray.setHeld(this.game.dice.held, false);
       this.tray.setDecor({ foresight: this.game.turnState.foresight, noHold: c.noHoldDie });
       const slot = this.tray.slotEl(c.noHoldDie);
@@ -743,7 +755,7 @@ export class Controller {
     const c = this.game ? this.#handOwner().status.curse : null;
     if (!c) return;
     const r = this.#rect(this.hand.el);
-    const text = c.type === 'apocalypse' ? 'APOCALISSE IN ARRIVO AL PROSSIMO LANCIO' : 'MALEDIZIONE IN ARRIVO AL PROSSIMO LANCIO';
+    const text = c.type === 'apocalypse' ? 'APOCALISSE IN ARRIVO AL PROSSIMO LANCIO' : c.type === 'freeze' ? 'GELO IN ARRIVO AL PROSSIMO LANCIO' : 'MALEDIZIONE IN ARRIVO AL PROSSIMO LANCIO';
     toast(this.fx, text, { x: r.x + r.w / 2, y: r.y + r.h + 26, kind: 'hint' });
   }
 
@@ -758,7 +770,7 @@ export class Controller {
     if (def.target.kind === 'oppCard') {
       this.popup.pickOpponentCard({
         cards: g.opponent.hand,
-        isLocked: (c) => g.isCardLocked(c),
+        isLocked: (c) => !def.target.any && g.isCardLocked(c),
         title: def.prompt,
         onPick: async (uid) => {
           this.busy = true;
@@ -790,6 +802,10 @@ export class Controller {
     if (kind === 'allDice') return new Set([0, 1, 2, 3, 4]);
     if (kind === 'ownBoxes') return new Set(ALL_CATEGORIES.filter((c) => me.card.canShield(c)).map((c) => `${me.id}:${c}`));
     if (kind === 'oppBox') return new Set(stealableBoxes(g, me).map((c) => `${g.opponent.id}:${c}`));
+    if (kind === 'box') {
+      const pid = t.def.target.side === 'opp' ? g.opponent.id : me.id;
+      return new Set(boxTargets(g, me, t.entry.id).map((c) => `${pid}:${c}`));
+    }
     return new Set();
   }
 
@@ -821,7 +837,7 @@ export class Controller {
       }
     } else if (kind === 'allDice') canConfirm = true;
     else if (kind === 'ownBoxes') canConfirm = t.picks.length === t.def.target.count;
-    else if (kind === 'oppBox') canConfirm = t.picks.length === 1;
+    else if (kind === 'oppBox' || kind === 'box') canConfirm = t.picks.length === 1;
     this.targetBar.render({
       cardId: t.entry.id,
       prompt: t.def.prompt,
@@ -861,7 +877,7 @@ export class Controller {
     const t = this.targeting;
     const kind = t.def.target.kind;
     const key = `${pid}:${cat}`;
-    if ((kind !== 'ownBoxes' && kind !== 'oppBox') || !this.#targets().has(key)) {
+    if ((kind !== 'ownBoxes' && kind !== 'oppBox' && kind !== 'box') || !this.#targets().has(key)) {
       sound.denied();
       shake(this.card.cell(pid, cat).el, 4);
       return;
@@ -902,7 +918,7 @@ export class Controller {
       if (t.def.choice === 'face') params.value = t.choice;
     } else if (kind === 'allDice') params = { values: [...t.values] };
     else if (kind === 'ownBoxes') params = { cats: t.picks.map((k) => k.split(':')[1]) };
-    else if (kind === 'oppBox') params = { cat: t.picks[0].split(':')[1] };
+    else if (kind === 'oppBox' || kind === 'box') params = { cat: t.picks[0].split(':')[1] };
     const entry = t.entry;
     this.#endTargeting();
     this.#playCard(entry, params);
@@ -931,7 +947,11 @@ export class Controller {
     try {
       this.#save();
       buzz(15);
-      sound.cast(def.rarity);
+      sound.cast(def.rarity === 'mythic' ? 'legendary' : def.rarity);
+      if (def.rarity === 'mythic') {
+        sound.introHit() || sound.yatzyBonus();
+        buzz([40, 40, 80]);
+      }
       this.hand.render(g, { interactive: false, player: this.#handOwner() });
       this.hud.setCardInfo(g.players);
       const ghost = h('div', { class: 'cast-from' });
@@ -980,8 +1000,65 @@ export class Controller {
         sound.godHand();
         this.cardFx.godRays(this.tray.el);
         await this.tray.roll(res.values, [0, 1, 2, 3, 4]);
-        [0, 1, 2, 3, 4].forEach((i) => this.cardFx.glowDie(this.tray.slotEl(i), 'legendary'));
+        [0, 1, 2, 3, 4].forEach((i) => this.cardFx.glowDie(this.tray.slotEl(i), def.rarity));
         this.#diceChangedCombo();
+        if (res.extraRoll) toast(this.fx, 'E UN LANCIO IN PIÙ!', { x: tr.x + tr.w / 2, y: tr.y + tr.h + 30, kind: 'gold' });
+        break;
+      case 'sabotage': {
+        const cell = this.card.cell(opp.id, res.cat).el;
+        if (res.blocked) {
+          sound.blocked();
+          this.card.render(g, { interactive: false });
+          await this.cardFx.blocked(cell);
+        } else {
+          sound.prison();
+          shake(cell, 5);
+          pop(cell, 1.15, 300);
+          const c = this.#rect(cell);
+          sparkle(this.fx, c.x + c.w / 2, c.y + c.h / 2, { colors: ['#3b1f5e', '#b98cff', '#ffffff'], count: 12, spread: 40 });
+          toast(this.fx, `CASELLA SABOTATA PER IL ${this.#short(opp.id)}`, { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'hint' });
+          await wait(ms(500));
+        }
+        break;
+      }
+      case 'bonusSet': {
+        sound.crown();
+        await this.cardFx.crownOn(this.controls.confirm);
+        const label = { plus: '+8 AL PUNTEGGIO DEL TURNO', mult: 'PUNTEGGIO ×1,5', net: 'RETE: UNO ZERO VALE 15' }[res.bonus];
+        toast(this.fx, label, { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'gold' });
+        break;
+      }
+      case 'bless':
+        sound.holy();
+        this.cardFx.godRays(this.tray.el);
+        toast(this.fx, res.eternal ? 'BENEDIZIONE ETERNA: 1 E 2 SPARISCONO PER 4 TURNI' : 'PROSSIMO LANCIO BENEDETTO', { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'gold' });
+        await wait(ms(600));
+        break;
+      case 'cardSteal':
+        sound.steal();
+        await this.cardFx.prison(res.cardId);
+        this.hand.render(g, { interactive: false, player: this.#handOwner() });
+        this.hud.setCardInfo(g.players);
+        toast(this.fx, `RUBATA: ${CARDS[res.cardId].name.toUpperCase()}`, { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'gold' });
+        break;
+      case 'halveSet':
+        sound.curse();
+        await this.cardFx.curseCast(this.hud.totalEl(opp.id), 'chaos');
+        toast(this.fx, `IL PROSSIMO PUNTEGGIO DEL ${this.#short(opp.id)} SARÀ DIMEZZATO`, { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'hint' });
+        break;
+      case 'lessRolls':
+        sound.curse();
+        await this.cardFx.curseCast(this.hud.totalEl(opp.id), 'chaos');
+        toast(this.fx, `IL ${this.#short(opp.id)} AVRÀ UN LANCIO IN MENO`, { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'hint' });
+        break;
+      case 'blackhole':
+        sound.satan();
+        buzz([60, 40, 100]);
+        shake(this.stage.table.querySelector('.play-area') || this.stage.table, 9, 700);
+        await this.cardFx.curseCast(this.hud.totalEl(opp.id), 'apocalypse');
+        this.hud.setCardInfo(g.players);
+        toast(this.fx, `BUCO NERO: ${res.swallowed.length} CARTE INGHIOTTITE!`, { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'hint' });
+        await wait(ms(400));
         break;
       case 'shield':
         sound.shieldUp();
@@ -990,6 +1067,11 @@ export class Controller {
         break;
       case 'steal': {
         const cell = this.card.cell(opp.id, res.cat).el;
+        if (res.cosmic) {
+          sound.satan();
+          shake(this.stage.table.querySelector('.play-area') || this.stage.table, 8, 600);
+          toast(this.fx, 'FURTO COSMICO!', { x: tr.x + tr.w / 2, y: tr.y - 40, kind: 'gold' });
+        }
         if (res.blocked) {
           sound.blocked();
           this.card.render(g, { interactive: false });
@@ -1005,7 +1087,7 @@ export class Controller {
       case 'extraRoll':
         sound.combo();
         this.updateControls({ locked: true });
-        toast(this.fx, 'UN LANCIO IN PIÙ!', { x: tr.x + tr.w / 2, y: tr.y - 8 });
+        toast(this.fx, res.added > 1 ? `+${res.added} LANCI!` : 'UN LANCIO IN PIÙ!', { x: tr.x + tr.w / 2, y: tr.y - 8, kind: res.added > 2 ? 'gold' : undefined });
         await wait(ms(500));
         break;
       case 'curse':
@@ -1035,6 +1117,7 @@ export class Controller {
         this.hud.setCardInfo(g.players);
         toast(this.fx, `ANNULLATO: ${name}`, { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'gold' });
         await wait(ms(400));
+        if (res.draw && g.pendingDraws > 0) await this.#drawPhase({ extra: true });
         break;
       }
       case 'crown':
@@ -1159,7 +1242,33 @@ export class Controller {
       }
     }
     const yb = res.yatzyBonus ? RULES.YATZY_BONUS : 0;
-    await Promise.all([this.hud.setTotal(pid, res.total - yb - res.crownExtra, true), clearing]);
+    const cardExtra = res.cardExtra || 0;
+    await Promise.all([this.hud.setTotal(pid, res.total - yb - res.crownExtra - cardExtra, true), clearing]);
+
+    // Mezza Luna dell'avversario: metà punteggio se ne va
+    if (res.halved) {
+      const c = this.#rect(cell.el);
+      if (res.halved.blocked) {
+        sound.blocked();
+        await this.cardFx.blocked(cell.el);
+      } else if (res.halved.taken > 0) {
+        sound.curseHit();
+        shake(cell.el, 5);
+        toast(this.fx, `MEZZA LUNA −${res.halved.taken}`, { x: c.x + c.w / 2, y: c.y - 6, kind: 'hint' });
+        await wait(ms(500));
+      }
+      this.card.render(g, { interactive: false, holdRingFor: pid, holdChecksFor: res.yatzyBonus ? pid : null });
+    }
+
+    // carte bonus del turno (Spicciolo, Moltiplicatore, Rete di Salvataggio)
+    if (cardExtra > 0) {
+      sound.coins();
+      const c = this.#rect(cell.el);
+      const names = res.extras.map((x) => CARDS[x.cardId].name.toUpperCase()).join(' + ');
+      toast(this.fx, names, { x: c.x + c.w / 2, y: c.y - 6, kind: 'gold' });
+      await this.cardFx.flyPoints({ x: c.x + c.w / 2, y: c.y + c.h / 2 }, this.hud.totalEl(pid), `+${cardExtra}`);
+      await this.hud.setTotal(pid, res.total - yb - res.crownExtra, true);
+    }
 
     // Corona del Destino: punteggio raddoppiato
     if (res.crownExtra > 0) {
@@ -1192,6 +1301,31 @@ export class Controller {
   /* ------------------------------------------------------------ */
   /* cambio turno                                                  */
   /* ------------------------------------------------------------ */
+  /** Avvisi delle carte che scattano a inizio turno (Sabotaggio, Lancio Rubato, Benedizione). */
+  async #cardTurnNotes(g) {
+    const n = g.turnState.cardNotes;
+    if (!n) return;
+    const tr = this.#rect(this.tray.el);
+    const me = g.current.id;
+    if (n.sabotage) {
+      const cell = this.card.cell(me, n.sabotage).el;
+      sound.prison();
+      shake(cell, 5);
+      toast(this.fx, 'SABOTAGGIO: UNA CASELLA È BLOCCATA', { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'hint' });
+      await wait(ms(700));
+    }
+    if (n.lessRolls) {
+      sound.curseHit();
+      toast(this.fx, 'LANCIO RUBATO: UN LANCIO IN MENO', { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'hint' });
+      await wait(ms(700));
+    }
+    if (n.bless) {
+      sound.holy();
+      toast(this.fx, `BENEDIZIONE ETERNA (${n.bless} TURNI)`, { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'gold' });
+      await wait(ms(600));
+    }
+  }
+
   async #advanceTurn() {
     const g = this.game;
     this.busy = true;
@@ -1232,6 +1366,8 @@ export class Controller {
     await banner.hide();
     if (g !== this.game) return;
     await this.mode?.turnStart?.(this, g);
+    if (g !== this.game) return;
+    await this.#cardTurnNotes(g);
     if (g !== this.game) return;
     await this.#drawPhase();
     if (g !== this.game) return;

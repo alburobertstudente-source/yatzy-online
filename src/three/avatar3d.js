@@ -199,7 +199,7 @@ function frame(obj, { azimuth = 0.42, elev = 0.22, fill = 0.88, fov = 26, fit = 
  * Il renderer è condiviso: per i colori pieni da cartone uso il tone mapping
  * "Neutral" (non sbiadisce i colori saturi) e rimetto tutto com'era dopo.
  */
-function sceneFor(obj, opts, renderer) {
+export function sceneFor(obj, opts, renderer) {
   const st = getStage();
   const prev = renderer ? { tm: renderer.toneMapping, ex: renderer.toneMappingExposure } : null;
   if (renderer) {

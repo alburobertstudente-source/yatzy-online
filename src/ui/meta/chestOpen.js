@@ -10,6 +10,7 @@ import { sound } from '../../audio/sound.js';
 import { chestSvg, MI } from '../metaIcons.js';
 import { ITEMS, RARITY, rarityRank } from '../../meta/catalog.js';
 import { CHESTS } from '../../meta/economy.js';
+import { ChestScene } from '../../three/chestOpen3d.js';
 import { itemArt, rarityChip, fmt } from './common.js';
 
 const tapOrWait = (el, t) =>
@@ -43,7 +44,14 @@ export async function openChestAnimation(host, chestId, result) {
   host.append(el);
   await play(el, [{ opacity: 0 }, { opacity: 1 }], { duration: 220, easing: 'linear' });
   sound.whoosh();
-  await play(chest, [{ transform: 'translateY(-260px) scale(.6)' }, { transform: 'translateY(0) scale(1.08,.9)', offset: 0.7 }, { transform: 'none' }], { duration: 650, easing: EASE.out });
+  // cassa in 3D (la versione disegnata resta come riserva)
+  const scene3d = ChestScene.create(stageEl, chestId, color, rarityRank(best));
+  if (scene3d) {
+    chest.style.visibility = 'hidden';
+    el.classList.add('is-3d');
+  }
+  if (scene3d) await scene3d.drop();
+  else await play(chest, [{ transform: 'translateY(-260px) scale(.6)' }, { transform: 'translateY(0) scale(1.08,.9)', offset: 0.7 }, { transform: 'none' }], { duration: 650, easing: EASE.out });
   if (!sound.fx('cupSlam', { rate: 0.85 })) sound.land();
   buzz(20);
 
@@ -54,10 +62,12 @@ export async function openChestAnimation(host, chestId, result) {
   for (let k = 0; k < shakes; k++) {
     if (!sound.fx('chestShake', { rate: 1 + k * 0.06 })) sound.tone({ freq: 180 + k * 40, type: 'square', dur: 0.08, gain: 0.12 });
     buzz(15);
-    await play(chest, [{ transform: 'rotate(0)' }, { transform: `rotate(${k % 2 ? 7 : -7}deg) scale(${1 + k * 0.02})` }, { transform: 'rotate(0)' }], { duration: 170, easing: 'ease-in-out' });
+    if (scene3d) await scene3d.shake(k);
+    else await play(chest, [{ transform: 'rotate(0)' }, { transform: `rotate(${k % 2 ? 7 : -7}deg) scale(${1 + k * 0.02})` }, { transform: 'rotate(0)' }], { duration: 170, easing: 'ease-in-out' });
   }
   chest.classList.add('is-open');
   rays.classList.add('is-on');
+  if (scene3d) scene3d.openLid();
   sound.chestOpen();
   sound.reveal(best);
   buzz([30, 40, 60]);
@@ -68,6 +78,7 @@ export async function openChestAnimation(host, chestId, result) {
   if (rarityRank(best) >= 4) confetti(fx, { colors: [color, '#ffffff', '#ffd23f'], count: 70 });
   await wait(ms(450));
 
+  scene3d?.dim();
   // oggetti uno alla volta
   const shelf = h('div', { class: 'co-shelf' });
   for (const [k, it] of result.items.entries()) {
@@ -85,7 +96,7 @@ export async function openChestAnimation(host, chestId, result) {
     const front = h('div', { class: 'co-front' }, card, h('div', { class: 'co-count' }, `${k + 1} / ${result.items.length}`), h('div', { class: 'co-hint' }, 'TOCCA PER CONTINUARE'));
     el.append(front);
     sound.reveal(it.rarity);
-    await play(card, [{ transform: 'translateY(120px) scale(.2) rotate(-12deg)', opacity: 0 }, { transform: 'translateY(-10px) scale(1.08)', opacity: 1, offset: 0.7 }, { transform: 'none', opacity: 1 }], { duration: 520, easing: EASE.out });
+    await play(card, [{ transform: 'perspective(700px) translateY(160px) scale(.15) rotateY(540deg) rotateX(30deg)', opacity: 0 }, { transform: 'perspective(700px) translateY(-14px) scale(1.1) rotateY(-12deg)', opacity: 1, offset: 0.72 }, { transform: 'perspective(700px) none', opacity: 1 }], { duration: 700, easing: EASE.out });
     if (rarityRank(it.rarity) >= 3) sparkle(fx, el.offsetWidth / 2, el.offsetHeight * 0.42, { colors: [RARITY[it.rarity].color, '#fff'], count: 22, spread: 160, size: 11 });
     await tapOrWait(front);
     sound.tap();
@@ -108,6 +119,7 @@ export async function openChestAnimation(host, chestId, result) {
   await new Promise((resolve) => sum.querySelector('button').addEventListener('click', resolve, { once: true }));
   sound.tap();
   await play(el, [{ opacity: 1 }, { opacity: 0 }], { duration: 200, easing: 'linear' });
+  scene3d?.dispose();
   el.remove();
 }
 
