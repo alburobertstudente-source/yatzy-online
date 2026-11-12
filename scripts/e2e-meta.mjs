@@ -18,7 +18,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = process.argv[2] || join(ROOT, 'test-results', 'meta');
 mkdirSync(OUT, { recursive: true });
 const PORT = Number(process.env.E2E_PORT) || 5199;
-const DATA = join(ROOT, 'test-results', 'meta-data');
+const DATA = join(ROOT, 'test-results', `meta-data-${PORT}`);
 rmSync(DATA, { recursive: true, force: true });
 const PAGE = process.env.E2E_PAGE || 'index.html';
 const BASE = `http://localhost:${PORT}/${PAGE}`;
