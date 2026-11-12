@@ -96,7 +96,7 @@ export function diceSwatch(id, value = 5, size = 44) {
   const fx = it.fx ? ` dfx-${it.fx}` : '';
   const flat = `<span class="dice-swatch skinned${fx}" style="--die-face:${it.face};--die-pip:${it.pip};--die-edge:${it.edge};--die-ring:${it.ring || '0 0 0 0 transparent'};width:${size}px;height:${size}px"><span class="face">${skinPips(value, it.shape)}</span></span>`;
   // dado 3D (immagine generata al volo); il disegno piatto resta finché non è pronta
-  return artSpan('dice', `${it.id}:${value}`, Math.round(size * 1.3), flat, 'dice-art');
+  return artSpan('dice', `${it.id}:${value}`, size, flat, 'dice-art');
 }
 
 export function rollStyleOf(id) {

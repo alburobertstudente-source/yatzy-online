@@ -1134,3 +1134,11 @@
     transform: scale(0.92);
   }
 }
+
+/* dado 3D nelle anteprime: l'immagine (vista di 3/4) un po' più grande della casella */
+.dice-art {
+  overflow: visible;
+}
+.dice-art > .art3d-img {
+  transform: scale(1.32);
+}

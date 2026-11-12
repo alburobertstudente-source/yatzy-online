@@ -4,6 +4,7 @@
  */
 import { ITEMS, SKIN_TONES } from '../meta/catalog.js';
 import { toon } from './toon.js';
+import { avatarArtHtml, wearArtHtml } from '../three/avatar3d.js';
 
 const shade = (hex, k) => {
   const n = parseInt(hex.slice(1), 16);
@@ -202,7 +203,13 @@ const fxClass = (it) => (it?.fx ? ` class="av-fx-${it.fx}"` : '');
  * @param {{equip:object, skinTone?:number}} who
  * @param {{size?:number, bust?:boolean}} [o] bust = solo busto (testa e spalle)
  */
-export function avatarSvg({ equip = {}, skinTone = 0 } = {}, { size = 120, bust = false } = {}) {
+export function avatarSvg(who = {}, opts = {}) {
+  // personaggio 3D (immagine generata), con il disegno SVG come riserva
+  return avatarArtHtml({ equip: who.equip || {}, skinTone: who.skinTone || 0 }, { size: opts.size ?? 120, bust: Boolean(opts.bust) }, avatarSvgFlat(who, opts));
+}
+
+/** Avatar disegnato in SVG (riserva quando il 3D non c'è). */
+export function avatarSvgFlat({ equip = {}, skinTone = 0 } = {}, { size = 120, bust = false } = {}) {
   const skin = SKIN_TONES[skinTone] || SKIN_TONES[0];
   const get = (cat) => (equip[cat] ? ITEMS[equip[cat]] : null);
   const it = { hat: get('hat'), face: get('face'), shirt: get('shirt') || ITEMS['shirt.basic'], pants: get('pants') || ITEMS['pants.basic'], shoes: get('shoes') || ITEMS['shoes.basic'], back: get('back') };
@@ -248,5 +255,5 @@ export function itemPreviewSvg(id, size = 64) {
   if (!it) return '';
   const equip = { [it.cat]: id };
   const bust = it.cat === 'hat' || it.cat === 'face';
-  return avatarSvg({ equip }, { size, bust });
+  return wearArtHtml(id, size, avatarSvgFlat({ equip }, { size, bust }));
 }
