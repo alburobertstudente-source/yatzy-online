@@ -17,6 +17,8 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const require = createRequire(import.meta.url);
+/** Avvisi del WebGL software del browser di prova (non del gioco). */
+const IGNORED_CONSOLE = /KHR_parallel_shader_compile|GL Driver Message|GPU stall due to ReadPixels|WebGL: INVALID_|Automatic fallback to software WebGL/;
 let chromium;
 try {
   ({ chromium } = require('playwright'));
@@ -28,7 +30,7 @@ try {
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = process.argv[2] || join(ROOT, 'test-results');
 mkdirSync(OUT, { recursive: true });
-const PORT = 5199;
+const PORT = Number(process.env.E2E_PORT) || 5199;
 const BASE = `http://localhost:${PORT}/${process.env.E2E_PAGE || 'index.html'}`;
 
 const server = spawn(process.execPath, [join(ROOT, 'scripts/serve.mjs'), String(PORT), ROOT], { stdio: 'ignore' });
@@ -51,7 +53,7 @@ async function newPage(browser, viewport, query = 'classic=1&debug=1&speed=6') {
   const ctx = await browser.newContext({ viewport, deviceScaleFactor: 1, hasTouch: true, isMobile: viewport.width < 600 });
   const page = await ctx.newPage();
   const errors = [];
-  page.on('console', (m) => ['error', 'warning'].includes(m.type()) && errors.push(`${m.type()}: ${m.text()}`));
+  page.on('console', (m) => ['error', 'warning'].includes(m.type()) && !IGNORED_CONSOLE.test(m.text()) && errors.push(`${m.type()}: ${m.text()}`));
   page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
   await page.goto(`${BASE}?${query}`);
   await page.evaluate(() => localStorage.clear());

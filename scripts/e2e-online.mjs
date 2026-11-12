@@ -13,12 +13,14 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const require = createRequire(import.meta.url);
+/** Avvisi del WebGL software del browser di prova (non del gioco). */
+const IGNORED_CONSOLE = /KHR_parallel_shader_compile|GL Driver Message|GPU stall due to ReadPixels|WebGL: INVALID_|Automatic fallback to software WebGL/;
 const { chromium } = require('playwright');
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = process.argv[2] || join(ROOT, 'test-results', 'online');
 mkdirSync(OUT, { recursive: true });
 
-const WEB_PORT = 5198;
+const WEB_PORT = Number(process.env.E2E_PORT) || 5198;
 const PEER_PORT = 9010;
 const PAGE = process.env.E2E_PAGE || 'index.html';
 const URL = `http://localhost:${WEB_PORT}/${PAGE}?classic=1&debug=1&netlog=1&speed=6&peerHost=127.0.0.1&peerPort=${PEER_PORT}&peerPath=/`;
@@ -41,7 +43,7 @@ async function phone(browser, name) {
   page.errors = [];
   page.netlog = [];
   page.on('console', (m) => {
-    if (m.type() === 'error') page.errors.push(`${name}: ${m.text()}`);
+    if (m.type() === 'error' && !IGNORED_CONSOLE.test(m.text())) page.errors.push(`${name}: ${m.text()}`);
     if (m.text().startsWith('[net]')) page.netlog.push(`${name} ${m.text()}`);
   });
   pages.push(page);
