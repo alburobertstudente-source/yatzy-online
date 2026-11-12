@@ -1384,7 +1384,7 @@ const SPEC = {
   planet: { paint: P.planet, mat: 'satin', fx: 'ring' },
   storm: { paint: P.storm, mat: 'satin', pipGlow: '#ffe14d', fx: 'storm' },
   cat: { paint: P.cat, mat: 'fabric', sheenColor: '#ffd8a8', mat2: { roughness: 0.75 } },
-  geode: { paint: P.geode, mat: 'gem', alpha: 1, core: null, coreColor: '#9a6bff', fx: 'shine' },
+  geode: { paint: P.geode, mat: 'gem', alpha: 1, core: false, coreColor: '#9a6bff', fx: 'shine' },
   lavalamp: { paint: P.lavalamp, mat: 'jelly', alpha: 0.78, core: 'blobs', coreColor: '#ff7a2a', fx: 'blobs' },
   hologram: { paint: P.hologram, mat: 'glass', alpha: 0.45, pipGlow: '#c8fff9', fx: 'scan' },
   piano: { paint: P.piano, mat: 'lacquer', pipMetal: true, pipColor: '#ffcf33' },

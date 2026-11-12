@@ -138,6 +138,13 @@ export class DiceLayer3D {
     this.camera = new THREE.PerspectiveCamera(24, 1, 0.3, 120);
     this.catcher = shadowCatcher(1, 0.34);
     this.catcher.position.y = 0.001;
+    // bordi sfumati: l'ombra svanisce verso i lati invece di tagliarsi di netto
+    this.catcher.material.onBeforeCompile = (sh) => {
+      sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec2 vEdgeUv;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvEdgeUv = uv;');
+      sh.fragmentShader = sh.fragmentShader
+        .replace('#include <common>', '#include <common>\nvarying vec2 vEdgeUv;')
+        .replace('#include <fog_fragment>', 'gl_FragColor.a *= smoothstep(0.0, 0.16, vEdgeUv.x) * smoothstep(0.0, 0.16, 1.0 - vEdgeUv.x) * smoothstep(0.0, 0.2, vEdgeUv.y) * smoothstep(0.0, 0.2, 1.0 - vEdgeUv.y);\n#include <fog_fragment>');
+    };
     scene.add(this.catcher);
     this.fx = new Particles(scene);
     this.discs = { portal: vortexDisc('#b98cff'), blackhole: vortexDisc('#1a0838', true) };
@@ -211,7 +218,7 @@ export class DiceLayer3D {
     const b = this.#toPlane(pad.side + w, pad.top + h, 0);
     if (a && b) {
       this.catcher.position.set((a.x + b.x) / 2, 0.001, (a.z + b.z) / 2);
-      this.catcher.scale.set(Math.abs(b.x - a.x) + 0.6, Math.abs(b.z - a.z) + 0.6, 1);
+      this.catcher.scale.set(Math.abs(b.x - a.x) + 1.6, Math.abs(b.z - a.z) + 1.4, 1);
       this.trayBox = { x0: Math.min(a.x, b.x) - 0.3, x1: Math.max(a.x, b.x) + 0.3, z0: Math.min(a.z, b.z) - 0.3, z1: Math.max(a.z, b.z) + 0.3 };
     }
     return true;
