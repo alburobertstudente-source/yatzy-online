@@ -34,7 +34,7 @@ export async function openChestAnimation(host, chestId, result) {
   const best = result.items.reduce((m, it) => (rarityRank(it.rarity) > rarityRank(m) ? it.rarity : m), 'common');
   const color = RARITY[best].color;
   const rays = h('div', { class: 'co-rays', style: { '--rc': color } });
-  const chest = h('div', { class: 'co-chest', html: chestSvg(chestId, 190) });
+  const chest = h('div', { class: 'co-chest', html: chestSvg(chestId, 190, { parts: true }) });
   const hint = h('div', { class: 'co-hint' }, 'TOCCA PER APRIRE');
   const stageEl = h('div', { class: 'co-stage' }, rays, chest);
   const title = h('div', { class: 'co-title' }, CHESTS[chestId].name.toUpperCase());

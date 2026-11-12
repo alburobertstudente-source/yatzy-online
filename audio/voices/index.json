@@ -31,7 +31,7 @@
     0.94,
     1.06
    ],
-   "gain": 1.0
+   "gain": 1.1
   },
   "wood": {
    "shake": [
@@ -78,7 +78,7 @@
     0.9,
     1.1
    ],
-   "gain": 1.0
+   "gain": 1.05
   },
   "glass": {
    "shake": [
@@ -213,7 +213,7 @@
     0.88,
     1.2
    ],
-   "gain": 0.9
+   "gain": 1.25
   },
   "bubble": {
    "shake": [
@@ -360,10 +360,10 @@
     "voices/notes/marimba-c5.mp3"
    ],
    "hold": [
-    "voices/notes/marimba-g4.mp3"
+    "voices/musical/hold.mp3"
    ],
    "release": [
-    "voices/notes/marimba-c4.mp3"
+    "voices/musical/release.mp3"
    ],
    "rate": [
     1,
@@ -384,10 +384,10 @@
     "voices/notes/piano-g5.mp3"
    ],
    "hold": [
-    "voices/notes/piano-g5.mp3"
+    "voices/piano/hold.mp3"
    ],
    "release": [
-    "voices/notes/piano-c5.mp3"
+    "voices/piano/release.mp3"
    ],
    "rate": [
     1,
@@ -628,7 +628,7 @@
     0.95,
     1.1
    ],
-   "gain": 0.9
+   "gain": 1.05
   },
   "spooky": {
    "shake": [
@@ -639,7 +639,8 @@
    "land": [
     "voices/spooky/land-1.mp3",
     "voices/spooky/land-2.mp3",
-    "voices/spooky/land-3.mp3"
+    "voices/spooky/land-3.mp3",
+    "voices/spooky/land-4.mp3"
    ],
    "hold": [
     "voices/spooky/hold.mp3"
@@ -1043,10 +1044,8 @@
   },
   "glitch": {
    "files": [
-    "voices/styles/glitch-1.mp3",
-    "voices/styles/glitch-2.mp3",
-    "voices/styles/glitch-3.mp3",
-    "voices/styles/glitch-4.mp3"
+    "voices/styles/glitch.mp3",
+    "voices/styles/glitch-2.mp3"
    ],
    "gain": 0.7
   },

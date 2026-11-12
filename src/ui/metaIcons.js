@@ -1,4 +1,5 @@
 import { toon } from './toon.js';
+import { artSpan } from '../three/core.js';
 /** Icone del menu principale, del negozio e della campagna (SVG originali). */
 const s = (body, vb = '0 0 24 24') => `<svg viewBox="${vb}" aria-hidden="true">${body}</svg>`;
 const st = 'fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"';
@@ -26,9 +27,14 @@ export const MI = {
   dice: s(`<rect x="3.5" y="3.5" width="17" height="17" rx="4" ${st}/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/>`),
 };
 
-/** Cassa disegnata (stile per tipo) con il coperchio separato per l'animazione. */
-export function chestSvg(type = 'small', size = 120) {
-  return toon(chestRaw(type, size), { outline: 1.6 });
+/**
+ * Cassa: immagine 3D nel negozio (con il disegno come riserva).
+ * Con { parts: true } resta il disegno SVG con il coperchio separato (.chest-lid),
+ * che serve all'animazione di apertura.
+ */
+export function chestSvg(type = 'small', size = 120, { parts = false } = {}) {
+  const svg = toon(chestRaw(type, size), { outline: 1.6 });
+  return parts ? svg : artSpan('chest', type, size, svg, 'chest-art');
 }
 
 function chestRaw(type, size) {

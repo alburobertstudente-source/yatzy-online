@@ -3,6 +3,8 @@
  * lancio, tema del tavolo e skin delle carte.
  */
 import { ITEMS } from '../meta/catalog.js';
+import { artSpan } from '../three/core.js';
+import '../three/diceThumbs.js';
 
 const PIP_POS = { tl: [13, 13], tr: [35, 13], ml: [13, 24], mm: [24, 24], mr: [35, 24], bl: [13, 35], br: [35, 35] };
 const PIPS = { 1: ['mm'], 2: ['tr', 'bl'], 3: ['tr', 'mm', 'bl'], 4: ['tl', 'tr', 'bl', 'br'], 5: ['tl', 'tr', 'mm', 'bl', 'br'], 6: ['tl', 'tr', 'ml', 'mr', 'bl', 'br'] };
@@ -92,7 +94,9 @@ export function applyDiceSkin(el, id) {
 export function diceSwatch(id, value = 5, size = 44) {
   const it = ITEMS[id] || ITEMS['dice.classic'];
   const fx = it.fx ? ` dfx-${it.fx}` : '';
-  return `<span class="dice-swatch skinned${fx}" style="--die-face:${it.face};--die-pip:${it.pip};--die-edge:${it.edge};--die-ring:${it.ring || '0 0 0 0 transparent'};width:${size}px;height:${size}px"><span class="face">${skinPips(value, it.shape)}</span></span>`;
+  const flat = `<span class="dice-swatch skinned${fx}" style="--die-face:${it.face};--die-pip:${it.pip};--die-edge:${it.edge};--die-ring:${it.ring || '0 0 0 0 transparent'};width:${size}px;height:${size}px"><span class="face">${skinPips(value, it.shape)}</span></span>`;
+  // dado 3D (immagine generata al volo); il disegno piatto resta finché non è pronta
+  return artSpan('dice', `${it.id}:${value}`, Math.round(size * 1.3), flat, 'dice-art');
 }
 
 export function rollStyleOf(id) {

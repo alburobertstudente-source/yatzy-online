@@ -1,15 +1,6 @@
 [
  {
   "file": "voices/dice/shake-1.mp3",
-  "title": "dice-many-shake-01.m4a — Fantasy Accessory SFX Library (OpenGameArt)",
-  "author": "vehicle",
-  "license": "CC0 1.0",
-  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
-  "source": "https://opengameart.org/content/fantasy-accessory-sfx-library",
-  "via": "https://github.com/novincode/atomcut-library/tree/HEAD/packs/opengameart-fantasy-accessory-sfx-library"
- },
- {
-  "file": "voices/dice/shake-2.mp3",
   "title": "dice-many-shake-02.m4a — Fantasy Accessory SFX Library (OpenGameArt)",
   "author": "vehicle",
   "license": "CC0 1.0",
@@ -18,13 +9,22 @@
   "via": "https://github.com/novincode/atomcut-library/tree/HEAD/packs/opengameart-fantasy-accessory-sfx-library"
  },
  {
-  "file": "voices/dice/shake-3.mp3",
+  "file": "voices/dice/shake-2.mp3",
   "title": "dice-many-shake-03.m4a — Fantasy Accessory SFX Library (OpenGameArt)",
   "author": "vehicle",
   "license": "CC0 1.0",
   "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
   "source": "https://opengameart.org/content/fantasy-accessory-sfx-library",
   "via": "https://github.com/novincode/atomcut-library/tree/HEAD/packs/opengameart-fantasy-accessory-sfx-library"
+ },
+ {
+  "file": "voices/dice/shake-3.mp3",
+  "title": "dieShuffle2.ogg — Casino Audio (Kenney)",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0 1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/casino-audio",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Casino%20Audio"
  },
  {
   "file": "voices/dice/land-1.mp3",
@@ -82,7 +82,7 @@
  },
  {
   "file": "voices/dice/release.mp3",
-  "title": "dieGrab2.ogg — Casino Audio (Kenney)",
+  "title": "dieGrab1.ogg — Casino Audio (Kenney)",
   "author": "Kenney (www.kenney.nl)",
   "license": "CC0 1.0",
   "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
@@ -524,7 +524,7 @@
  {
   "file": "voices/gem/shake.mp3",
   "title": "crystal-falls.m4a — Random SFX (OpenGameArt)",
-  "author": "%C3%A9crivain",
+  "author": "écrivain",
   "license": "CC0 1.0",
   "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
   "source": "https://opengameart.org/content/random-sfx",
@@ -1332,6 +1332,24 @@
   "via": "https://github.com/gleitz/midi-js-soundfonts/tree/HEAD/FluidR3_GM/marimba-mp3"
  },
  {
+  "file": "voices/musical/hold.mp3",
+  "title": "marimba G4 — Fluid R3 GM SoundFont",
+  "author": "Frank Wen (Fluid R3 GM SoundFont), MP3 rendering by Benjamin Gleitzman (midi-js-soundfonts)",
+  "license": "CC BY 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+  "source": "https://github.com/gleitz/midi-js-soundfonts",
+  "via": "https://github.com/gleitz/midi-js-soundfonts/tree/HEAD/FluidR3_GM/marimba-mp3"
+ },
+ {
+  "file": "voices/musical/release.mp3",
+  "title": "marimba C4 — Fluid R3 GM SoundFont",
+  "author": "Frank Wen (Fluid R3 GM SoundFont), MP3 rendering by Benjamin Gleitzman (midi-js-soundfonts)",
+  "license": "CC BY 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+  "source": "https://github.com/gleitz/midi-js-soundfonts",
+  "via": "https://github.com/gleitz/midi-js-soundfonts/tree/HEAD/FluidR3_GM/marimba-mp3"
+ },
+ {
   "file": "voices/notes/piano-c4.mp3",
   "title": "acoustic_grand_piano C4 — Fluid R3 GM SoundFont",
   "author": "Frank Wen (Fluid R3 GM SoundFont), MP3 rendering by Benjamin Gleitzman (midi-js-soundfonts)",
@@ -1424,6 +1442,24 @@
  {
   "file": "voices/piano/shake.mp3",
   "title": "acoustic_grand_piano G4 — Fluid R3 GM SoundFont",
+  "author": "Frank Wen (Fluid R3 GM SoundFont), MP3 rendering by Benjamin Gleitzman (midi-js-soundfonts)",
+  "license": "CC BY 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+  "source": "https://github.com/gleitz/midi-js-soundfonts",
+  "via": "https://github.com/gleitz/midi-js-soundfonts/tree/HEAD/FluidR3_GM/acoustic_grand_piano-mp3"
+ },
+ {
+  "file": "voices/piano/hold.mp3",
+  "title": "acoustic_grand_piano G5 — Fluid R3 GM SoundFont",
+  "author": "Frank Wen (Fluid R3 GM SoundFont), MP3 rendering by Benjamin Gleitzman (midi-js-soundfonts)",
+  "license": "CC BY 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+  "source": "https://github.com/gleitz/midi-js-soundfonts",
+  "via": "https://github.com/gleitz/midi-js-soundfonts/tree/HEAD/FluidR3_GM/acoustic_grand_piano-mp3"
+ },
+ {
+  "file": "voices/piano/release.mp3",
+  "title": "acoustic_grand_piano C5 — Fluid R3 GM SoundFont",
   "author": "Frank Wen (Fluid R3 GM SoundFont), MP3 rendering by Benjamin Gleitzman (midi-js-soundfonts)",
   "license": "CC BY 3.0",
   "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
@@ -1838,7 +1874,7 @@
  {
   "file": "voices/ghost/shake.mp3",
   "title": "hollow-wind.m4a — Random SFX (OpenGameArt)",
-  "author": "%C3%A9crivain",
+  "author": "écrivain",
   "license": "CC0 1.0",
   "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
   "source": "https://opengameart.org/content/random-sfx",
@@ -2305,6 +2341,24 @@
  },
  {
   "file": "voices/spooky/land-3.mp3",
+  "title": "impactSoft_medium_002.ogg — Impact Sounds (Kenney)",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0 1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/impact-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Impact%20Sounds"
+ },
+ {
+  "file": "voices/spooky/land-4.mp3",
+  "title": "church_organ Gb4 — Fluid R3 GM SoundFont",
+  "author": "Frank Wen (Fluid R3 GM SoundFont), MP3 rendering by Benjamin Gleitzman (midi-js-soundfonts)",
+  "license": "CC BY 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+  "source": "https://github.com/gleitz/midi-js-soundfonts",
+  "via": "https://github.com/gleitz/midi-js-soundfonts/tree/HEAD/FluidR3_GM/church_organ-mp3"
+ },
+ {
+  "file": "voices/spooky/land-4.mp3",
   "title": "impactSoft_medium_002.ogg — Impact Sounds (Kenney)",
   "author": "Kenney (www.kenney.nl)",
   "license": "CC0 1.0",
@@ -3179,7 +3233,7 @@
  {
   "file": "voices/styles/tornado.mp3",
   "title": "hollow-wind.m4a — Random SFX (OpenGameArt)",
-  "author": "%C3%A9crivain",
+  "author": "écrivain",
   "license": "CC0 1.0",
   "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
   "source": "https://opengameart.org/content/random-sfx",
@@ -3267,7 +3321,43 @@
   "via": "https://github.com/novincode/atomcut-library/tree/HEAD/packs/opengameart-100-cc0-sfx-2"
  },
  {
-  "file": "voices/styles/glitch-1.mp3",
+  "file": "voices/styles/glitch.mp3",
+  "title": "glitch_001.ogg — Interface Sounds (Kenney)",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0 1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/interface-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Interface%20Sounds"
+ },
+ {
+  "file": "voices/styles/glitch.mp3",
+  "title": "glitch_002.ogg — Interface Sounds (Kenney)",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0 1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/interface-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Interface%20Sounds"
+ },
+ {
+  "file": "voices/styles/glitch.mp3",
+  "title": "glitch_003.ogg — Interface Sounds (Kenney)",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0 1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/interface-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Interface%20Sounds"
+ },
+ {
+  "file": "voices/styles/glitch.mp3",
+  "title": "glitch_004.ogg — Interface Sounds (Kenney)",
+  "author": "Kenney (www.kenney.nl)",
+  "license": "CC0 1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://kenney.nl/assets/interface-sounds",
+  "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Interface%20Sounds"
+ },
+ {
+  "file": "voices/styles/glitch-2.mp3",
   "title": "glitch_001.ogg — Interface Sounds (Kenney)",
   "author": "Kenney (www.kenney.nl)",
   "license": "CC0 1.0",
@@ -3277,7 +3367,7 @@
  },
  {
   "file": "voices/styles/glitch-2.mp3",
-  "title": "glitch_002.ogg — Interface Sounds (Kenney)",
+  "title": "glitch_004.ogg — Interface Sounds (Kenney)",
   "author": "Kenney (www.kenney.nl)",
   "license": "CC0 1.0",
   "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
@@ -3285,7 +3375,7 @@
   "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Interface%20Sounds"
  },
  {
-  "file": "voices/styles/glitch-3.mp3",
+  "file": "voices/styles/glitch-2.mp3",
   "title": "glitch_003.ogg — Interface Sounds (Kenney)",
   "author": "Kenney (www.kenney.nl)",
   "license": "CC0 1.0",
@@ -3294,8 +3384,8 @@
   "via": "https://github.com/DickyDicky7/TokenTale-The-Elemental-Saga/tree/HEAD/game_asset_s/Audio/Interface%20Sounds"
  },
  {
-  "file": "voices/styles/glitch-4.mp3",
-  "title": "glitch_004.ogg — Interface Sounds (Kenney)",
+  "file": "voices/styles/glitch-2.mp3",
+  "title": "glitch_002.ogg — Interface Sounds (Kenney)",
   "author": "Kenney (www.kenney.nl)",
   "license": "CC0 1.0",
   "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",

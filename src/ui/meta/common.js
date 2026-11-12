@@ -5,6 +5,8 @@ import { ITEMS, RARITY } from '../../meta/catalog.js';
 import { diceSwatch } from '../skins.js';
 import { itemPreviewSvg, avatarSvg } from '../avatar.js';
 import { play, EASE } from '../../anim/animations.js';
+import { artSpan } from '../../three/core.js';
+import '../../three/cosmetics3d.js';
 
 export const fmt = (n) => Math.round(n).toLocaleString('it-IT');
 
@@ -51,15 +53,15 @@ export function itemArt(id, size = 64) {
     case 'dice':
       return diceSwatch(id, 5, Math.round(size * 0.7));
     case 'roll':
-      return `<span class="roll-art roll-${it.style}" style="width:${size}px;height:${size}px">${diceSwatch('dice.classic', 3, Math.round(size * 0.46))}</span>`;
+      return artSpan('roll', it.style, size, `<span class="roll-art roll-${it.style}" style="width:${size}px;height:${size}px">${diceSwatch('dice.classic', 3, Math.round(size * 0.46))}</span>`);
     case 'cards':
-      return `<span class="cardskin-art cs-${it.skin}" style="width:${Math.round(size * 0.62)}px;height:${Math.round(size * 0.86)}px"></span>`;
+      return artSpan('card', it.skin, size, `<span class="cardskin-art cs-${it.skin}" style="width:${Math.round(size * 0.62)}px;height:${Math.round(size * 0.86)}px"></span>`);
     case 'table':
-      return `<span class="theme-art" data-theme-art="${it.theme}" style="width:${Math.round(size * 0.8)}px;height:${Math.round(size * 0.9)}px"><i class="ta-red"></i><i class="ta-blue"></i></span>`;
+      return artSpan('table', it.theme, size, `<span class="theme-art" data-theme-art="${it.theme}" style="width:${Math.round(size * 0.8)}px;height:${Math.round(size * 0.9)}px"><i class="ta-red"></i><i class="ta-blue"></i></span>`);
     case 'frame':
       return `<span class="av-frame f-${it.frame}" style="width:${Math.round(size * 0.78)}px;height:${Math.round(size * 0.78)}px">${avatarSvg({}, { size: Math.round(size * 0.7), bust: true })}</span>`;
     case 'title':
-      return `<span class="title-art">“${it.name}”</span>`;
+      return `<span class="title-art r-${it.rarity}"><span>${it.name}</span></span>`;
     default:
       return itemPreviewSvg(id, size);
   }
