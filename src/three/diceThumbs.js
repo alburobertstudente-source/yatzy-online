@@ -12,8 +12,8 @@ export function diceImage(skinId, value = 5, size = 96) {
     `dice:${skinId}:${value}`,
     (THREE) => {
       const scene = new THREE.Scene();
-      studioLights(scene, { shadows: true, intensity: 0.9 });
-      scene.environmentIntensity = 0.85;
+      studioLights(scene, { shadows: true, intensity: 0.78 });
+      scene.environmentIntensity = 0.75;
       const floor = shadowCatcher(6, 0.32);
       scene.add(floor);
       const die = createDie(skinId, { size: 1, quality: size > 120 ? 256 : 128 });

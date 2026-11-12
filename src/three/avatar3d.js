@@ -255,11 +255,11 @@ export function avatarImage(key, size) {
 /** Inquadrature delle anteprime per categoria. */
 const WEAR_VIEW = {
   hat: { azimuth: 0.55, elev: 0.38, fill: 0.86 },
-  face: { azimuth: 0.4, elev: 0.12, fill: 0.84 },
+  face: { azimuth: 0.3, elev: 0.1, fill: 0.9 },
   shirt: { azimuth: 0.42, elev: 0.18, fill: 0.86 },
-  pants: { azimuth: 0.42, elev: 0.2, fill: 0.86 },
+  pants: { azimuth: 0.45, elev: 0.03, fill: 0.86 },
   shoes: { azimuth: 0.85, elev: 0.42, fill: 0.86 },
-  back: { azimuth: PI - 0.55, elev: 0.2, fill: 0.86 },
+  back: { azimuth: PI - 0.75, elev: 0.2, fill: 0.86 },
 };
 
 export function wearImage(id, size) {
@@ -269,7 +269,10 @@ export function wearImage(id, size) {
     `wear3d:${id}`,
     (_T, r) => {
       const obj = buildWearable(it);
-      return sceneFor(obj, WEAR_VIEW[it.cat] || {}, r);
+      // cinghie e spallacci servono solo indossati
+      obj.traverse((o) => o.userData.bodyOnly && (o.visible = false));
+      const view = it.type === 'cape' ? { azimuth: 1.15, elev: 0.25, fill: 0.86 } : WEAR_VIEW[it.cat] || {};
+      return sceneFor(obj, view, r);
     },
     size,
   );

@@ -85,6 +85,65 @@ class Stream {
   }
 }
 
+/**
+ * Ambiente registrato in loop dalla memoria (AudioBuffer): gira senza il piccolo
+ * stacco che lasciano i lettori <audio>. Il buffer non resta in cache: quando
+ * l'ambiente cambia la memoria si libera.
+ */
+class AmbLoop {
+  constructor(ctx, dest) {
+    this.ctx = ctx;
+    this.dest = dest;
+    this.key = null;
+    this.src = null;
+    this.gain = null;
+  }
+
+  start(path, key, level, fade = 2.2) {
+    this.key = key;
+    const token = (this.token = {});
+    lib.load(path).then((buf) => {
+      lib.forget(path);
+      if (!buf || this.token !== token || this.key !== key) return;
+      const t = this.ctx.currentTime;
+      const g = this.ctx.createGain();
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(level, t + fade);
+      const src = this.ctx.createBufferSource();
+      src.buffer = buf;
+      src.loop = true;
+      src.connect(g).connect(this.dest);
+      // parte da un punto a caso: lo stesso ambiente non suona mai identico
+      src.start(t, Math.random() * buf.duration * 0.8);
+      this.src = src;
+      this.gain = g;
+    });
+  }
+
+  stop(fade = 1.5) {
+    this.key = null;
+    this.token = null;
+    const { src, gain } = this;
+    this.src = null;
+    this.gain = null;
+    if (!src) return;
+    const t = this.ctx.currentTime;
+    gain.gain.cancelScheduledValues(t);
+    gain.gain.setValueAtTime(gain.gain.value, t);
+    gain.gain.linearRampToValueAtTime(0, t + fade);
+    try {
+      src.stop(t + fade + 0.05);
+    } catch {
+      /* già fermo */
+    }
+    setTimeout(() => gain.disconnect(), (fade + 0.3) * 1000);
+  }
+
+  pause() {}
+
+  resume() {}
+}
+
 /** Ambienti: dal tipo di ambiente (mondo o tema del tavolo) al file registrato. */
 const AMB_FILE = { tBirds: 'birds', tWaves: 'waves', tChimes: 'chimes', tCrickets: 'crickets', tWind: 'wind', tRumble: 'rumble', tShimmer: 'shimmer', tHum: 'hum', tHarp: 'harp' };
 
@@ -436,7 +495,7 @@ class Music {
     this.verbIn.gain.value = 0.35;
     this.verbIn.connect(this.verb).connect(this.out);
     this.ambBus = ctx.createGain();
-    this.ambBus.gain.value = 1.1;
+    this.ambBus.gain.value = 1.6;
     this.ambBus.connect(this.out);
     return true;
   }
@@ -750,10 +809,13 @@ class Music {
       this.musicBus = this.ctx.createGain();
       this.musicBus.gain.value = 1;
       this.musicBus.connect(this.out);
-      this.streams = [new Stream(this.ctx, this.musicBus), new Stream(this.ctx, this.musicBus), new Stream(this.ctx, this.ambBus), new Stream(this.ctx, this.ambBus)];
-      this.streams.forEach((st) => st.prime());
+      this.streams = [new Stream(this.ctx, this.musicBus), new Stream(this.ctx, this.musicBus), new AmbLoop(this.ctx, this.ambBus), new AmbLoop(this.ctx, this.ambBus)];
+      this.streams.slice(0, 2).forEach((st) => st.prime());
       document.addEventListener('visibilitychange', () => {
+        // app in secondo piano (telefono bloccato, altra app): tutto in silenzio
         for (const st of this.streams) (document.hidden || !this.enabled ? st.pause() : st.resume());
+        if (document.hidden) this.ctx.suspend?.().catch(() => {});
+        else this.ctx.resume?.().catch(() => {});
       });
     }
     return this.streams || [{}, {}];
@@ -772,7 +834,7 @@ class Music {
     }
     if (cur?.key === ak) return true;
     cur?.stop(1.5);
-    (cur === a ? b : a).start(lib.url(file.file), ak, file.gain ?? 1, 2.2);
+    (cur === a ? b : a).start(file.file, ak, file.gain ?? 1, 2.2);
     return true;
   }
 

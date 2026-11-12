@@ -522,7 +522,7 @@ function cardModel(skin) {
 
 export function cardThumb(skin, size = 96) {
   return thumb(`card:${skin}`, size, () => cardModel(skin), {
-    cam: { fov: 22, elev: 0.3, azim: 0.2, pad: 0.8, lift: 0.04 },
+    cam: { fov: 22, elev: 0.3, azim: 0.2, pad: 0.72, lift: 0.06 },
     shadow: 0.22,
     env: 0.5,
     accent: skin === 'neon' ? '#5dff9c' : skin === 'lava' ? '#ff7a1a' : skin === 'galaxy' ? '#b38bff' : null,
@@ -751,7 +751,7 @@ function tableModel(theme) {
 export function tableThumb(theme, size = 96) {
   const pal = THEME_PAL[theme] || THEME_PAL.classic;
   return thumb(`table:${theme}`, size, () => tableModel(theme), {
-    cam: { fov: 24, elev: 0.72, azim: 0.42, pad: 0.9 },
+    cam: { fov: 24, elev: 0.72, azim: 0.42, pad: 0.84 },
     shadow: 0.3,
     accent: pal.accent,
     accentPower: theme === 'neoncity' || theme === 'volcano' || theme === 'space' ? 8 : 3,
@@ -977,7 +977,8 @@ function rollModel(style) {
   const die = miniDie(0.9);
   die.position.set(0, 0.75, 0);
   die.rotation.set(0.5, 0.6, 0.25);
-  const white = phys({ color: color('#ffffff'), roughness: 0.3, clearcoat: 1 });
+  // scie e linee di velocità azzurro-grigie: si vedono anche sulle caselle bianche
+  const white = phys({ color: color('#8fa6d6'), roughness: 0.3, clearcoat: 1, emissive: color('#5a78c0'), emissiveIntensity: 0.25 });
   switch (style) {
     case 'bounce': {
       die.position.set(0.5, 1.45, 0);
@@ -1021,7 +1022,7 @@ function rollModel(style) {
         const r = 0.25 + t * 0.95;
         pts.push(new THREE.Vector3(Math.cos(a) * r, t * 2.3, Math.sin(a) * r));
       }
-      const tube = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 300, 0.045, 8), phys({ color: color('#dff3ff'), roughness: 0.35, transparent: true, opacity: 0.85, clearcoat: 1 }));
+      const tube = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 300, 0.045, 8), phys({ color: color('#9fc4ec'), roughness: 0.35, transparent: true, opacity: 0.9, clearcoat: 1 }));
       g.add(tube);
       die.position.y = 1.3;
       die.scale.setScalar(0.7);
@@ -1378,6 +1379,22 @@ async function installFrames() {
   } catch {
     framesInstalled = false;
   }
+}
+
+/* riflesso delle carte che segue il dito (solo CSS: funziona anche senza WebGL) */
+if (typeof document !== 'undefined') {
+  document.addEventListener(
+    'pointermove',
+    (e) => {
+      const el = e.target?.closest?.('.card-face.big, .scratch-card');
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      if (!r.width) return;
+      el.style.setProperty('--mx', `${(((e.clientX - r.left) / r.width) * 100).toFixed(1)}%`);
+      el.style.setProperty('--my', `${(((e.clientY - r.top) / r.height) * 100).toFixed(1)}%`);
+    },
+    { passive: true },
+  );
 }
 
 if (typeof document !== 'undefined' && has3D()) {

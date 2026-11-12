@@ -109,6 +109,11 @@ class Library {
     return p;
   }
 
+  /** Toglie un file dalla cache (ambienti lunghi: la memoria si libera quando smettono). */
+  forget(path) {
+    this.buffers.delete(path);
+  }
+
   /** Carica una lista di file uno alla volta (per non intasare la rete). */
   async preload(paths) {
     for (const p of paths) {

@@ -6734,5 +6734,466 @@
     "via": "https://github.com/SomeTroglodyte/Additional-Music-Various/blob/HEAD/music/Lord of the Land - Ambient.ogg",
     "attribution": "\"Lord of the Land\" Kevin MacLeod (incompetech.com), licensed under Creative Commons: By Attribution 4.0 License",
     "changes": "trimmed to a loopable excerpt, fades added, loudness normalized, re-encoded to MP3 96 kbps"
+  },
+  {
+    "group": "amb",
+    "file": "amb/pond.mp3, amb/rumble.mp3",
+    "title": "Stream Running Into Pond",
+    "author": "mhtaylor67",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/mhtaylor67/sounds/236981/",
+    "via": "https://github.com/Kaesual/grudgelands/blob/22c648642b9ffb93b58c5d4f3da0e62e419600de/mods/CORE/grug_ambience/sounds/grug_ambience_stream_pond.ogg"
+  },
+  {
+    "group": "amb",
+    "file": "amb/pond.mp3, amb/crickets.mp3",
+    "title": "Night Crickets Back Porch.aiff",
+    "author": "hdfreema",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/hdfreema/sounds/333221/",
+    "via": "https://github.com/dgreenheck/tidewater/blob/4811ba48d795197de5621985f404e765c0b7c0ef/public/audio/crickets.ogg"
+  },
+  {
+    "group": "amb",
+    "file": "amb/pond.mp3",
+    "title": "Single Frog Croak.oga",
+    "author": "MichaeltheFox8621",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Single_Frog_Croak.oga",
+    "via": "https://github.com/shiv19/animal-sounds/blob/f5dc4e45303036fea7e36e48a2f7701d11b650a3/assets-src/sounds/frog.oga",
+    "note": "Share-alike: amb/pond.mp3 is an adaptation and is shared under CC BY-SA 4.0."
+  },
+  {
+    "group": "amb",
+    "file": "amb/beach.mp3",
+    "title": "Calm ocean waves",
+    "author": "SamsterBirdies",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/SamsterBirdies/sounds/578524/",
+    "via": "https://github.com/drmowinckels/entracte/blob/a96a4dfe30a1a4acc122fa2ca6579c83334a4c29/src/assets/sounds/578524-calm-ocean-waves.mp3"
+  },
+  {
+    "group": "amb",
+    "file": "amb/beach.mp3",
+    "title": "Seagull on beach",
+    "author": "squashy555",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/squashy555/sounds/353416/",
+    "via": "https://github.com/dgreenheck/tidewater/blob/4811ba48d795197de5621985f404e765c0b7c0ef/public/audio/gull.ogg"
+  },
+  {
+    "group": "amb",
+    "file": "amb/beach.mp3",
+    "title": "Seagulls / gaviotas clean wildtrack.WAV",
+    "author": "Soojay",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/Soojay/sounds/462462/",
+    "via": "https://github.com/dgreenheck/tidewater/blob/4811ba48d795197de5621985f404e765c0b7c0ef/public/audio/gull.ogg"
+  },
+  {
+    "group": "amb",
+    "file": "amb/forest.mp3",
+    "title": "Forest At Night Ambience",
+    "author": "fribergmusic2024",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/fribergmusic2024/sounds/719558/",
+    "via": "https://github.com/Kaesual/grudgelands/blob/22c648642b9ffb93b58c5d4f3da0e62e419600de/mods/CORE/grug_ambience/sounds/grug_ambience_night_forest.ogg"
+  },
+  {
+    "group": "amb",
+    "file": "amb/forest.mp3, amb/castle.mp3, amb/chimes.mp3, amb/wind.mp3, amb/heaven.mp3",
+    "title": "Windy Day.wav",
+    "author": "squashy555",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/squashy555/sounds/341368/",
+    "via": "https://github.com/Kaesual/grudgelands/blob/22c648642b9ffb93b58c5d4f3da0e62e419600de/mods/CORE/grug_ambience/sounds/grug_ambience_battlegrounds_gusts.ogg"
+  },
+  {
+    "group": "amb",
+    "file": "amb/forest.mp3",
+    "title": "Owl Hoot",
+    "author": "Breviceps",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/Breviceps/sounds/465697/",
+    "via": "https://github.com/Kaesual/grudgelands/blob/22c648642b9ffb93b58c5d4f3da0e62e419600de/mods/CORE/grug_ambience/sounds/grug_ambience_call_owl.1.ogg"
+  },
+  {
+    "group": "amb",
+    "file": "amb/forest.mp3",
+    "title": "owl.wav",
+    "author": "Anthousai",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/Anthousai/sounds/398734/",
+    "via": "https://github.com/Kaesual/grudgelands/blob/22c648642b9ffb93b58c5d4f3da0e62e419600de/mods/CORE/grug_ambience/sounds/grug_ambience_call_owl.2.ogg"
+  },
+  {
+    "group": "amb",
+    "file": "amb/ice.mp3",
+    "title": "Appalachian Snowy Afternoon 2",
+    "author": "lakewoodsound",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/lakewoodsound/sounds/719852/",
+    "via": "https://github.com/Kaesual/grudgelands/blob/22c648642b9ffb93b58c5d4f3da0e62e419600de/mods/CORE/grug_ambience/sounds/grug_ambience_snow_afternoon.ogg"
+  },
+  {
+    "group": "amb",
+    "file": "amb/ice.mp3, amb/sky.mp3, amb/wind.mp3",
+    "title": "Wind singing in the mountain, some night cricket in background",
+    "author": "felix.blume",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/felix.blume/sounds/165526/",
+    "via": "https://github.com/justynroberts/mmo-engine/blob/e29e1645d90b72c283bba6026a2ad6306d413614/godot/sounds/ambience/wind.ogg"
+  },
+  {
+    "group": "amb",
+    "file": "amb/ice.mp3, amb/chaos.mp3, amb/chimes.mp3, amb/shimmer.mp3",
+    "title": "wineglass3",
+    "author": "piwilliwillski",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/piwilliwillski/sounds/579290/",
+    "via": "https://github.com/drmowinckels/entracte/blob/a96a4dfe30a1a4acc122fa2ca6579c83334a4c29/src/assets/sounds/579290-wineglass3.mp3"
+  },
+  {
+    "group": "amb",
+    "file": "amb/ice.mp3, amb/chimes.mp3, amb/heaven.mp3",
+    "title": "wind chimes - single 04",
+    "author": "Anthousai",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/Anthousai/sounds/398496/",
+    "via": "https://github.com/drmowinckels/entracte/blob/a96a4dfe30a1a4acc122fa2ca6579c83334a4c29/src/assets/sounds/398496-wind-chimes-single-04.mp3"
+  },
+  {
+    "group": "amb",
+    "file": "amb/chaos.mp3",
+    "title": "7",
+    "author": "GAMEDRIX974",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/GAMEDRIX974/sounds/587417/",
+    "via": "https://github.com/drmowinckels/entracte/blob/a96a4dfe30a1a4acc122fa2ca6579c83334a4c29/src/assets/sounds/587417-7.mp3"
+  },
+  {
+    "group": "amb",
+    "file": "amb/sea.mp3",
+    "title": "Harbour_Seagulls_Day.WAV",
+    "author": "ivolipa",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/ivolipa/sounds/328808/",
+    "via": "https://github.com/devIykee/ct-life-frontend/blob/38b99831eb5dac32ad21285fc9d6a8f9ab3d1646/audio/processed/ambience/amb_dubai_marina.wav"
+  },
+  {
+    "group": "amb",
+    "file": "amb/sea.mp3",
+    "title": "Stronger wind at a marina, rattling at masts and rigging of the yachts.",
+    "author": "Pfannkuchn",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/Pfannkuchn/sounds/360633/",
+    "via": "https://github.com/devIykee/ct-life-frontend/blob/38b99831eb5dac32ad21285fc9d6a8f9ab3d1646/audio/processed/ambience/amb_dubai_marina.wav"
+  },
+  {
+    "group": "amb",
+    "file": "amb/sea.mp3",
+    "title": "Ocean_Gentle_Lapping_Waves_Under_Dock.wav",
+    "author": "hdmcgehee",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/hdmcgehee/sounds/457215/",
+    "via": "https://github.com/devIykee/ct-life-frontend/blob/38b99831eb5dac32ad21285fc9d6a8f9ab3d1646/audio/processed/ambience/amb_dubai_marina.wav"
+  },
+  {
+    "group": "amb",
+    "file": "amb/sea.mp3",
+    "title": "Boat (edited by Porrumentzio for Blanket)",
+    "author": "Falcet",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/Falcet/sounds/439365/",
+    "via": "https://github.com/rafaelmardojai/blanket/blob/bbc88ed3b9dfa8b21805d77286f3183abf88f36f/data/resources/sounds/boat.ogg"
+  },
+  {
+    "group": "amb",
+    "file": "amb/desert.mp3",
+    "title": "Wind (edited by Porrumentzio for Blanket)",
+    "author": "felix.blume",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/felix.blume/sounds/217506/",
+    "via": "https://github.com/rafaelmardojai/blanket/blob/bbc88ed3b9dfa8b21805d77286f3183abf88f36f/data/resources/sounds/wind.ogg"
+  },
+  {
+    "group": "amb",
+    "file": "amb/desert.mp3",
+    "title": "wind light desert day steady eerie with crickets.flac",
+    "author": "kyles",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/kyles/sounds/454361/",
+    "via": "https://github.com/Kaesual/grudgelands/blob/22c648642b9ffb93b58c5d4f3da0e62e419600de/mods/CORE/grug_ambience/sounds/grug_ambience_badlands_crickets.ogg"
+  },
+  {
+    "group": "amb",
+    "file": "amb/chaos.mp3",
+    "title": "Dark Sahara Egypt",
+    "author": "szegvari",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/szegvari/sounds/557552/",
+    "via": "https://github.com/Kaesual/grudgelands/blob/22c648642b9ffb93b58c5d4f3da0e62e419600de/mods/CORE/grug_ambience/sounds/grug_ambience_underground_crystal.ogg"
+  },
+  {
+    "group": "amb",
+    "file": "amb/chaos.mp3, amb/hum.mp3",
+    "title": "furnace.wav",
+    "author": "jimmyfisher",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/jimmyfisher/sounds/415156/",
+    "via": "https://github.com/devIykee/ct-life-frontend/blob/38b99831eb5dac32ad21285fc9d6a8f9ab3d1646/audio/processed/ambience/amb_ore_refinery.wav"
+  },
+  {
+    "group": "amb",
+    "file": "amb/chaos.mp3, amb/hum.mp3",
+    "title": "General Fusion industrial workshop factory ambience9 heavy machine hum, bg activity, distant warning alarm.wav",
+    "author": "kyles",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/kyles/sounds/450126/",
+    "via": "https://github.com/devIykee/ct-life-frontend/blob/38b99831eb5dac32ad21285fc9d6a8f9ab3d1646/audio/processed/ambience/amb_ore_refinery.wav"
+  },
+  {
+    "group": "amb",
+    "file": "amb/chaos.mp3, amb/hum.mp3",
+    "title": "Industrial-compressor.wav",
+    "author": "Astounded",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/Astounded/sounds/478118/",
+    "via": "https://github.com/devIykee/ct-life-frontend/blob/38b99831eb5dac32ad21285fc9d6a8f9ab3d1646/audio/processed/ambience/amb_ore_refinery.wav"
+  },
+  {
+    "group": "amb",
+    "file": "amb/castle.mp3, amb/rumble.mp3",
+    "title": "Dark Dungeon Ambience",
+    "author": "Kinoton",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/Kinoton/sounds/516566/",
+    "via": "https://github.com/Kaesual/grudgelands/blob/22c648642b9ffb93b58c5d4f3da0e62e419600de/mods/CORE/grug_ambience/sounds/grug_ambience_underground_dungeon.ogg"
+  },
+  {
+    "group": "amb",
+    "file": "amb/castle.mp3",
+    "title": "crow.wav",
+    "author": "nigelcoop",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/nigelcoop/sounds/75162/",
+    "via": "https://github.com/Kaesual/grudgelands/blob/22c648642b9ffb93b58c5d4f3da0e62e419600de/mods/CORE/grug_ambience/sounds/grug_ambience_call_crow.1.ogg"
+  },
+  {
+    "group": "amb",
+    "file": "amb/castle.mp3",
+    "title": "Crows_02.wav",
+    "author": "Q.K.",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/Q.K./sounds/56234/",
+    "via": "https://github.com/Kaesual/grudgelands/blob/22c648642b9ffb93b58c5d4f3da0e62e419600de/mods/CORE/grug_ambience/sounds/grug_ambience_call_crow.2.ogg"
+  },
+  {
+    "group": "amb",
+    "file": "amb/sky.mp3",
+    "title": "Rain (loopable)",
+    "author": "Ylmir",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://opengameart.org/content/rain-loopable",
+    "via": "https://github.com/BrenoBertucci/Terrarium/blob/aadc04b5cba78c555f367887a6ecfddae8224f93/assets/audio/rain.ogg"
+  },
+  {
+    "group": "amb",
+    "file": "amb/sky.mp3",
+    "title": "Thunderclap",
+    "author": "Fission9",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/Fission9/sounds/534023/",
+    "via": "https://github.com/Kaesual/grudgelands/blob/22c648642b9ffb93b58c5d4f3da0e62e419600de/mods/CORE/grug_ambience/sounds/grug_ambience_call_thunder.1.ogg"
+  },
+  {
+    "group": "amb",
+    "file": "amb/rumble.mp3",
+    "title": "200817 Thunder, pretty close crack 4pm.flac",
+    "author": "TRP",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/TRP/sounds/567945/",
+    "via": "https://github.com/Kaesual/grudgelands/blob/22c648642b9ffb93b58c5d4f3da0e62e419600de/mods/CORE/grug_ambience/sounds/grug_ambience_call_thunder.2.ogg"
+  },
+  {
+    "group": "amb",
+    "file": "amb/sky.mp3",
+    "title": "thunder crack.wav",
+    "author": "cognito perceptu",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/cognito%20perceptu/sounds/347853/",
+    "via": "https://github.com/Kaesual/grudgelands/blob/22c648642b9ffb93b58c5d4f3da0e62e419600de/mods/CORE/grug_ambience/sounds/grug_ambience_call_thunder.3.ogg"
+  },
+  {
+    "group": "amb",
+    "file": "amb/sky.mp3, amb/rumble.mp3",
+    "title": "Thunder3",
+    "author": "Yoyodaman234",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/Yoyodaman234/sounds/267550/",
+    "via": "https://github.com/Kaesual/grudgelands/blob/22c648642b9ffb93b58c5d4f3da0e62e419600de/mods/CORE/grug_ambience/sounds/grug_ambience_call_thunder.4.ogg"
+  },
+  {
+    "group": "amb",
+    "file": "amb/throne.mp3, amb/rumble.mp3",
+    "title": "Campfire 02",
+    "author": "HECKFRICKER",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/HECKFRICKER/sounds/729396/",
+    "via": "https://github.com/justynroberts/mmo-engine/blob/e29e1645d90b72c283bba6026a2ad6306d413614/godot/sounds/ambience/fire.ogg"
+  },
+  {
+    "group": "amb",
+    "file": "amb/throne.mp3, amb/hum.mp3",
+    "title": "S13-05 Light cafe background walla",
+    "author": "craigsmith",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/craigsmith/sounds/675073/",
+    "via": "https://github.com/BrenoBertucci/Terrarium/blob/aadc04b5cba78c555f367887a6ecfddae8224f93/assets/audio/town.ogg"
+  },
+  {
+    "group": "amb",
+    "file": "amb/throne.mp3, amb/shimmer.mp3, amb/hum.mp3",
+    "title": "Room white noise - Room Ambience",
+    "author": "Littleboot",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/Littleboot/sounds/147300/",
+    "via": "https://github.com/BrenoBertucci/Terrarium/blob/aadc04b5cba78c555f367887a6ecfddae8224f93/assets/audio/indoor.ogg"
+  },
+  {
+    "group": "amb",
+    "file": "amb/casino.mp3",
+    "title": "Casino Floor, Phoenix AZ (Audio Field Recording) [mono]",
+    "author": "mhtaylor67",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/mhtaylor67/sounds/277444/",
+    "via": "https://github.com/devIykee/ct-life-frontend/blob/38b99831eb5dac32ad21285fc9d6a8f9ab3d1646/audio/processed/ambience/amb_rug_room.wav"
+  },
+  {
+    "group": "amb",
+    "file": "amb/casino.mp3",
+    "title": "G16-05-Casino Ambience.wav",
+    "author": "craigsmith",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/craigsmith/sounds/438129/",
+    "via": "https://github.com/devIykee/ct-life-frontend/blob/38b99831eb5dac32ad21285fc9d6a8f9ab3d1646/audio/processed/ambience/amb_rug_room.wav"
+  },
+  {
+    "group": "amb",
+    "file": "amb/casino.mp3",
+    "title": "Casino Audio: chips-stack-4.ogg",
+    "author": "Kenney (Kenney Vleugels)",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://kenney.nl/assets/casino-audio",
+    "via": "https://github.com/devIykee/ct-life-frontend/blob/38b99831eb5dac32ad21285fc9d6a8f9ab3d1646/audio/processed/sfx/sfx_chips.wav"
+  },
+  {
+    "group": "amb",
+    "file": "amb/casino.mp3",
+    "title": "Slot machine in a small casino (Chile)",
+    "author": "felix.blume",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/felix.blume/sounds/499767/",
+    "via": "https://github.com/devIykee/ct-life-frontend/blob/38b99831eb5dac32ad21285fc9d6a8f9ab3d1646/audio/processed/sfx/sfx_slot_spin.wav"
+  },
+  {
+    "group": "amb",
+    "file": "amb/birds.mp3",
+    "title": "summer meadow near village in the morning",
+    "author": "Garuda1982",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/Garuda1982/sounds/692048/",
+    "via": "https://github.com/Kaesual/grudgelands/blob/22c648642b9ffb93b58c5d4f3da0e62e419600de/mods/CORE/grug_ambience/sounds/grug_ambience_human_meadow.ogg"
+  },
+  {
+    "group": "amb",
+    "file": "amb/birds.mp3",
+    "title": "03 - Birds_stereo",
+    "author": "Nordliecht",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/Nordliecht/sounds/855953/",
+    "via": "https://github.com/Kaesual/grudgelands/blob/22c648642b9ffb93b58c5d4f3da0e62e419600de/mods/CORE/grug_ambience/sounds/grug_ambience_crags_birds_clear.ogg"
+  },
+  {
+    "group": "amb",
+    "file": "amb/crickets.mp3",
+    "title": "COUNTRY_NIGHT_CRICKETS.wav",
+    "author": "keng-wai-chane-chick-te",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/keng-wai-chane-chick-te/sounds/431519/",
+    "via": "https://github.com/Kaesual/grudgelands/blob/22c648642b9ffb93b58c5d4f3da0e62e419600de/mods/CORE/grug_ambience/sounds/grug_ambience_night_crickets.ogg"
+  },
+  {
+    "group": "amb",
+    "file": "amb/shimmer.mp3, amb/heaven.mp3",
+    "title": "Singing Bowl a tuned",
+    "author": "brodjaman",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/brodjaman/sounds/204915/",
+    "via": "https://github.com/drmowinckels/entracte/blob/a96a4dfe30a1a4acc122fa2ca6579c83334a4c29/src/assets/sounds/204915-singing-bowl-a-tuned.mp3"
+  },
+  {
+    "group": "amb",
+    "file": "amb/shimmer.mp3",
+    "title": "Singing Bowl, long without reverb",
+    "author": "hollandm",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://freesound.org/people/hollandm/sounds/573805/",
+    "via": "https://github.com/drmowinckels/entracte/blob/a96a4dfe30a1a4acc122fa2ca6579c83334a4c29/src/assets/sounds/573805-singing-bowl-long-without-reverb.mp3"
+  },
+  {
+    "group": "amb",
+    "file": "amb/heaven.mp3",
+    "title": "R4_00197v2_FR_CatholicMonks.wav",
+    "author": "kevp888",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "source": "https://freesound.org/people/kevp888/sounds/575757/",
+    "via": "https://github.com/justynroberts/mmo-engine/blob/e29e1645d90b72c283bba6026a2ad6306d413614/godot/sounds/ambience/holy.ogg"
   }
 ]

@@ -369,14 +369,19 @@ export class DiceLayer3D {
       d.anim = { kind: 'roll', motion, t0, dur, qF, q0: fresh ? randomQuat() : d.obj.quaternion.clone(), axis, fresh, fired: 0, k: -1, style: this.style };
       d.value = values[i];
       d.visible = true;
-      d.q = qF;
       setTimeout(() => onLand?.(i), Math.round(ms(delay) + dur * motion.firstContact));
       end = Math.max(end, ms(delay) + dur);
     }
     this.kick();
     return new Promise((resolve) =>
       setTimeout(() => {
-        for (const i of rolled) if (this.dice[i].anim?.kind === 'roll') this.dice[i].anim = null;
+        for (const i of rolled) {
+          const d = this.dice[i];
+          if (d.anim?.kind === 'roll' && !this.frozen) {
+            d.q = d.anim.qF;
+            d.anim = null;
+          }
+        }
         this.kick();
         this.#maybeYatzy();
         resolve();
@@ -449,9 +454,19 @@ export class DiceLayer3D {
 
   /* ---------------- ciclo di disegno ---------------- */
   kick() {
-    if (!this.alive || this.raf) return;
+    if (!this.alive || this.raf || this.frozen) return;
     clearTimeout(this.idleTimer);
     this.raf = requestAnimationFrame((t) => this.#frame(t));
+  }
+
+  /** Solo per i test: ferma il tempo e disegna un fotogramma all'istante `now`. */
+  debugFrame(now) {
+    this.frozen = true;
+    cancelAnimationFrame(this.raf);
+    this.raf = 0;
+    this.#frame(now);
+    cancelAnimationFrame(this.raf);
+    this.raf = 0;
   }
 
   #poll() {
@@ -556,8 +571,12 @@ export class DiceLayer3D {
       if (a.kind === 'roll') {
         if (t < 0) {
           if (a.fresh) show = false;
-          else this.#restPose(d);
+          else {
+            this.#restPose(d);
+            d.obj.quaternion.copy(a.q0);
+          }
         } else if (t >= 1) {
+          d.q = a.qF;
           d.anim = null;
           this.#restPose(d);
         } else {

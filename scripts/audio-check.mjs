@@ -93,8 +93,8 @@ try {
       const ambOnly = music.streams[2].key ? music.streams[2] : music.streams[3];
       const st = music.streams[2].key ? music.streams[3] : music.streams[2];
       ambOnly.stop?.(0.1);
-      st.start(lib.url(lib.manifest.amb[k].file), k, lib.manifest.amb[k].gain ?? 1, 0.3);
-      await new Promise((r) => setTimeout(r, 1500));
+      st.start(lib.manifest.amb[k].file, k, lib.manifest.amb[k].gain ?? 1, 0.3);
+      await new Promise((r) => setTimeout(r, 2200));
       out[`amb:${k}`] = await rms(1200);
       st.stop(0.1);
       await new Promise((r) => setTimeout(r, 300));

@@ -655,7 +655,7 @@ const P = {
     }
     bumps(h, S, rnd, 26, S * 0.06, S * 0.14, true, 0.22);
   },
-  popit: (p) => linear(p.c, p.S, ['#c4b0ff', '#b8d0f2', '#a8ecd6'], 135),
+  popit: (p) => linear(p.c, p.S, ['#b39bff', '#a3c2f2', '#8fe3c6'], 135),
   popitRainbow: (p) => {
     const { c, S } = p;
     const cols = ['#ff8a8a', '#ffc46b', '#fff07b', '#86e39a', '#7bc8ff', '#c19bff'];
@@ -748,29 +748,32 @@ const P = {
     const { c, h, S } = p;
     c.fillStyle = '#fafafa';
     c.fillRect(0, 0, S, S);
-    const pent = (x, y, r, rot) => {
-      c.beginPath();
-      for (let i = 0; i < 5; i++) {
-        const a = rot + (i / 5) * Math.PI * 2;
-        c.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r);
+    const poly = (ctx, x, y, r, n, rot) => {
+      ctx.beginPath();
+      for (let i = 0; i < n; i++) {
+        const a = rot + (i / n) * Math.PI * 2;
+        ctx.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r);
       }
-      c.closePath();
+      ctx.closePath();
     };
-    for (const [x, y] of [[0, 0], [S, 0], [0, S], [S, S]]) {
-      pent(x, y, S * 0.2, 0.3);
+    // cuciture esagonali del pallone e pentagoni neri sugli spigoli
+    h.strokeStyle = 'rgba(0,0,0,.35)';
+    c.strokeStyle = 'rgba(0,0,0,.12)';
+    h.lineWidth = c.lineWidth = S / 120;
+    const R = S * 0.16;
+    for (let row = -1; row < 5; row++)
+      for (let col = -1; col < 5; col++) {
+        const x = col * R * 1.73 + (row % 2 ? R * 0.87 : 0);
+        const y = row * R * 1.5;
+        for (const ctx of [c, h]) {
+          poly(ctx, x, y, R, 6, Math.PI / 6);
+          ctx.stroke();
+        }
+      }
+    for (const [x, y] of [[0, 0], [S, 0], [0, S], [S, S], [S / 2, -S * 0.02], [S / 2, S * 1.02], [-S * 0.02, S / 2], [S * 1.02, S / 2]]) {
+      poly(c, x, y, S * 0.1, 5, 0.3);
       c.fillStyle = '#23232c';
       c.fill();
-    }
-    h.strokeStyle = 'rgba(0,0,0,.4)';
-    h.lineWidth = S / 70;
-    for (const [x, y] of [[0, 0], [S, 0], [0, S], [S, S]]) {
-      h.beginPath();
-      for (let i = 0; i < 5; i++) {
-        const a = 0.3 + (i / 5) * Math.PI * 2;
-        h.lineTo(x + Math.cos(a) * S * 0.2, y + Math.sin(a) * S * 0.2);
-      }
-      h.closePath();
-      h.stroke();
     }
   },
   donut: (p) => {
@@ -946,7 +949,7 @@ const P = {
   },
   pumpkin: (p) => {
     const { c, h, S } = p;
-    radial(c, S, '#ffb13d', '#e8700f', 0.45, 0.4);
+    radial(c, S, '#f08a1e', '#c4560a', 0.45, 0.4);
     for (let i = 1; i < 6; i++) {
       const x = (i * S) / 6;
       const g = c.createLinearGradient(x - S / 20, 0, x + S / 20, 0);
@@ -1033,8 +1036,10 @@ const P = {
     const { c, h, S, rnd } = p;
     const pts = Array.from({ length: 28 }, () => [rnd() * S, rnd() * S]);
     const cols = ['#5a2a9a', '#b38bff', '#3b1d8f', '#e0c8ff', '#7a4dff', '#9a6bff'];
-    const img = c.getImageData(0, 0, S, S);
-    const hi = h.getImageData(0, 0, S, S);
+    // getImageData/putImageData ignorano la traslazione: uso la posizione della cella
+    const { e: x0, f: y0 } = c.getTransform();
+    const img = c.getImageData(x0, y0, S, S);
+    const hi = h.getImageData(x0, y0, S, S);
     const rgb = cols.map((col) => [parseInt(col.slice(1, 3), 16), parseInt(col.slice(3, 5), 16), parseInt(col.slice(5, 7), 16)]);
     const pc = pts.map((_, i) => rgb[i % rgb.length]);
     for (let y = 0; y < S; y++)
@@ -1061,8 +1066,8 @@ const P = {
         hi.data[o] = hi.data[o + 1] = hi.data[o + 2] = hv;
         hi.data[o + 3] = 255;
       }
-    c.putImageData(img, 0, 0);
-    h.putImageData(hi, 0, 0);
+    c.putImageData(img, x0, y0);
+    h.putImageData(hi, x0, y0);
   },
   lavalamp: (p) => {
     const { c, e, S, rnd } = p;
@@ -1375,7 +1380,7 @@ const SPEC = {
   aquarium: { paint: P.aquarium, mat: 'glass', alpha: 0.7, core: 'soft', coreColor: '#2a9ad6', fx: 'bubbles' },
   synthwave: { paint: P.synthwave, mat: 'lacquer', pipGlow: '#20e3ff', fx: 'pulse' },
   snowflake: { paint: P.snowflake, mat: 'satin', fx: 'sparkle' },
-  pumpkin: { paint: P.pumpkin, mat: 'satin', pipMode: 'carved', pipColor: '#2a1405', pipGlow: '#ff9a1a', fx: 'flicker' },
+  pumpkin: { paint: P.pumpkin, mat: 'satin', pipMode: 'carved', pipColor: '#2a1405', pipGlow: '#ffe066', fx: 'flicker' },
   planet: { paint: P.planet, mat: 'satin', fx: 'ring' },
   storm: { paint: P.storm, mat: 'satin', pipGlow: '#ffe14d', fx: 'storm' },
   cat: { paint: P.cat, mat: 'fabric', sheenColor: '#ffd8a8', mat2: { roughness: 0.75 } },
@@ -1411,6 +1416,8 @@ export function diceSpec(skinId) {
     it,
     rarity: it.rarity,
     shape: it.shape || 'dot',
+    mix: s.mix,
+    sat: s.sat,
     base: s.base || (cols.length >= 2 ? [cols[0], cols[cols.length - 1]] : [cols[0] || '#ffffff', cols[0] || '#e8e8f0']),
     paint: s.paint || null,
     pipColor: s.pipColor === 'face' ? null : s.pipColor || it.pip,

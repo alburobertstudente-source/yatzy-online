@@ -147,8 +147,9 @@ function buildTextures(spec, S) {
     // fondo della faccia
     if (spec.paint) spec.paint(p);
     else {
-      const g = c.createRadialGradient(S * 0.38, S * 0.32, S * 0.05, S * 0.5, S * 0.5, S * 0.8);
-      g.addColorStop(0, spec.base[0]);
+      // la luce vera fa già le sfumature: la faccia ha un colore pieno, appena più chiaro al centro
+      const g = c.createRadialGradient(S * 0.42, S * 0.38, S * 0.05, S * 0.5, S * 0.5, S * 0.8);
+      g.addColorStop(0, '#' + new THREE.Color(spec.base[0]).lerp(new THREE.Color(spec.base[1]), spec.mix ?? 0.72).getHexString());
       g.addColorStop(1, spec.base[1]);
       c.fillStyle = g;
       c.fillRect(0, 0, S, S);
@@ -189,7 +190,7 @@ function buildTextures(spec, S) {
         drawPip(c, spec.shape, x, y, pipR, kk, col);
       }
       drawPip(m, spec.shape === 'dot' && spec.pipMode === 'bubble' ? 'bubble' : spec.shape, x, y, pipR, kk, '#fff', 'mask');
-      if (e && spec.pipGlow) drawPip(e, spec.shape, x, y, pipR * (spec.pipMode === 'carved' ? 0.92 : 1), kk, spec.pipGlow);
+      if (e && spec.pipGlow) drawPip(e, spec.shape, x, y, pipR * (spec.pipMode === 'carved' ? 0.74 : 1), kk, spec.pipGlow);
     });
     for (const ctx of [c, h, m, e]) ctx?.restore();
     for (const ctx of [c, h, m, e]) ctx?.restore();
@@ -584,7 +585,7 @@ function addFx(spec, group, body, mat) {
       ups.push((dt, t) => (mat.iridescenceThicknessRange = [120, 420 + Math.sin(t * 0.9) * 260]));
       break;
     case 'sparkle':
-      glints(7, ['#ffffff', '#dff4ff', '#fff6d0']);
+      glints(6, ['#ffffff', '#dff4ff', '#fff6d0'], 0.6, 0.24);
       break;
     case 'shine':
       glints(4, ['#fff6d0', '#ffffff'], 0.58, 0.28);
@@ -613,11 +614,11 @@ function addFx(spec, group, body, mat) {
       break;
     case 'ring': {
       const m = new THREE.Mesh(new THREE.RingGeometry(0.84, 1.02, 64), new THREE.MeshStandardMaterial({ color: '#ffe2b8', roughness: 0.6, transparent: true, opacity: 0.8, side: THREE.DoubleSide }));
-      m.rotation.set(-1.15, 0.25, 0.4);
+      m.rotation.set(-1.95, -0.3, 0);
       m.castShadow = true;
       fxRoot.add(m);
       own.push(m);
-      ups.push((dt, t) => (m.rotation.z = 0.35 + Math.sin(t * 0.5) * 0.05));
+      ups.push((dt, t) => (m.rotation.z = t * 0.3));
       break;
     }
     case 'blobs': {
@@ -652,13 +653,13 @@ function addFx(spec, group, body, mat) {
       break;
     }
     case 'vortex': {
-      const disk = new THREE.Mesh(new THREE.RingGeometry(0.75, 1.45, 64), new THREE.MeshBasicMaterial({ map: diskTexture('#ff7a1a', '#7a4dff'), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
+      const disk = new THREE.Mesh(new THREE.RingGeometry(0.72, 1.22, 64), new THREE.MeshBasicMaterial({ map: diskTexture('#ff7a1a', '#7a4dff'), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
       disk.rotation.x = -Math.PI / 2 + 0.3;
       fxRoot.add(disk);
       own.push(disk);
-      fxRoot.add(halo('#7a4dff', 2.6, 0.4));
+      fxRoot.add(halo('#7a4dff', 2.2, 0.4));
       ups.push((dt, t) => (disk.rotation.z = -t * 1.4));
-      orbit(16, { colors: ['#ffb36a', '#b38bff'], radius: 1.25, size: 0.1, speed: 2.2, wobble: 0.05 });
+      orbit(14, { colors: ['#ffb36a', '#b38bff'], radius: 1.05, size: 0.1, speed: 2.2, wobble: 0.05 });
       break;
     }
     case 'unicorn':

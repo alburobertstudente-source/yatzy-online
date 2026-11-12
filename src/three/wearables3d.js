@@ -390,7 +390,9 @@ function temples(g, mat, out = 0.12) {
   for (const sx of [-1, 1]) {
     const a = onHead(sx * 0.62, EYE.pitch + 0.03, out).p;
     const b = onHead(sx * 1.45, EYE.pitch + 0.06, 0.04).p;
-    g.add(segment([a.x, a.y, a.z], [b.x, b.y, b.z], 0.02, 0.02, mat, 10));
+    const t = segment([a.x, a.y, a.z], [b.x, b.y, b.z], 0.02, 0.02, mat, 10);
+    t.userData.noFrame = true; // le stanghette non contano per l'inquadratura dell'anteprima
+    g.add(t);
   }
 }
 
@@ -637,10 +639,7 @@ const SHIRT = {
     const g = new THREE.Group();
     const m = fabric(it.c1, { map: TEX.plain(it.c1), key: 'tank' });
     g.add(torso(m, [[0, 0.9], [0.4, 0.9], [0.445, 0.97], [0.46, 1.18], [0.45, 1.42], [0.43, 1.58], [0.36, 1.66], [0.18, 1.72], [0.12, 1.73]], 'tank'));
-    for (const sx of [-1, 1]) {
-      g.add(segment([sx * 0.25, 1.62, 0.28], [sx * 0.28, 1.84, 0.0], 0.04, 0.04, fabric(it.c2), 10));
-      g.add(segment([sx * 0.28, 1.84, 0.0], [sx * 0.25, 1.62, -0.28], 0.04, 0.04, fabric(it.c2), 10));
-    }
+    for (const sx of [-1, 1]) g.add(mesh(G.tube(`tankstrap${sx}`, [[sx * 0.2, 1.6, 0.3], [sx * 0.24, 1.74, 0.12], [sx * 0.25, 1.77, 0], [sx * 0.24, 1.74, -0.12], [sx * 0.2, 1.6, -0.3]], 0.045, false, 24), fabric(it.c2)));
     return g;
   },
   jersey(it) {
@@ -1102,16 +1101,22 @@ const BACK = {
     g.add(mesh(G.box(0.08, 0.035, 0.02, 0.01), metal('#d9dde6'), { p: [0, 1.28, BACKZ - 0.39] }));
     // spallacci visibili davanti
     for (const sx of [-1, 1]) {
-      g.add(mesh(G.torus(0.2, 0.035, PI, 20), fabric(hexOf(shade(it.c2, 0.75))), { p: [sx * 0.24, 1.7, 0.0], r: [0, PI / 2, 0], s: [1.6, 1, 1] }));
-      g.add(segment([sx * 0.25, 1.72, 0.3], [sx * 0.27, 1.2, 0.34], 0.035, 0.035, fabric(hexOf(shade(it.c2, 0.75))), 8));
+      const arc = mesh(G.torus(0.2, 0.035, PI, 20), fabric(hexOf(shade(it.c2, 0.75))), { p: [sx * 0.24, 1.7, 0.0], r: [0, PI / 2, 0], s: [1.6, 1, 1] });
+      arc.userData.bodyOnly = true;
+      g.add(arc);
+      const st = segment([sx * 0.25, 1.72, 0.3], [sx * 0.27, 1.2, 0.34], 0.035, 0.035, fabric(hexOf(shade(it.c2, 0.75))), 8);
+      st.userData.bodyOnly = true;
+      g.add(st);
     }
     return g;
   },
   cape(it) {
     const g = new THREE.Group();
-    const outer = new THREE.MeshPhysicalMaterial({ color: it.c1, roughness: 0.6, sheen: 1, sheenColor: hexOf(shade(it.c1, 1.8)), sheenRoughness: 0.35, side: THREE.DoubleSide });
-    const c = mesh(capeGeo(), outer, { p: [0, 1.84, -0.02] });
-    g.add(c);
+    // fuori il colore del mantello, dentro la fodera (c2)
+    const outer = cached(`m:capeout${it.c1}`, () => new THREE.MeshPhysicalMaterial({ color: it.c1, roughness: 0.6, sheen: 0.8, sheenColor: hexOf(shade(it.c1, 1.6)), sheenRoughness: 0.35, side: THREE.BackSide }));
+    const lining = cached(`m:capein${it.c2}`, () => new THREE.MeshPhysicalMaterial({ color: it.c2, roughness: 0.35, sheen: 1, sheenColor: '#ffffff', clearcoat: 0.4, side: THREE.FrontSide }));
+    g.add(mesh(capeGeo(), outer, { p: [0, 1.84, -0.02] }));
+    g.add(mesh(capeGeo(), lining, { p: [0, 1.84, -0.02] }));
     // orlo dorato in fondo
     const hem = cached('g:capehem', () => {
       const pts = [];
@@ -1146,7 +1151,9 @@ const BACK = {
     gt.position.set(0.08, 1.05, BACKZ - 0.2);
     gt.rotation.set(0, PI, 0.62);
     g.add(gt);
-    g.add(mesh(G.torus(0.62, 0.03, PI * 2, 48), leather('#3a2412'), { p: [0, 1.38, 0], r: [PI / 2, 0.62, 0], s: [1, 0.62, 1] }));
+    const strap = mesh(G.torus(0.62, 0.03, PI * 2, 48), leather('#3a2412'), { p: [0, 1.38, 0], r: [PI / 2, 0.62, 0], s: [1, 0.62, 1] });
+    strap.userData.bodyOnly = true;
+    g.add(strap);
     return g;
   },
   butterfly(it) {
@@ -1179,7 +1186,11 @@ const BACK = {
       g.add(mesh(G.torus(0.15, 0.02, PI * 2, 24), plastic(it.c2), { p: [sx * 0.24, 1.55, BACKZ - 0.22], r: [PI / 2, 0, 0] }));
       flame(g, [sx * 0.24, 0.96, BACKZ - 0.22], 0.85, '#ffe14d', it.c2, [0, -1, 0]);
     }
-    for (const sx of [-1, 1]) g.add(segment([sx * 0.24, 1.75, 0.28], [sx * 0.26, 1.25, 0.34], 0.03, 0.03, leather('#2b2f45'), 8));
+    for (const sx of [-1, 1]) {
+      const st = segment([sx * 0.24, 1.75, 0.28], [sx * 0.26, 1.25, 0.34], 0.03, 0.03, leather('#2b2f45'), 8);
+      st.userData.bodyOnly = true;
+      g.add(st);
+    }
     return g;
   },
   wings(it) {
