@@ -522,7 +522,7 @@ function cardModel(skin) {
 
 export function cardThumb(skin, size = 96) {
   return thumb(`card:${skin}`, size, () => cardModel(skin), {
-    cam: { fov: 22, elev: 0.3, azim: 0.2, pad: 0.72, lift: 0.06 },
+    cam: { fov: 22, elev: 0.3, azim: 0.2, pad: 0.76, lift: 0.1 },
     shadow: 0.22,
     env: 0.5,
     accent: skin === 'neon' ? '#5dff9c' : skin === 'lava' ? '#ff7a1a' : skin === 'galaxy' ? '#b38bff' : null,
@@ -1059,10 +1059,10 @@ function rollModel(style) {
     }
     case 'rocket': {
       die.position.y = 1.35;
-      const flame = new THREE.Mesh(new THREE.ConeGeometry(0.32, 0.9, 24), glowMat('#ff8a1a', 2));
+      const flame = new THREE.Mesh(new THREE.ConeGeometry(0.32, 0.9, 24), glowMat('#ff5a00', 1.1));
       flame.rotation.x = Math.PI;
       flame.position.y = 0.55;
-      const inner = new THREE.Mesh(new THREE.ConeGeometry(0.17, 0.6, 20), glowMat('#fff3a8', 2.4));
+      const inner = new THREE.Mesh(new THREE.ConeGeometry(0.17, 0.6, 20), glowMat('#ffc400', 1.3));
       inner.rotation.x = Math.PI;
       inner.position.y = 0.66;
       flame.userData.noShadow = true;
@@ -1084,11 +1084,11 @@ function rollModel(style) {
     case 'meteor': {
       die.position.set(0.55, 0.65, 0);
       // scia di fuoco: stretta lontano, larga vicino al dado
-      const trail = new THREE.Mesh(new THREE.ConeGeometry(0.42, 2.4, 24, 1, true), glowMat('#ff7a1a', 1.6, { transparent: true, opacity: 0.85, side: THREE.DoubleSide }));
+      const trail = new THREE.Mesh(new THREE.ConeGeometry(0.42, 2.4, 24, 1, true), glowMat('#ff4a00', 0.9, { transparent: true, opacity: 0.85, side: THREE.DoubleSide }));
       trail.position.set(-0.3, 1.5, 0);
       trail.rotation.z = Math.PI / 4;
       trail.userData.noShadow = true;
-      const core = new THREE.Mesh(new THREE.ConeGeometry(0.22, 1.8, 20, 1, true), glowMat('#ffe14d', 2.2, { transparent: true, opacity: 0.9, side: THREE.DoubleSide }));
+      const core = new THREE.Mesh(new THREE.ConeGeometry(0.22, 1.8, 20, 1, true), glowMat('#ffa800', 1.1, { transparent: true, opacity: 0.9, side: THREE.DoubleSide }));
       core.position.set(-0.09, 1.29, 0.05);
       core.rotation.z = Math.PI / 4;
       core.userData.noShadow = true;
@@ -1240,7 +1240,7 @@ function rollModel(style) {
 
 export function rollThumb(style, size = 96) {
   return thumb(`roll:${style}`, size, () => rollModel(style), {
-    cam: { fov: 26, elev: 0.3, azim: 0.32, pad: 0.92, lift: 0 },
+    cam: { fov: 26, elev: 0.3, azim: 0.32, pad: style === 'tornado' ? 1.04 : 0.92, lift: style === 'tornado' ? 0.15 : 0 },
     groundY: 0,
     shadow: 0.25,
     accent: { meteor: '#ff7a1a', rocket: '#ff8a1a', lightning: '#ffe14d', portal: '#a54dff', blackhole: '#ff8a2a', glitch: '#20e3ff' }[style] || null,
