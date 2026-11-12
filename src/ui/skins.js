@@ -5,6 +5,7 @@
 import { ITEMS } from '../meta/catalog.js';
 import { artSpan } from '../three/core.js';
 import '../three/diceThumbs.js';
+import { THEME_PAL, tableGrainUrl } from '../three/cosmTextures.js';
 
 const PIP_POS = { tl: [13, 13], tr: [35, 13], ml: [13, 24], mm: [24, 24], mr: [35, 24], bl: [13, 35], br: [35, 35] };
 const PIPS = { 1: ['mm'], 2: ['tr', 'bl'], 3: ['tr', 'mm', 'bl'], 4: ['tl', 'tr', 'bl', 'br'], 5: ['tl', 'tr', 'mm', 'bl', 'br'], 6: ['tl', 'tr', 'ml', 'mr', 'bl', 'br'] };
@@ -107,6 +108,9 @@ export function rollStyleOf(id) {
 export function applyTheme(app, { table, cards }) {
   app.dataset.theme = ITEMS[table]?.theme || 'classic';
   app.dataset.cardskin = ITEMS[cards]?.skin || 'silver';
+  // grana del materiale del tavolo (panno, sabbia, ghiaccio…) per il rilievo 3D dello sfondo
+  const grain = tableGrainUrl(THEME_PAL[app.dataset.theme]?.tex || 'felt');
+  if (grain) app.style.setProperty('--table-grain', `url("${grain}")`);
 }
 
 /** Colori della lamina da grattare per ogni skin delle carte. */

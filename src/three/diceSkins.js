@@ -655,7 +655,7 @@ const P = {
     }
     bumps(h, S, rnd, 26, S * 0.06, S * 0.14, true, 0.22);
   },
-  popit: (p) => linear(p.c, p.S, ['#d6c8ff', '#c9dcf2', '#bff2e2'], 135),
+  popit: (p) => linear(p.c, p.S, ['#c4b0ff', '#b8d0f2', '#a8ecd6'], 135),
   popitRainbow: (p) => {
     const { c, S } = p;
     const cols = ['#ff8a8a', '#ffc46b', '#fff07b', '#86e39a', '#7bc8ff', '#c19bff'];
@@ -1317,7 +1317,7 @@ const MAT = {
 /** Specifiche 3D per skin (le altre derivano dal catalogo). */
 const SPEC = {
   classic: { base: ['#ffffff', '#e8e8f0'], mat: 'plastic' },
-  ivory: { base: ['#fffaf0', '#efdfbd'], mat: 'satin', paint: (p) => specks(p.c, p.S, p.rnd, ['rgba(160,120,60,.25)'], 80, 0.3, 1, 0.5) },
+  ivory: { mat: 'satin', paint: (p) => (radial(p.c, p.S, '#fffaf0', '#ecdab4'), specks(p.c, p.S, p.rnd, ['rgba(160,120,60,.25)'], 80, 0.3, 1, 0.5)) },
   mint: { base: ['#ecfff7', '#93e3bd'], mat: 'candy' },
   peach: { base: ['#fff3ea', '#ffb08a'], mat: 'candy' },
   sky: { base: ['#f0f9ff', '#86c5ff'], mat: 'plastic' },
@@ -1353,8 +1353,8 @@ const SPEC = {
   divine: { paint: P.divine, mat: 'metal', color: '#ffe27a', pipGlow: '#ffffff', fx: 'halo', haloColor: '#ffe9a0' },
   bubblegum: { base: ['#ffe7f3', '#ff94c4'], mat: 'rubber' },
   sand: { paint: P.sand, mat: 'rock', mat2: { roughness: 0.95 } },
-  cloud: { paint: P.cloud, mat: 'fabric', sheenColor: '#ffffff', mat2: { roughness: 0.8 } },
-  popit: { paint: P.popit, mat: 'silicone', pipMode: 'bubble', pipColor: '#c4b2ff' },
+  cloud: { paint: P.cloud, mat: 'silicone', sheenColor: '#dfeeff', mat2: { roughness: 0.7, sheen: 0.25 } },
+  popit: { paint: P.popit, mat: 'silicone', pipMode: 'bubble', pipColor: '#a98cff' },
   pizza: { paint: (p) => P.pizza(p), mat: 'food', ring: ['#f0be72', '#c98a3e'], pipMode: 'raised' },
   watermelon: { paint: P.watermelon, mat: 'candy', ring: ['#f6ffe9', '#3fae4a', '#2a8a36'], pipMode: 'raised' },
   cookie: { paint: P.cookie, mat: 'food', mat2: { roughness: 0.85 }, pipMode: 'raised' },
@@ -1367,7 +1367,7 @@ const SPEC = {
   musical: { paint: P.musical, mat: 'lacquer' },
   popit_rainbow: { paint: P.popitRainbow, mat: 'silicone', pipMode: 'bubble', pipColor: 'face' },
   gummy: { paint: P.gummy, mat: 'jelly', coreColor: '#d0203f', fx: 'wobble' },
-  paw: { paint: P.paw, mat: 'fabric', sheenColor: '#ffe0ea' },
+  paw: { paint: P.paw, mat: 'fabric', sheenColor: '#ffe0ea', mat2: { sheen: 0.4 } },
   money: { paint: P.money, mat: 'matte', mat2: { roughness: 0.7 } },
   arcade: { paint: P.arcade, mat: 'satin', pipGlow: '#ff3df2', fx: 'pulse' },
   slime: { paint: P.slime, mat: 'jelly', coreColor: '#3fa31a', fx: 'wobble' },
@@ -1375,7 +1375,7 @@ const SPEC = {
   aquarium: { paint: P.aquarium, mat: 'glass', alpha: 0.7, core: 'soft', coreColor: '#2a9ad6', fx: 'bubbles' },
   synthwave: { paint: P.synthwave, mat: 'lacquer', pipGlow: '#20e3ff', fx: 'pulse' },
   snowflake: { paint: P.snowflake, mat: 'satin', fx: 'sparkle' },
-  pumpkin: { paint: P.pumpkin, mat: 'satin', pipMode: 'carved', pipGlow: '#ffcf4a', fx: 'flicker' },
+  pumpkin: { paint: P.pumpkin, mat: 'satin', pipMode: 'carved', pipColor: '#2a1405', pipGlow: '#ff9a1a', fx: 'flicker' },
   planet: { paint: P.planet, mat: 'satin', fx: 'ring' },
   storm: { paint: P.storm, mat: 'satin', pipGlow: '#ffe14d', fx: 'storm' },
   cat: { paint: P.cat, mat: 'fabric', sheenColor: '#ffd8a8', mat2: { roughness: 0.75 } },

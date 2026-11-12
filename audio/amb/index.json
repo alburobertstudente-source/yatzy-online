@@ -1,0 +1,90 @@
+{
+  "pond": {
+    "file": "amb/pond.mp3",
+    "gain": 1.0
+  },
+  "beach": {
+    "file": "amb/beach.mp3",
+    "gain": 1.0
+  },
+  "forest": {
+    "file": "amb/forest.mp3",
+    "gain": 1.0
+  },
+  "ice": {
+    "file": "amb/ice.mp3",
+    "gain": 1.0
+  },
+  "sea": {
+    "file": "amb/sea.mp3",
+    "gain": 1.0
+  },
+  "desert": {
+    "file": "amb/desert.mp3",
+    "gain": 1.0
+  },
+  "chaos": {
+    "file": "amb/chaos.mp3",
+    "gain": 1.0
+  },
+  "castle": {
+    "file": "amb/castle.mp3",
+    "gain": 1.0
+  },
+  "sky": {
+    "file": "amb/sky.mp3",
+    "gain": 1.0
+  },
+  "throne": {
+    "file": "amb/throne.mp3",
+    "gain": 1.0
+  },
+  "casino": {
+    "file": "amb/casino.mp3",
+    "gain": 1.0
+  },
+  "birds": {
+    "file": "amb/birds.mp3",
+    "gain": 1.0
+  },
+  "waves": {
+    "file": "amb/beach.mp3",
+    "gain": 1.0
+  },
+  "chimes": {
+    "file": "amb/chimes.mp3",
+    "gain": 1.0
+  },
+  "crickets": {
+    "file": "amb/crickets.mp3",
+    "gain": 1.0
+  },
+  "wind": {
+    "file": "amb/wind.mp3",
+    "gain": 1.0
+  },
+  "rumble": {
+    "file": "amb/rumble.mp3",
+    "gain": 1.0
+  },
+  "shimmer": {
+    "file": "amb/shimmer.mp3",
+    "gain": 1.0
+  },
+  "hum": {
+    "file": "amb/hum.mp3",
+    "gain": 1.0
+  },
+  "harp": {
+    "file": "amb/heaven.mp3",
+    "gain": 1.0
+  },
+  "heaven": {
+    "file": "amb/heaven.mp3",
+    "gain": 1.0
+  },
+  "storm": {
+    "file": "amb/sky.mp3",
+    "gain": 1.0
+  }
+}

@@ -229,5 +229,5 @@ export function buildMotion(style, { entering = false, from, to }) {
 /** Punto di partenza del lancio dal lato di chi tira (fuori dal vassoio, in alto). */
 export function throwStart(to, style, k = 0) {
   if (style === 'meteor') return P(to.x + 3.4, 4.6, to.z - 2.6);
-  return P(to.x * 0.6 + rnd(-0.6, 0.6) + (k - 2) * 0.1, rnd(2.6, 3.2), to.z + rnd(3.8, 4.6));
+  return P(to.x * 0.6 + rnd(-0.6, 0.6) + (k - 2) * 0.1, rnd(2.3, 2.8), to.z + rnd(3, 3.6));
 }

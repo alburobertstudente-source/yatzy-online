@@ -12,7 +12,8 @@ export function diceImage(skinId, value = 5, size = 96) {
     `dice:${skinId}:${value}`,
     (THREE) => {
       const scene = new THREE.Scene();
-      studioLights(scene, { shadows: true, intensity: 1.05 });
+      studioLights(scene, { shadows: true, intensity: 0.9 });
+      scene.environmentIntensity = 0.85;
       const floor = shadowCatcher(6, 0.32);
       scene.add(floor);
       const die = createDie(skinId, { size: 1, quality: size > 120 ? 256 : 128 });
@@ -23,7 +24,7 @@ export function diceImage(skinId, value = 5, size = 96) {
       die.userData.update(0.016, 1.7);
       const cam = new THREE.PerspectiveCamera(26, 1, 0.1, 50);
       const fxBig = Boolean(die.getObjectByName('fx')?.children.length);
-      const d = fxBig ? 5.6 : 4.5;
+      const d = fxBig ? 5.1 : 4.5;
       cam.position.set(d * 0.52, d * 0.66, d * 0.68);
       cam.lookAt(0, fxBig ? 0.5 : 0.46, 0);
       return {

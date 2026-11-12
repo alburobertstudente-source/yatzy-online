@@ -489,8 +489,9 @@ function cardMaterials(skin) {
   const iri = IRI_CARDS.has(skin);
   const faceMat = phys({
     map: tex(face),
-    roughness: metal ? 0.3 : skin === 'kraft' ? 0.85 : 0.42,
-    metalness: metal ? 0.85 : skin === 'carbon' ? 0.4 : 0.05,
+    roughness: metal ? 0.26 : skin === 'kraft' ? 0.85 : 0.42,
+    metalness: metal ? 0.75 : skin === 'carbon' ? 0.4 : 0.05,
+    envMapIntensity: metal ? 2.4 : 1,
     clearcoat: skin === 'kraft' ? 0.1 : 0.7,
     clearcoatRoughness: 0.14,
     iridescence: iri ? 1 : skin === 'galaxy' || skin === 'frost' ? 0.5 : 0,
@@ -521,7 +522,7 @@ function cardModel(skin) {
 
 export function cardThumb(skin, size = 96) {
   return thumb(`card:${skin}`, size, () => cardModel(skin), {
-    cam: { fov: 22, elev: 0.3, azim: 0.2, pad: 0.74, lift: -0.05 },
+    cam: { fov: 22, elev: 0.3, azim: 0.2, pad: 0.8, lift: 0.04 },
     shadow: 0.22,
     env: 0.5,
     accent: skin === 'neon' ? '#5dff9c' : skin === 'lava' ? '#ff7a1a' : skin === 'galaxy' ? '#b38bff' : null,
@@ -750,7 +751,7 @@ function tableModel(theme) {
 export function tableThumb(theme, size = 96) {
   const pal = THEME_PAL[theme] || THEME_PAL.classic;
   return thumb(`table:${theme}`, size, () => tableModel(theme), {
-    cam: { fov: 24, elev: 0.72, azim: 0.42, pad: 0.8 },
+    cam: { fov: 24, elev: 0.72, azim: 0.42, pad: 0.9 },
     shadow: 0.3,
     accent: pal.accent,
     accentPower: theme === 'neoncity' || theme === 'volcano' || theme === 'space' ? 8 : 3,

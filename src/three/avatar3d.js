@@ -152,8 +152,10 @@ let stage = null;
 function getStage() {
   if (stage) return stage;
   const scene = new THREE.Scene();
-  studioLights(scene, { shadows: true });
-  const catcher = shadowCatcher(12, 0.3);
+  // luci un po' più morbide e riflessi più bassi: colori pieni, niente effetto "slavato"
+  studioLights(scene, { shadows: true, intensity: 0.8 });
+  scene.environmentIntensity = 0.45;
+  const catcher = shadowCatcher(12, 0.22);
   scene.add(catcher);
   stage = { scene, catcher };
   return stage;
@@ -167,7 +169,11 @@ const tmpV = new THREE.Vector3();
  * telecamera, quanto deve riempire l'immagine.
  */
 function frame(obj, { azimuth = 0.42, elev = 0.22, fill = 0.88, fov = 26, fit = 'sphere', range = null } = {}) {
-  box.setFromObject(obj);
+  // solo le mesh: aloni e scintille non contano per l'inquadratura
+  box.makeEmpty();
+  obj.traverse((o) => {
+    if (o.isMesh && !o.userData.noFrame && o.visible) box.expandByObject(o, false);
+  });
   if (range) {
     box.min.y = Math.max(box.min.y, range[0]);
     box.max.y = Math.min(box.max.y, range[1]);
@@ -189,15 +195,34 @@ function frame(obj, { azimuth = 0.42, elev = 0.22, fill = 0.88, fov = 26, fit = 
   return { cam, floor: box.min.y };
 }
 
-function sceneFor(obj, opts) {
+/**
+ * Il renderer è condiviso: per i colori pieni da cartone uso il tone mapping
+ * "Neutral" (non sbiadisce i colori saturi) e rimetto tutto com'era dopo.
+ */
+function sceneFor(obj, opts, renderer) {
   const st = getStage();
+  const prev = renderer ? { tm: renderer.toneMapping, ex: renderer.toneMappingExposure } : null;
+  if (renderer) {
+    renderer.toneMapping = THREE.NeutralToneMapping;
+    renderer.toneMappingExposure = 1.0;
+  }
   st.scene.add(obj);
   obj.updateMatrixWorld(true);
   const full = new THREE.Box3().setFromObject(obj);
   const { cam } = frame(obj, opts);
   st.catcher.position.y = full.min.y - 0.002;
   st.catcher.visible = opts.shadow !== false;
-  return { scene: st.scene, camera: cam, dispose: () => st.scene.remove(obj) };
+  return {
+    scene: st.scene,
+    camera: cam,
+    dispose: () => {
+      st.scene.remove(obj);
+      if (prev) {
+        renderer.toneMapping = prev.tm;
+        renderer.toneMappingExposure = prev.ex;
+      }
+    },
+  };
 }
 
 /* ---------------- chiavi e immagini ---------------- */
@@ -216,12 +241,12 @@ function parseKey(key) {
 export function avatarImage(key, size) {
   return renderThumb(
     `av3d:${key}`,
-    () => {
+    (_T, r) => {
       const { equip, skinTone, bust } = parseKey(key);
       const obj = buildAvatar(equip, skinTone);
       obj.rotation.y = -0.18;
-      if (bust) return sceneFor(obj, { azimuth: 0.1, elev: 0.08, fov: 24, fit: 'height', fill: 0.94, range: [1.42, 4.2] });
-      return sceneFor(obj, { azimuth: 0.18, elev: 0.14, fov: 24, fit: 'height', fill: 0.93 });
+      if (bust) return sceneFor(obj, { azimuth: 0.1, elev: 0.08, fov: 24, fit: 'height', fill: 0.94, range: [1.42, 4.2] }, r);
+      return sceneFor(obj, { azimuth: 0.18, elev: 0.14, fov: 24, fit: 'height', fill: 0.93 }, r);
     },
     size,
   );
@@ -242,9 +267,9 @@ export function wearImage(id, size) {
   if (!it) return Promise.resolve(null);
   return renderThumb(
     `wear3d:${id}`,
-    () => {
+    (_T, r) => {
       const obj = buildWearable(it);
-      return sceneFor(obj, WEAR_VIEW[it.cat] || {});
+      return sceneFor(obj, WEAR_VIEW[it.cat] || {}, r);
     },
     size,
   );

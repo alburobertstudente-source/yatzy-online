@@ -315,11 +315,12 @@ const v3 = (x, y, z) => new THREE.Vector3(x, y, z);
 
 /** Sbuffo di polvere sotto al dado (più forte = più polvere). */
 export function dust(P, at, strength = 1, color = '#f4ead8') {
-  const n = Math.round(4 + strength * 6);
+  const n = Math.round(3 + strength * 5);
   for (let i = 0; i < n; i++) {
-    const a = rnd(0, Math.PI * 2);
-    const sp = rnd(0.6, 1.4) * strength;
-    P.sprite('soft', { pos: v3(at.x + Math.cos(a) * 0.4, 0.06, at.z + Math.sin(a) * 0.4), vel: [Math.cos(a) * sp, rnd(0.2, 0.6), Math.sin(a) * sp], color, size: rnd(0.22, 0.36), grow: 1.6, life: rnd(0.45, 0.7), drag: 3.5, opacity: 0.45 });
+    // la polvere esce da sotto gli spigoli e si allarga radente al tavolo (più dietro/ai lati che davanti)
+    const a = rnd(Math.PI * 0.85, Math.PI * 2.15);
+    const sp = rnd(0.5, 1.1) * strength;
+    P.sprite('soft', { pos: v3(at.x + Math.cos(a) * 0.55, 0.04, at.z + Math.sin(a) * 0.5), vel: [Math.cos(a) * sp, rnd(0.08, 0.3), Math.sin(a) * sp * 0.7], color, size: rnd(0.14, 0.22), grow: 1.2, life: rnd(0.35, 0.55), drag: 4, opacity: 0.22 });
   }
 }
 

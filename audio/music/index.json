@@ -1,0 +1,70 @@
+{
+  "intro": {
+    "file": "music/intro.mp3",
+    "gain": 1.0
+  },
+  "menu": {
+    "file": "music/menu.mp3",
+    "gain": 0.85
+  },
+  "game": {
+    "file": "music/game.mp3",
+    "gain": 0.8
+  },
+  "campaign": {
+    "file": "music/campaign.mp3",
+    "gain": 0.9
+  },
+  "boss": {
+    "file": "music/boss.mp3",
+    "gain": 1.0
+  },
+  "bossFinal": {
+    "file": "music/bossFinal.mp3",
+    "gain": 1.0
+  },
+  "casino": {
+    "file": "music/casino.mp3",
+    "gain": 0.9
+  },
+  "w1": {
+    "file": "music/w1.mp3",
+    "gain": 0.9
+  },
+  "w2": {
+    "file": "music/w2.mp3",
+    "gain": 0.9
+  },
+  "w3": {
+    "file": "music/w3.mp3",
+    "gain": 0.9
+  },
+  "w4": {
+    "file": "music/w4.mp3",
+    "gain": 0.9
+  },
+  "w5": {
+    "file": "music/w5.mp3",
+    "gain": 0.9
+  },
+  "w6": {
+    "file": "music/w6.mp3",
+    "gain": 0.9
+  },
+  "w7": {
+    "file": "music/w7.mp3",
+    "gain": 0.9
+  },
+  "w8": {
+    "file": "music/w8.mp3",
+    "gain": 0.9
+  },
+  "w9": {
+    "file": "music/w9.mp3",
+    "gain": 0.9
+  },
+  "w10": {
+    "file": "music/w10.mp3",
+    "gain": 0.9
+  }
+}

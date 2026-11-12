@@ -248,7 +248,7 @@ function buildTextures(spec, S) {
   const pipRoughM = spec.pipMetal ? 0.25 : pipRough;
   for (let i = 0; i < N; i++) {
     const pit = Math.max(0, big[i] - hs[i]);
-    const ao = 1 - Math.min(0.7, pit * 3.2);
+    const ao = 1 - Math.min(0.78, pit * 5.5);
     const mk = mask[i];
     const o = i * 4;
     oimg.data[o] = ao * 255;
@@ -258,15 +258,22 @@ function buildTextures(spec, S) {
   }
   octx.putImageData(oimg, 0, 0);
 
-  // trasparenza: facce trasparenti, punti pieni
-  if (spec.alpha < 1) {
-    const cimg = c.getImageData(0, 0, W, H);
-    for (let i = 0; i < N; i++) {
-      const a = cimg.data[i * 4 + 3] / 255;
-      cimg.data[i * 4 + 3] = Math.min(1, a * spec.alpha + mask[i]) * 255;
-    }
-    c.putImageData(cimg, 0, 0);
+  // colori un po' più saturi (stile cartoon) e trasparenza: facce trasparenti, punti pieni
+  const cimg = c.getImageData(0, 0, W, H);
+  const cd = cimg.data;
+  const sat = spec.sat ?? 1.18;
+  for (let i = 0; i < N; i++) {
+    const o = i * 4;
+    const r = cd[o];
+    const g = cd[o + 1];
+    const b = cd[o + 2];
+    const l = 0.299 * r + 0.587 * g + 0.114 * b;
+    cd[o] = Math.max(0, Math.min(255, l + (r - l) * sat));
+    cd[o + 1] = Math.max(0, Math.min(255, l + (g - l) * sat));
+    cd[o + 2] = Math.max(0, Math.min(255, l + (b - l) * sat));
+    if (spec.alpha < 1) cd[o + 3] = Math.min(1, (cd[o + 3] / 255) * spec.alpha + mask[i]) * 255;
   }
+  c.putImageData(cimg, 0, 0);
   return { color: cc, normal: nc, orm: oc, emissive: ec };
 }
 
@@ -297,7 +304,7 @@ function buildMaterial(spec, S) {
     clearcoat: m.clearcoat ?? 0,
     clearcoatRoughness: m.clearcoatRoughness ?? 0.1,
     ior: m.ior ?? 1.5,
-    envMapIntensity: m.metalness ? 1.25 : 1,
+    envMapIntensity: m.metalness ? 1.15 : 0.8,
   };
   const orm = tex(t.orm);
   params.roughnessMap = orm;
@@ -605,8 +612,8 @@ function addFx(spec, group, body, mat) {
       rising(12, { colors: ['#e8fbff', '#bfeaff'], size: 0.09, spread: 0.3, height: 0.8, speed: 0.35, inside: true, map: glowTexture() });
       break;
     case 'ring': {
-      const m = new THREE.Mesh(new THREE.RingGeometry(0.78, 1.05, 64), new THREE.MeshStandardMaterial({ color: '#ffe2b8', roughness: 0.6, transparent: true, opacity: 0.85, side: THREE.DoubleSide }));
-      m.rotation.set(-1.25, 0, 0.35);
+      const m = new THREE.Mesh(new THREE.RingGeometry(0.84, 1.02, 64), new THREE.MeshStandardMaterial({ color: '#ffe2b8', roughness: 0.6, transparent: true, opacity: 0.8, side: THREE.DoubleSide }));
+      m.rotation.set(-1.15, 0.25, 0.4);
       m.castShadow = true;
       fxRoot.add(m);
       own.push(m);

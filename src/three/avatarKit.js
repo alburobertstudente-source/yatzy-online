@@ -56,9 +56,9 @@ export function skinMat(tone) {
     const c = col(tone);
     return new THREE.MeshPhysicalMaterial({
       color: c,
-      roughness: 0.58,
-      sheen: 0.55,
-      sheenColor: new THREE.Color('#ffb59c'),
+      roughness: 0.55,
+      sheen: 0.35,
+      sheenColor: new THREE.Color('#ff9f80'),
       sheenRoughness: 0.5,
       clearcoat: 0.12,
       clearcoatRoughness: 0.5,
@@ -67,16 +67,16 @@ export function skinMat(tone) {
 }
 
 /** Stoffa: opaca con il "velluto" (sheen) che illumina i bordi. */
-export function fabric(color, { map = null, key = '', emissiveMap = null, emissive = null, sheen = 1 } = {}) {
-  return M(`fab${hexOf(color)}${key}`, () => {
+export function fabric(color, { map = null, key = '', emissiveMap = null, emissive = null, sheen = 0.45 } = {}) {
+  return M(`fab${hexOf(color)}${key}${sheen}`, () => {
     const c = col(color);
     return new THREE.MeshPhysicalMaterial({
       color: map ? 0xffffff : c,
       map,
-      roughness: 0.82,
+      roughness: 0.78,
       sheen,
-      sheenColor: c.clone().lerp(new THREE.Color('#ffffff'), 0.55),
-      sheenRoughness: 0.45,
+      sheenColor: c.clone().lerp(new THREE.Color('#ffffff'), 0.22),
+      sheenRoughness: 0.5,
       emissiveMap,
       emissive: emissive ? col(emissive) : new THREE.Color(0),
       emissiveIntensity: emissive ? 1.4 : 0,

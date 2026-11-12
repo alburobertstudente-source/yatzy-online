@@ -101,7 +101,7 @@ export class DiceLayer3D {
     }
   }
 
-  constructor(host, slots, { top = 150, side = 16, bottom = 40, dieScale = 0.74, tilt = 30 } = {}) {
+  constructor(host, slots, { top = 150, side = 16, bottom = 76, dieScale = 0.64, tilt = 22 } = {}) {
     injectCss();
     this.host = host;
     this.slots = slots;
@@ -198,7 +198,7 @@ export class DiceLayer3D {
     this.dpx = Math.min(s0.offsetWidth, s0.offsetHeight) * this.dieScale;
     const cam = this.camera;
     cam.aspect = W / H;
-    cam.fov = 24;
+    cam.fov = 20;
     const D = H / 2 / Math.tan((cam.fov * Math.PI) / 360) / this.dpx;
     cam.position.set(0, D * Math.cos(this.tilt), D * Math.sin(this.tilt));
     cam.lookAt(0, 0, 0);

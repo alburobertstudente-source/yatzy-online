@@ -619,8 +619,14 @@ const SHIRT = {
     const m = fabric(it.c1, { map: TEX.plain(it.c1, 0.08), key: 'hood' });
     g.add(torso(m));
     sleeves(g, m, 0.94, fabric(it.c2));
-    // cappuccio appoggiato dietro il collo
-    g.add(mesh(G.torus(0.3, 0.12, PI * 1.25, 32), m, { p: [0, 1.86, -0.12], r: [PI / 2 + 0.55, 0, PI * 1.38], s: [1.1, 1, 1] }));
+    // cappuccio appoggiato sulla schiena (conca aperta verso l'alto)
+    const hoodMat = cached(`m:hood${it.c1}`, () => {
+      const hm = m.clone();
+      hm.side = THREE.DoubleSide;
+      return hm;
+    });
+    g.add(mesh(G.dome(PI / 2, 32), hoodMat, { p: [0, 1.74, -0.27], s: [0.34, 0.26, 0.2], r: [PI - 0.35, 0, 0] }));
+    g.add(mesh(G.torus(0.33, 0.035, PI, 32), fabric(it.c2), { p: [0, 1.76, -0.2], r: [-0.35 - PI / 2, 0, 0], s: [1, 0.62, 1] }));
     g.add(mesh(G.box(0.46, 0.22, 0.06, 0.05), fabric(it.c2), { p: [0, 1.17, 0.335], r: [-0.05, 0, 0] }));
     for (const sx of [-1, 1]) g.add(segment([sx * 0.07, 1.82, 0.2], [sx * 0.08, 1.52, 0.335], 0.012, 0.012, fabric('#ffffff'), 8));
     for (const sx of [-1, 1]) g.add(mesh(G.sphere(8), plastic('#ffffff'), { p: [sx * 0.08, 1.5, 0.34], s: 0.025 }));
@@ -1054,7 +1060,7 @@ function capeGeo() {
       const width = 0.82 + v * 0.75;
       const R = 0.38 + v * 0.25;
       const a = (u * width) / R;
-      const fold = Math.sin(u * 16) * 0.035 * v;
+      const fold = Math.sin(u * 13) * 0.055 * (0.2 + v);
       const x = Math.sin(a) * (R + fold);
       const z = -Math.cos(a) * (R + fold) + 0.05 - v * 0.2;
       pos.setXYZ(i, x, -v * 1.55, z);
@@ -1106,6 +1112,21 @@ const BACK = {
     const outer = new THREE.MeshPhysicalMaterial({ color: it.c1, roughness: 0.6, sheen: 1, sheenColor: hexOf(shade(it.c1, 1.8)), sheenRoughness: 0.35, side: THREE.DoubleSide });
     const c = mesh(capeGeo(), outer, { p: [0, 1.84, -0.02] });
     g.add(c);
+    // orlo dorato in fondo
+    const hem = cached('g:capehem', () => {
+      const pts = [];
+      const v = 1;
+      for (let i = 0; i <= 24; i++) {
+        const u = i / 24 - 0.5;
+        const width = 0.82 + v * 0.75;
+        const R = 0.38 + v * 0.25;
+        const a = (u * width) / R;
+        const fold = Math.sin(u * 13) * 0.055 * (0.2 + v);
+        pts.push(new THREE.Vector3(Math.sin(a) * (R + fold), -v * 1.55, -Math.cos(a) * (R + fold) + 0.05 - v * 0.2));
+      }
+      return new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 64, 0.028, 8, false);
+    });
+    g.add(mesh(hem, metal(/wizard/.test(it.id) ? it.c2 : '#e2b23a', 0.25), { p: [0, 1.84, -0.02] }));
     g.add(mesh(G.torus(0.2, 0.06, PI * 2, 32), fabric(it.c2), { p: [0, 1.84, 0.0], r: [PI / 2 + 0.2, 0, 0], s: [1.15, 0.95, 1] }));
     for (const sx of [-1, 1]) g.add(mesh(G.sphere(12), metal('#e2b23a', 0.25), { p: [sx * 0.17, 1.8, 0.16], s: 0.045 }));
     if (/wizard/.test(it.id)) for (const [x, y] of [[-0.3, 1.2], [0.25, 0.9], [0.0, 0.55], [-0.35, 0.6]]) g.add(mesh(starGeo(), glow(it.c2, 0.8), { p: [x, y, -0.55 - (1.84 - y) * 0.12], s: 0.07, r: [0, PI, 0] }));
