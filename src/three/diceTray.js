@@ -115,10 +115,6 @@ export class DiceLayer3D {
     purge();
     try {
       const l = new DiceLayer3D(host, slots, opts);
-      if (isSoftwareGL(l.renderer)) {
-        l.dispose();
-        return null;
-      }
       layers.add(l);
       return l;
     } catch {
@@ -141,6 +137,12 @@ export class DiceLayer3D {
     this.canvas.setAttribute('aria-hidden', 'true');
     host.prepend(this.canvas);
     this.renderer = setupRenderer(new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true, alpha: true, powerPreference: 'high-performance' }));
+    if (isSoftwareGL(this.renderer)) {
+      this.renderer.dispose();
+      this.renderer.forceContextLoss?.();
+      this.canvas.remove();
+      throw new Error('WebGL senza scheda grafica');
+    }
     this.renderer.setClearColor(0x000000, 0);
     this.canvas.addEventListener('webglcontextlost', (e) => {
       e.preventDefault();
@@ -221,7 +223,7 @@ export class DiceLayer3D {
       this.kick();
     };
     try {
-      if (this.renderer.compileAsync) this.renderer.compileAsync(this.scene, this.camera).then(done, done);
+      if (this.renderer.compileAsync && this.renderer.extensions.has('KHR_parallel_shader_compile')) this.renderer.compileAsync(this.scene, this.camera).then(done, done);
       else {
         this.renderer.compile(this.scene, this.camera);
         done();
