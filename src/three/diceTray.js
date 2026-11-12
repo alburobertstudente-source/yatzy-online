@@ -59,6 +59,27 @@ function injectCss() {
   document.head.append(st);
 }
 
+/**
+ * WebGL senza scheda grafica (SwiftShader, llvmpipe…: browser senza GPU o in
+ * prova automatica) disegna troppo lentamente: lì restano i dadi CSS.
+ * Con ?force3d si usa comunque il 3D (per le prove).
+ */
+let softwareGL = null;
+function isSoftwareGL(renderer) {
+  if (softwareGL !== null) return softwareGL;
+  softwareGL = false;
+  try {
+    if (new URLSearchParams(location.search).has('force3d')) return false;
+    const gl = renderer.getContext();
+    const ext = gl.getExtension('WEBGL_debug_renderer_info');
+    const name = String(ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER));
+    softwareGL = /swiftshader|llvmpipe|softpipe|software|basic render/i.test(name);
+  } catch {
+    /* se non si sa, si prova col 3D */
+  }
+  return softwareGL;
+}
+
 /** Tutti i vassoi 3D vivi (per liberare quelli tolti dalla pagina). */
 const layers = new Set();
 function purge() {
@@ -90,10 +111,14 @@ export class DiceLayer3D {
    * @returns {DiceLayer3D|null}
    */
   static attach(host, slots, opts = {}) {
-    if (!has3D() || !host?.isConnected || !host.offsetWidth || !host.offsetHeight) return null;
+    if (!has3D() || softwareGL || !host?.isConnected || !host.offsetWidth || !host.offsetHeight) return null;
     purge();
     try {
       const l = new DiceLayer3D(host, slots, opts);
+      if (isSoftwareGL(l.renderer)) {
+        l.dispose();
+        return null;
+      }
       layers.add(l);
       return l;
     } catch {
@@ -170,6 +195,7 @@ export class DiceLayer3D {
     this.raycaster = new THREE.Raycaster();
     this.#buildDice('dice.classic');
     this.layout();
+    this.#warm();
     this.syncFromDom();
     host.classList.add('d3-on');
 
@@ -179,6 +205,30 @@ export class DiceLayer3D {
     this.ro.observe(host);
     this.gone = 0;
     this.poll = setInterval(() => this.#poll(), 120);
+  }
+
+  /** Prepara in anticipo gli shader (dadi, particelle, anelli): niente scatti al primo lancio. */
+  #warm() {
+    const P = this.fx;
+    const at = new THREE.Vector3(0, -5, 0);
+    P.sprite('soft', { pos: at, life: 0.01 });
+    P.sprite('soft', { pos: at, life: 0.01, additive: true });
+    P.ring(at, { life: 0.01 });
+    P.confetti(at, { life: 0.01 });
+    P.coin(at, [0, 0, 0]);
+    const done = () => {
+      P.update(5);
+      this.kick();
+    };
+    try {
+      if (this.renderer.compileAsync) this.renderer.compileAsync(this.scene, this.camera).then(done, done);
+      else {
+        this.renderer.compile(this.scene, this.camera);
+        done();
+      }
+    } catch {
+      done();
+    }
   }
 
   /* ---------------- impaginazione ---------------- */
