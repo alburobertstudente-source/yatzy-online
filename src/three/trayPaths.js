@@ -148,9 +148,9 @@ export function buildMotion(style, { entering = false, from, to }) {
       break;
     }
     case 'meteor': {
-      const sky = P(to.x + 3.4, 4.6, to.z - 2.6);
+      const sky = P(to.x + 2.6, 3.6, to.z - 1.6);
       const L1 = around(to, 0.2, 0.25);
-      m = bouncer({ points: [sky, L1, around(to, -0.06, 0.08), base], fracs: [0.4, 0.17, 0.1], apex: [4.6, 0.5, 0.14], rollAt: [0.7, 0.92, 0.98] });
+      m = bouncer({ points: [sky, L1, around(to, -0.06, 0.08), base], fracs: [0.4, 0.17, 0.1], apex: [3.6, 0.5, 0.14], rollAt: [0.7, 0.92, 0.98] });
       m.contacts[0].amp = 0.3;
       m.contacts[0].hard = true;
       rollTurns = rnd(2.4, 3);
@@ -228,6 +228,6 @@ export function buildMotion(style, { entering = false, from, to }) {
 
 /** Punto di partenza del lancio dal lato di chi tira (fuori dal vassoio, in alto). */
 export function throwStart(to, style, k = 0) {
-  if (style === 'meteor') return P(to.x + 3.4, 4.6, to.z - 2.6);
+  if (style === 'meteor') return P(to.x + 2.6, 3.6, to.z - 1.6);
   return P(to.x * 0.6 + rnd(-0.6, 0.6) + (k - 2) * 0.1, rnd(2.3, 2.8), to.z + rnd(3, 3.6));
 }

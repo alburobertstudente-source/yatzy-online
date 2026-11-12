@@ -1114,7 +1114,7 @@ const BACK = {
     const g = new THREE.Group();
     // fuori il colore del mantello, dentro la fodera (c2)
     const outer = cached(`m:capeout${it.c1}`, () => new THREE.MeshPhysicalMaterial({ color: it.c1, roughness: 0.6, sheen: 0.8, sheenColor: hexOf(shade(it.c1, 1.6)), sheenRoughness: 0.35, side: THREE.BackSide }));
-    const lining = cached(`m:capein${it.c2}`, () => new THREE.MeshPhysicalMaterial({ color: it.c2, roughness: 0.35, sheen: 1, sheenColor: '#ffffff', clearcoat: 0.4, side: THREE.FrontSide }));
+    const lining = cached(`m:capein${it.c2}`, () => new THREE.MeshPhysicalMaterial({ color: it.c2, roughness: 0.4, sheen: 0.35, sheenColor: hexOf(shade(it.c2, 1.5)), clearcoat: 0.3, side: THREE.FrontSide }));
     g.add(mesh(capeGeo(), outer, { p: [0, 1.84, -0.02] }));
     g.add(mesh(capeGeo(), lining, { p: [0, 1.84, -0.02] }));
     // orlo dorato in fondo

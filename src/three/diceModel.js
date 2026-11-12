@@ -57,14 +57,14 @@ function dieGeometry() {
   if (geoCache) return geoCache;
   const g = new RoundedBoxGeometry(1, 1, 1, 4, RADIUS);
   const uv = g.attributes.uv;
-  // ogni faccia nella sua cella dell'atlante (4 colonne x 2 righe, ne usiamo 3x2);
+  // ogni faccia nella sua cella dell'atlante (3 colonne x 2 righe; WebGL2 accetta texture non quadrate);
   // riga 0 del canvas (in alto, flipY) = metà superiore della texture
   for (let gi = 0; gi < g.groups.length; gi++) {
     const { start, count } = g.groups[gi];
     const v = GROUP_VALUE[gi];
     const col = (v - 1) % 3;
     const row = Math.floor((v - 1) / 3);
-    for (let i = start; i < start + count; i++) uv.setXY(i, (col + uv.getX(i)) / 4, (1 - row) * 0.5 + uv.getY(i) * 0.5);
+    for (let i = start; i < start + count; i++) uv.setXY(i, (col + uv.getX(i)) / 3, (1 - row) * 0.5 + uv.getY(i) * 0.5);
   }
   uv.needsUpdate = true;
   g.clearGroups();
@@ -111,7 +111,7 @@ const hexRgb = (c) => {
 
 /** Dipinge l'atlante di una skin: colore, normali, AO/ruvidità/metallo, luce propria. */
 function buildTextures(spec, S) {
-  const W = S * 4;
+  const W = S * 3;
   const H = S * 2;
   const cc = canvas(W, H);
   const hc = canvas(W, H);
@@ -225,7 +225,7 @@ function buildTextures(spec, S) {
       const dy = hs[Math.min(H - 1, y + 1) * W + x] - hs[Math.max(0, y - 1) * W + x];
       let nx = -dx * strength;
       let ny = dy * strength;
-      const len = Math.hypot(nx, ny, 1);
+      const len = Math.sqrt(nx * nx + ny * ny + 1);
       nx /= len;
       ny /= len;
       const nz = 1 / len;

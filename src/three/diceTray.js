@@ -101,7 +101,7 @@ export class DiceLayer3D {
     }
   }
 
-  constructor(host, slots, { top = 150, side = 16, bottom = 76, dieScale = 0.64, tilt = 22 } = {}) {
+  constructor(host, slots, { top = 190, side = 16, bottom = 76, dieScale = 0.64, tilt = 22 } = {}) {
     injectCss();
     this.host = host;
     this.slots = slots;
