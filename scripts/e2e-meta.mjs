@@ -11,11 +11,13 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const require = createRequire(import.meta.url);
+/** Avvisi del WebGL software del browser di prova (non del gioco). */
+const IGNORED_CONSOLE = /KHR_parallel_shader_compile|GL Driver Message|GPU stall due to ReadPixels|WebGL: INVALID_|Automatic fallback to software WebGL/;
 const { chromium } = require('playwright');
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = process.argv[2] || join(ROOT, 'test-results', 'meta');
 mkdirSync(OUT, { recursive: true });
-const PORT = 5199;
+const PORT = Number(process.env.E2E_PORT) || 5199;
 const DATA = join(ROOT, 'test-results', 'meta-data');
 rmSync(DATA, { recursive: true, force: true });
 const PAGE = process.env.E2E_PAGE || 'index.html';
@@ -35,7 +37,7 @@ async function phone() {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, hasTouch: true, isMobile: true });
   const page = await ctx.newPage();
   page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
-  page.on('console', (m) => m.type() === 'error' && !/Failed to load resource/.test(m.text()) && errors.push(m.text()));
+  page.on('console', (m) => m.type() === 'error' && !/Failed to load resource/.test(m.text()) && !IGNORED_CONSOLE.test(m.text()) && errors.push(m.text()));
   return { ctx, page };
 }
 const prof = (page) => page.evaluate(() => JSON.parse(JSON.stringify(window.yatzyApp.account.profile)));
