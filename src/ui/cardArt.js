@@ -116,7 +116,8 @@ export const CARD_ICONS = {
      <rect x="8" y="44" width="48" height="9" rx="3" fill="#ffb21e" stroke="${GOLD_D}" stroke-width="2.8"/>
      <circle cx="32" cy="34" r="5" fill="${RED}"/><circle cx="18" cy="38" r="3" fill="${AZURE}"/><circle cx="46" cy="38" r="3" fill="${AZURE}"/>
      <text x="32" y="63" text-anchor="middle" font-size="11" font-weight="700" fill="${INK}" font-family="Fredoka, sans-serif">×2</text>`,
-  ),  dadoGemello: svg(
+  ),
+  dadoGemello: svg(
     `${die(6, 20, 24, P5)}${die(34, 20, 24, P5)}
      <path d="M20 50c4 6 20 6 24 0" fill="none" stroke="${AZURE}" stroke-width="3.5" stroke-linecap="round"/>
      <path d="M40 46l4 4-5 3" fill="none" stroke="${AZURE}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -235,6 +236,89 @@ export const CARD_ICONS = {
      <rect x="44" y="8" width="10" height="14" rx="2" fill="#fff" stroke="${INK}" stroke-width="1.6" transform="rotate(30 49 15)"/>
      <rect x="8" y="42" width="10" height="14" rx="2" fill="${GOLD}" stroke="${INK}" stroke-width="1.6" transform="rotate(-40 13 49)"/>`,
   ),
+  ladroDiLanci: svg(
+    `${die(6, 24, 22, P2)}<path d="M30 30h10" stroke="#35c46a" stroke-width="4" stroke-linecap="round"/><path d="M36 25l5 5-5 5" fill="none" stroke="#35c46a" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+     <circle cx="50" cy="20" r="9" fill="${AZURE}" stroke="#fff" stroke-width="2"/><text x="50" y="24" text-anchor="middle" font-size="10" font-weight="700" fill="#fff" font-family="Fredoka, sans-serif">+1</text>
+     <circle cx="50" cy="46" r="9" fill="${RED}" stroke="#fff" stroke-width="2"/><text x="50" y="50" text-anchor="middle" font-size="10" font-weight="700" fill="#fff" font-family="Fredoka, sans-serif">−1</text>`,
+  ),
+  eco: svg(
+    `<path d="M14 32a18 18 0 0 1 18-18" fill="none" stroke="${VIOLET}" stroke-width="4" stroke-linecap="round"/>
+     <path d="M8 32a24 24 0 0 1 24-24" fill="none" stroke="${VIOLET}" stroke-width="3" stroke-linecap="round" opacity=".6"/>
+     <rect x="24" y="24" width="32" height="32" rx="6" fill="#fff" stroke="${INK}" stroke-width="2.6"/>
+     <text x="40" y="45" text-anchor="middle" font-size="14" font-weight="700" fill="${VIOLET}" font-family="Fredoka, sans-serif">×2</text>`,
+  ),
+  tesoroDraghi: svg(
+    `<path d="M8 30h48v22a4 4 0 0 1-4 4H12a4 4 0 0 1-4-4z" fill="${WOOD}" stroke="${WOOD_D}" stroke-width="2.6"/>
+     <path d="M12 30c0-10 8-16 20-16s20 6 20 16" fill="${GOLD}" stroke="${GOLD_D}" stroke-width="2.4"/>
+     <circle cx="22" cy="22" r="4" fill="${RED}"/><circle cx="42" cy="22" r="4" fill="#35c46a"/>
+     <text x="32" y="50" text-anchor="middle" font-size="12" font-weight="700" fill="#fff" font-family="Fredoka, sans-serif">+40</text>`,
+  ),
+  clonazione: svg(
+    `<circle cx="32" cy="32" r="28" fill="#1a0b3a"/>
+     <rect x="10" y="16" width="20" height="28" rx="4" fill="${GOLD}" stroke="#fff" stroke-width="2"/>
+     <rect x="34" y="16" width="20" height="28" rx="4" fill="${GOLD}" stroke="#fff" stroke-width="2" opacity=".75"/>
+     <path d="M20 50c4 6 20 6 24 0" fill="none" stroke="#2fd0ff" stroke-width="3" stroke-dasharray="3 3"/>`,
+  ),
+  seiFortunato: svg(
+    `${die(14, 16, 34, P6)}<path d="M6 10l4 4M58 10l-4 4M32 2v6" stroke="${GOLD}" stroke-width="3" stroke-linecap="round"/><circle cx="50" cy="50" r="9" fill="${GOLD}" stroke="${GOLD_D}" stroke-width="2"/><text x="50" y="54" text-anchor="middle" font-size="11" font-weight="700" fill="${INK}" font-family="Fredoka, sans-serif">6</text>`,
+  ),
+  spintaGentile: svg(
+    `${die(6, 22, 22, [[0.5, 0.5]])}${die(36, 22, 22, P2)}<path d="M30 33h4" stroke="${AZURE}" stroke-width="4" stroke-linecap="round"/><path d="M31 28l5 5-5 5" fill="none" stroke="${AZURE}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 54c6-6 34-6 40 0" fill="none" stroke="${GOLD}" stroke-width="3" stroke-linecap="round"/>`,
+  ),
+  paccaSpalla: svg(
+    `<path d="M14 50c0-12 8-20 18-20s18 8 18 20z" fill="#f0bf98" stroke="${INK}" stroke-width="2.6"/><path d="M22 30c-2-8 2-14 8-14h4c6 0 10 6 8 14" fill="#f0bf98" stroke="${INK}" stroke-width="2.6"/><circle cx="48" cy="14" r="10" fill="${GOLD}" stroke="${GOLD_D}" stroke-width="2"/><text x="48" y="18" text-anchor="middle" font-size="10" font-weight="700" fill="${INK}" font-family="Fredoka, sans-serif">+6</text>`,
+  ),
+  rimbalzo: svg(
+    `${die(20, 30, 24, P3)}<path d="M6 54c6-30 14-40 20-24M58 54c-6-30-14-40-20-24" fill="none" stroke="${AZURE}" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="4 4"/><path d="M32 4v14M26 12l6 6 6-6" fill="none" stroke="${GOLD}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>`,
+  ),
+  antidoto: svg(
+    `<path d="M26 6h12v10l10 18v20a4 4 0 0 1-4 4H20a4 4 0 0 1-4-4V34l10-18z" fill="#c9f5d6" stroke="${INK}" stroke-width="2.6" stroke-linejoin="round"/><path d="M17 38h30v16a4 4 0 0 1-4 4H21a4 4 0 0 1-4-4z" fill="#35c46a"/><path d="M32 40v12M26 46h12" stroke="#fff" stroke-width="4" stroke-linecap="round"/>`,
+  ),
+  tassaDelRe: svg(
+    `<path d="M12 22L14 8l9 7 9-10 9 10 9-7 2 14z" fill="${GOLD}" stroke="${GOLD_D}" stroke-width="2.4" stroke-linejoin="round"/><rect x="10" y="28" width="44" height="28" rx="4" fill="#fff" stroke="${INK}" stroke-width="2.6"/><path d="M16 36h32M16 44h20" stroke="#7b8399" stroke-width="2.5"/><text x="32" y="54" text-anchor="middle" font-size="10" font-weight="700" fill="${RED}" font-family="Fredoka, sans-serif">−6×3</text>`,
+  ),
+  raddoppioSuperiore: svg(
+    `${die(8, 18, 24, [[0.28, 0.28], [0.72, 0.72]])}<path d="M36 30h8M36 36h8" stroke="${INK}" stroke-width="3"/><circle cx="52" cy="33" r="10" fill="${AZURE}" stroke="#fff" stroke-width="2.5"/><text x="52" y="37" text-anchor="middle" font-size="10" font-weight="700" fill="#fff" font-family="Fredoka, sans-serif">×2</text>`,
+  ),
+  trappola: svg(
+    `<path d="M6 46h52" stroke="${INK}" stroke-width="3" stroke-linecap="round"/><path d="M10 46c0-14 10-22 22-22s22 8 22 22" fill="none" stroke="#7b8399" stroke-width="4"/><path d="M12 46l4-10 4 10 4-10 4 10 4-10 4 10 4-10 4 10 4-10 4 10" fill="none" stroke="#c9ced9" stroke-width="2.5" stroke-linejoin="round"/><text x="32" y="20" text-anchor="middle" font-size="12" font-weight="700" fill="${RED}" font-family="Fredoka, sans-serif">−12</text>`,
+  ),
+  investimento: svg(
+    `<rect x="10" y="40" width="8" height="16" fill="${AZURE}"/><rect x="24" y="30" width="8" height="26" fill="${AZURE}"/><rect x="38" y="20" width="8" height="36" fill="${AZURE}"/><path d="M8 34L22 22l10 6 20-18" fill="none" stroke="#35c46a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M44 8h10v10" fill="none" stroke="#35c46a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`,
+  ),
+  specchioRiflesso: svg(
+    `<ellipse cx="32" cy="28" rx="18" ry="22" fill="#c9ecfa" stroke="${GOLD_D}" stroke-width="4"/><path d="M22 18l8-6M20 28l16-14" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M32 50v10M24 60h16" stroke="${GOLD_D}" stroke-width="4" stroke-linecap="round"/><path d="M4 40l10-6-2 8" fill="none" stroke="${RED}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`,
+  ),
+  rivincita: svg(
+    `<path d="M8 50l14-14 10 8 22-26" fill="none" stroke="#35c46a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M44 16h12v12" fill="none" stroke="#35c46a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 14l10 10M18 14L8 24" stroke="${RED}" stroke-width="3.5" stroke-linecap="round"/>`,
+  ),
+  combo: svg(
+    `<rect x="6" y="14" width="22" height="30" rx="4" fill="#fff" stroke="${INK}" stroke-width="2.4" transform="rotate(-10 17 29)"/><rect x="22" y="12" width="22" height="30" rx="4" fill="${AZURE}" stroke="${INK}" stroke-width="2.4"/><rect x="38" y="16" width="22" height="30" rx="4" fill="${GOLD}" stroke="${INK}" stroke-width="2.4" transform="rotate(10 49 31)"/><text x="32" y="60" text-anchor="middle" font-size="12" font-weight="700" fill="${VIOLET}" font-family="Fredoka, sans-serif">+15</text>`,
+  ),
+  terremoto: svg(
+    `<path d="M4 40h12l4-10 6 20 6-28 6 24 4-8h18" fill="none" stroke="${RED}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 54h48" stroke="${WOOD_D}" stroke-width="4" stroke-linecap="round"/><path d="M20 54l4 6M36 54l-3 6M46 54l4 5" stroke="${WOOD_D}" stroke-width="3" stroke-linecap="round"/><text x="32" y="14" text-anchor="middle" font-size="12" font-weight="700" fill="${INK}" font-family="Fredoka, sans-serif">−3</text>`,
+  ),
+  jackpot: svg(
+    `<rect x="8" y="12" width="48" height="40" rx="8" fill="${RED}" stroke="${INK}" stroke-width="2.6"/><rect x="14" y="20" width="10" height="16" rx="2" fill="#fff"/><rect x="27" y="20" width="10" height="16" rx="2" fill="#fff"/><rect x="40" y="20" width="10" height="16" rx="2" fill="#fff"/><text x="19" y="33" text-anchor="middle" font-size="11" font-weight="700" fill="${INK}" font-family="Fredoka, sans-serif">7</text><text x="32" y="33" text-anchor="middle" font-size="11" font-weight="700" fill="${INK}" font-family="Fredoka, sans-serif">7</text><text x="45" y="33" text-anchor="middle" font-size="11" font-weight="700" fill="${INK}" font-family="Fredoka, sans-serif">7</text><circle cx="32" cy="46" r="4" fill="${GOLD}"/>`,
+  ),
+  catene: svg(
+    `<g fill="none" stroke="#7b8399" stroke-width="5"><rect x="4" y="22" width="20" height="12" rx="6"/><rect x="20" y="26" width="20" height="12" rx="6"/><rect x="36" y="22" width="20" height="12" rx="6"/></g>${die(20, 38, 22, P2)}<path d="M48 40l8 8M56 40l-8 8" stroke="${RED}" stroke-width="3.5" stroke-linecap="round"/>`,
+  ),
+  contrattacco: svg(
+    `<path d="M10 54L42 14" stroke="#c9ced9" stroke-width="6" stroke-linecap="round"/><path d="M54 54L22 14" stroke="${GOLD}" stroke-width="6" stroke-linecap="round"/><path d="M12 46l8 4M44 50l8-4" stroke="${INK}" stroke-width="4" stroke-linecap="round"/><circle cx="32" cy="32" r="6" fill="${RED}" stroke="#fff" stroke-width="2"/>`,
+  ),
+  tempestaPerfetta: svg(
+    `<path d="M12 26a12 12 0 0 1 22-8 10 10 0 0 1 18 6 8 8 0 0 1-2 16H14a8 8 0 0 1-2-14z" fill="#3b1f5e" stroke="${INK}" stroke-width="2.6"/><path d="M28 40l-6 10h8l-6 12" fill="none" stroke="${GOLD}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M44 44l-2 8M50 44l-2 8M38 44l-2 8" stroke="#7fd6f5" stroke-width="3" stroke-linecap="round"/>`,
+  ),
+  fontanaDesideri: svg(
+    `<path d="M10 44h44l-4 14H14z" fill="#9aa3b5" stroke="${INK}" stroke-width="2.6"/><path d="M32 44V20M32 20c-6-8-16-8-20 4M32 20c6-8 16-8 20 4" fill="none" stroke="${AZURE}" stroke-width="3.5" stroke-linecap="round"/><circle cx="24" cy="50" r="3" fill="${GOLD}"/><circle cx="34" cy="51" r="3" fill="${GOLD}"/><circle cx="42" cy="49" r="3" fill="${GOLD}"/>`,
+  ),
+  pioggiaOro: svg(
+    `<circle cx="32" cy="32" r="28" fill="#1a0b3a"/><circle cx="18" cy="16" r="6" fill="${GOLD}" stroke="${GOLD_D}" stroke-width="2"/><circle cx="40" cy="12" r="5" fill="${GOLD}" stroke="${GOLD_D}" stroke-width="2"/><circle cx="50" cy="28" r="6" fill="${GOLD}" stroke="${GOLD_D}" stroke-width="2"/><circle cx="14" cy="34" r="5" fill="${GOLD}" stroke="${GOLD_D}" stroke-width="2"/><text x="32" y="52" text-anchor="middle" font-size="14" font-weight="700" fill="${GOLD}" font-family="Fredoka, sans-serif">+100</text>`,
+  ),
+  dominioAssoluto: svg(
+    `<circle cx="32" cy="32" r="30" fill="#001a26"/><circle cx="32" cy="32" r="26" fill="none" stroke="#00d9ff" stroke-width="2.5" stroke-dasharray="3 4"/><path d="M14 22L18 8l7 7 7-10 7 10 7-7 4 14z" fill="#00d9ff" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/>${die(10, 28, 14, [[0.5, 0.5]], "#e6fbff")}${die(25, 28, 14, [[0.5, 0.5]], "#e6fbff")}${die(40, 28, 14, [[0.5, 0.5]], "#e6fbff")}<text x="32" y="58" text-anchor="middle" font-size="11" font-weight="700" fill="#00d9ff" font-family="Fredoka, sans-serif">×5</text>`,
+  ),
 };
 
 /** Retro della carta (gratta e vinci / carta coperta). */
@@ -243,13 +327,13 @@ export const CARD_BACK = svg(
    <path d="M32 16l4 10 11 1-8 7 3 11-10-6-10 6 3-11-8-7 11-1z" fill="#fff"/>`,
 );
 
-const GEMS = { common: 1, rare: 2, epic: 3, legendary: 4, mythic: 5 };
+const GEMS = { common: 1, rare: 2, epic: 3, legendary: 4, mythic: 5, absurd: 6 };
 
 /** Faccia grande della carta (gratta e vinci, dettaglio). */
 export function bigCard(id, { extraClass = '' } = {}) {
   const c = CARDS[id];
   const gems = h('div', { class: 'cf-gems' });
-  for (let i = 0; i < (c.rarity === 'mythic' ? 5 : 4); i++) gems.append(h('span', { class: i < GEMS[c.rarity] ? 'on' : '' }));
+  for (let i = 0; i < Math.max(4, GEMS[c.rarity]); i++) gems.append(h('span', { class: i < GEMS[c.rarity] ? 'on' : '' }));
   return h(
     'div',
     { class: `card-face big r-${c.rarity} ${extraClass}`, dataset: { card: id } },

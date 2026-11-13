@@ -9,13 +9,14 @@ import { CARDS } from '../core/cards.js';
 import { play, EASE, ms, pop, shake } from './animations.js';
 import { sparkle, toast } from './effects.js';
 
-export const RARITY_HEX = { common: '#8e98ad', rare: '#22a6d8', epic: '#9a5ae0', legendary: '#ffb21e', mythic: '#ff3fa4' };
+export const RARITY_HEX = { common: '#8e98ad', rare: '#22a6d8', epic: '#9a5ae0', legendary: '#ffb21e', mythic: '#ff3fa4', absurd: '#00d9ff' };
 const RARITY_SPARK = {
   common: ['#ffffff', '#c9d0dd'],
   rare: ['#ffffff', '#7fd6f5', '#22a6d8'],
   epic: ['#ffffff', '#d6b8ff', '#9a5ae0'],
   legendary: ['#fff6c2', '#ffd23f', '#ffffff'],
   mythic: ['#ff3fa4', '#7a5cff', '#2fd0ff', '#fff6c2', '#ffffff'],
+  absurd: ['#00d9ff', '#7dffef', '#ffffff', '#ffd23f', '#ff3fa4'],
 };
 
 export class CardFx {

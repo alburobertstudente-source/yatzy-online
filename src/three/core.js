@@ -139,8 +139,18 @@ export function renderThumb(key, build, size = 128) {
   return p;
 }
 
+/** Finché gate() è vero (animazioni della partita) le immagini 3D aspettano. */
+let gate = () => false;
+export function setThumbGate(fn) {
+  gate = fn || (() => false);
+}
+
 function pump() {
   if (busy || !queue.length) return;
+  if (gate()) {
+    setTimeout(pump, 400);
+    return;
+  }
   busy = true;
   const job = queue.shift();
   const next = () => {

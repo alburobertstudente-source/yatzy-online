@@ -179,7 +179,7 @@ async function landscapeTest(browser) {
 async function tryUseCard(page) {
   const plan = await page.evaluate(() => {
     const g = window.yatzyDebug.game;
-    const order = ['bigBang', 'furtoCosmico', 'bucoNero', 'tempoInfinito', 'benedizioneEterna', 'reDeiLadri', 'scudoDivino', 'coronaDestino', 'moltiplicatore', 'scambioSorte', 'sabotaggio', 'manoLesta', 'dadoGemello', 'calamita',
+    const order = ['dominioAssoluto', 'pioggiaOro', 'tempestaPerfetta', 'fontanaDesideri', 'tesoroDraghi', 'clonazione', 'terremoto', 'jackpot', 'catene', 'contrattacco', 'ladroDiLanci', 'eco', 'tassaDelRe', 'raddoppioSuperiore', 'trappola', 'investimento', 'specchioRiflesso', 'rivincita', 'combo', 'paccaSpalla', 'rimbalzo', 'antidoto', 'seiFortunato', 'spintaGentile', 'occhioDestino', 'bigBang', 'furtoCosmico', 'bucoNero', 'tempoInfinito', 'benedizioneEterna', 'reDeiLadri', 'scudoDivino', 'coronaDestino', 'moltiplicatore', 'scambioSorte', 'sabotaggio', 'manoLesta', 'dadoGemello', 'calamita',
       'mezzaLuna', 'lancioRubato', 'geloEterno', 'tempestaLanci', 'spiccioloFortunato', 'reteSalvataggio', 'lancioBenedetto',
       'doppioLancio', 'furtoFortuna', 'saccheggioReale', 'scudoLegno', 'scudoArcano', 'maledizioneCaos', 'apocalisseDadi', 'rewindTemporale', 'dadoTruccato', 'ritiraFortuna', 'riscritturaDestino', 'prigioneTemporale'];
     for (const id of order) {
@@ -190,7 +190,16 @@ async function tryUseCard(page) {
   });
   if (!plan) return null;
   await pd(page, `.hand .card-face.mini[data-uid="${plan.uid}"]`);
-  await page.waitForSelector('.card-popup .cp-actions .primary:not([disabled])', { timeout: 10000 });
+  try {
+    await page.waitForSelector('.card-popup .cp-actions .primary:not([disabled])', { timeout: 10000 });
+  } catch (e) {
+    const st = await page.evaluate((pl) => {
+      const g = window.yatzyDebug.game;
+      return { plan: pl, av: g.cardAvailability(pl.uid), busy: window.yatzyDebug.busy, popup: Boolean(document.querySelector('.card-popup')), btn: document.querySelector('.card-popup .cp-actions .primary')?.outerHTML?.slice(0, 120), draws: g.pendingDraws, hand: g.current.hand.map((c) => c.id) };
+    }, plan);
+    console.log('DEBUG carta', JSON.stringify(st));
+    throw e;
+  }
   await page.locator('.card-popup .cp-actions .primary').click();
   await page.waitForTimeout(250);
   const g = (fn, arg) => page.evaluate(fn, arg);
@@ -247,8 +256,7 @@ async function tryUseCard(page) {
         return Object.keys(gm.current.card.scores).filter((c) => gm.current.card.canShield(c));
       });
       const me = await g(() => window.yatzyDebug.game.current.id);
-      await pd(page, `.cell.${me}[data-cat="${cats[0]}"]`);
-      if (plan.id === 'scudoArcano') await pd(page, `.cell.${me}[data-cat="${cats[1]}"]`);
+      for (const c of cats.slice(0, plan.id === 'scudoArcano' ? 3 : 2)) await pd(page, `.cell.${me}[data-cat="${c}"]`);
       await pd(page, '.tb-btn.ok');
       break;
     }
@@ -266,10 +274,6 @@ async function tryUseCard(page) {
       await pd(page, '.slot >> nth=0');
       await pd(page, '.tb-choice:not([disabled])');
       await pd(page, '.tb-btn.ok');
-      break;
-    case 'prigioneTemporale':
-      await page.waitForSelector('.cp-pick-row .card-face.mini:not(.is-locked)');
-      await pd(page, '.cp-pick-row .card-face.mini:not(.is-locked)');
       break;
     default:
       break;
@@ -451,6 +455,7 @@ async function cardsTest(browser) {
   check(cursed, 'Maledizione del Caos: il blu mostra la maledizione in arrivo');
   await use('scudoLegno');
   await pd(page, '.cell.red[data-cat="yatzy"]');
+  await pd(page, '.cell.red[data-cat="chance"]');
   await pd(page, '.tb-btn.ok');
   await idle(page);
   check((await page.locator('.cell.red[data-cat="yatzy"] .cb-shield').count()) === 1, 'Scudo di Legno: scudo visibile sulla casella');
@@ -479,11 +484,9 @@ async function cardsTest(browser) {
   await page.screenshot({ path: join(OUT, 'saccheggio.png') });
   await idle(page);
   t = await page.evaluate(() => [window.yatzyDebug.game.player('red').card.total(), window.yatzyDebug.game.player('blue').card.total(), document.querySelector('.cell.red[data-cat="yatzy"] .val').textContent]);
-  check(t[0] === 25 && t[1] === 25 && t[2] === '25', `Saccheggio Reale: 25 punti passano dal rosso al blu (${t[0]} - ${t[1]})`);
-  // prigione sulla carta Rewind del rosso
+  check(t[0] === 30 && t[1] === 20 && t[2] === '30', `Saccheggio Reale: 20 punti passano dal rosso al blu (${t[0]} - ${t[1]})`);
+  // prigione: blocca tutte le carte del rosso (compreso il Rewind)
   await use('prigioneTemporale');
-  await page.waitForSelector('.cp-pick-row .card-face.mini[data-card="rewindTemporale"]');
-  await pd(page, '.cp-pick-row .card-face.mini[data-card="rewindTemporale"]');
   await idle(page);
   await score('blue', [1, 2, 3, 4, 6], 'chance');
   const locked = await page.evaluate(() => {

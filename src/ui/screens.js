@@ -132,7 +132,7 @@ export class Screens {
         h(
           'div',
           { class: `rules-rarity r-${r}` },
-          h('div', { class: 'rr-head' }, h('span', { class: 'rr-dot' }), `${RARITY_INFO[r].label} · ${CARD_RULES.RARITY_WEIGHTS[r]}%`),
+          h('div', { class: 'rr-head' }, h('span', { class: 'rr-dot' }), `${RARITY_INFO[r].label} · ${String(CARD_RULES.RARITY_WEIGHTS[r]).replace('.', ',')}%`),
           ...CARD_IDS.filter((id) => CARDS[id].rarity === r).map((id) => row(CARD_ICONS[id], CARDS[id].name, CARDS[id].text)),
         ),
       ),

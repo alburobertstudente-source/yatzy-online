@@ -31,9 +31,9 @@ export const CARDS = {
   ritiraFortuna: {
     name: 'Ritira Fortuna',
     rarity: 'common',
-    text: 'Rilancia fino a 2 dadi.',
-    target: { kind: 'dice', min: 1, max: 2 },
-    prompt: 'Scegli fino a 2 dadi da rilanciare',
+    text: 'Rilancia fino a 3 dadi senza consumare un lancio.',
+    target: { kind: 'dice', min: 1, max: 3 },
+    prompt: 'Scegli fino a 3 dadi da rilanciare',
   },
   scudoLegno: {
     name: 'Scudo di Legno',
@@ -45,9 +45,8 @@ export const CARDS = {
   occhioDestino: {
     name: 'Occhio del Destino',
     rarity: 'common',
-    text: 'Rivela il prossimo risultato di due dadi prima di decidere.',
-    target: { kind: 'dice', min: 1, max: 2, foresight: true },
-    prompt: 'Scegli fino a 2 dadi di cui vedere il prossimo risultato',
+    text: 'Rivela il prossimo risultato di TUTTI i dadi non conservati: sai già cosa uscirà.',
+    target: null,
   },
   manoVeloce: {
     name: 'Mano Veloce',
@@ -57,7 +56,7 @@ export const CARDS = {
   },
   dadoGemello: {
     name: 'Dado Gemello',
-    rarity: 'common',
+    rarity: 'rare',
     text: 'Scegli due dadi: il primo diventa uguale al secondo.',
     target: { kind: 'dice', min: 2, max: 2 },
     prompt: 'Tocca il dado da cambiare, poi il dado da copiare',
@@ -65,7 +64,7 @@ export const CARDS = {
   sabotaggio: {
     name: 'Sabotaggio',
     rarity: 'common',
-    text: "Blocca una casella libera dell'avversario per tutto il suo prossimo turno.",
+    text: "Blocca una casella libera dell'avversario per tutto il suo prossimo turno e ti dà 5 punti.",
     target: { kind: 'box', side: 'opp' },
     prompt: "Scegli la casella libera dell'avversario da bloccare",
   },
@@ -79,7 +78,7 @@ export const CARDS = {
   seiFortunato: {
     name: 'Sei Fortunato',
     rarity: 'common',
-    text: 'Il dado più basso diventa un 6.',
+    text: 'Il dado più basso sale di 2 (fino a 6).',
     target: null,
   },
   spintaGentile: {
@@ -88,6 +87,9 @@ export const CARDS = {
     text: 'Tutti gli 1 diventano 2 e tutti i 2 diventano 3.',
     target: null,
   },
+  paccaSpalla: { name: 'Pacca sulla Spalla', rarity: 'common', text: 'Guadagni subito 6 punti.', target: null },
+  rimbalzo: { name: 'Rimbalzo', rarity: 'common', text: 'Rilancia tutti i dadi non conservati senza consumare un lancio.', target: null },
+  antidoto: { name: 'Antidoto', rarity: 'common', text: 'Cancella maledizioni, sabotaggi, Mezza Luna, Trappole e Catene che ti colpiscono; in più 5 punti.', target: null },
   // ---------------- rare ----------------
   dadoTruccato: {
     name: 'Dado Truccato',
@@ -135,7 +137,7 @@ export const CARDS = {
   lancioBenedetto: {
     name: 'Lancio Benedetto',
     rarity: 'rare',
-    text: 'Al prossimo lancio i dadi che fanno 1 o 2 vengono rilanciati da soli.',
+    text: 'Ai prossimi due lanci i dadi che fanno 1 o 2 vengono rilanciati da soli.',
     target: null,
   },
   calamita: {
@@ -155,7 +157,7 @@ export const CARDS = {
   tassaDelRe: {
     name: 'Tassa del Re',
     rarity: 'rare',
-    text: "Ruba 6 punti da ognuna delle tre caselle migliori dell'avversario (gli scudi le proteggono).",
+    text: "Ruba 3 punti da ognuna delle tre caselle migliori dell'avversario (gli scudi le proteggono).",
     target: null,
   },
   raddoppioSuperiore: {
@@ -165,6 +167,11 @@ export const CARDS = {
     target: null,
     bonus: { kind: 'upper2', cap: 30 },
   },
+  trappola: { name: 'Trappola', rarity: 'rare', text: "Il prossimo punteggio segnato dall'avversario perde 12 punti.", target: null },
+  investimento: { name: 'Investimento', rarity: 'rare', text: 'All\'inizio del tuo prossimo turno ricevi 15 punti.', target: null },
+  specchioRiflesso: { name: 'Specchio Riflesso', rarity: 'rare', text: "Il prossimo attacco dell'avversario contro di te rimbalza: viene annullato e tu guadagni 10 punti (le maledizioni tornano a lui).", target: null },
+  rivincita: { name: 'Rivincita', rarity: 'rare', text: 'Se sei in svantaggio guadagni metà della differenza (fino a 40 punti), altrimenti 5.', target: null },
+  combo: { name: 'Combo', rarity: 'rare', text: 'Se in questo turno hai già giocato un\'altra carta, guadagni 15 punti e peschi una carta.', target: null },
   // ---------------- epiche ----------------
   maledizioneCaos: {
     name: 'Maledizione del Caos',
@@ -184,9 +191,9 @@ export const CARDS = {
   saccheggioReale: {
     name: 'Saccheggio Reale',
     rarity: 'epic',
-    text: "Ruba 25 punti all'avversario.",
+    text: "Ruba 20 punti all'avversario.",
     target: { kind: 'oppBox' },
-    amount: 25,
+    amount: 20,
     prompt: 'Scegli una casella avversaria da saccheggiare',
   },
   prigioneTemporale: {
@@ -203,7 +210,7 @@ export const CARDS = {
   },
   lancioRubato: {
     name: 'Lancio Rubato',
-    rarity: 'epic',
+    rarity: 'rare',
     text: "Nel suo prossimo turno l'avversario ha un lancio in meno.",
     target: null,
   },
@@ -217,9 +224,9 @@ export const CARDS = {
   tempestaLanci: {
     name: 'Tempesta di Lanci',
     rarity: 'epic',
-    text: 'Due lanci in più in questo turno.',
+    text: 'Tre lanci in più in questo turno.',
     target: null,
-    extraRolls: 2,
+    extraRolls: 3,
   },
   moltiplicatore: {
     name: 'Moltiplicatore',
@@ -231,7 +238,7 @@ export const CARDS = {
   ladroDiLanci: {
     name: 'Ladro di Lanci',
     rarity: 'epic',
-    text: "Un lancio in più per te adesso e uno in meno per l'avversario nel suo prossimo turno.",
+    text: "Due lanci in più per te adesso e uno in meno per l'avversario nel suo prossimo turno.",
     target: null,
   },
   eco: {
@@ -240,6 +247,10 @@ export const CARDS = {
     text: 'Guadagni di nuovo i punti della tua ultima casella segnata (fino a 30).',
     target: null,
   },
+  terremoto: { name: 'Terremoto', rarity: 'epic', text: "Ogni casella dell'avversario perde 3 punti (gli scudi la proteggono).", target: null },
+  jackpot: { name: 'Jackpot', rarity: 'epic', text: 'Se in questo turno segni Full, Scala, Poker o Yatzy con punti, +30.', target: null, bonus: { kind: 'jackpot', amount: 30 } },
+  catene: { name: 'Catene', rarity: 'epic', text: "Nel suo prossimo turno l'avversario non può conservare nessun dado.", target: null },
+  contrattacco: { name: 'Contrattacco', rarity: 'epic', text: "Carta di reazione: la prossima volta che l'avversario ti ruba punti, ne riprendi il doppio.", target: null },
   // ---------------- leggendarie ----------------
   manoDegliDei: {
     name: 'Mano degli Dei',
@@ -257,7 +268,7 @@ export const CARDS = {
   apocalisseDadi: {
     name: 'Apocalisse dei Dadi',
     rarity: 'legendary',
-    text: "Al prossimo lancio l'avversario rilancia tutti i dadi, anche quelli conservati, e un dado non si può più conservare.",
+    text: "Al prossimo lancio l'avversario rilancia tutti i dadi, anche quelli conservati, un dado non si può più conservare e perde un lancio.",
     target: null,
     curse: 'apocalypse',
   },
@@ -287,6 +298,8 @@ export const CARDS = {
     text: 'Guadagni subito 40 punti.',
     target: null,
   },
+  tempestaPerfetta: { name: 'Tempesta Perfetta', rarity: 'legendary', text: "L'avversario subisce insieme Maledizione del Caos, un lancio in meno e Mezza Luna.", target: null },
+  fontanaDesideri: { name: 'Fontana dei Desideri', rarity: 'legendary', text: 'Guadagni 5 punti per ogni casella che hai già segnato (fino a 60).', target: null },
   // ---------------- mitiche ----------------
   bigBang: {
     name: 'Big Bang',
@@ -303,14 +316,14 @@ export const CARDS = {
   tempoInfinito: {
     name: 'Tempo Infinito',
     rarity: 'mythic',
-    text: 'Otto lanci in più in questo turno.',
+    text: 'Otto lanci in più in questo turno, e a ogni lancio gli 1 e i 2 si rilanciano da soli.',
     target: null,
     extraRolls: 8,
   },
   benedizioneEterna: {
     name: 'Benedizione Eterna',
     rarity: 'mythic',
-    text: 'Per questo turno e i tuoi prossimi 3: un lancio in più e i dadi che fanno 1 o 2 si rilanciano da soli a ogni lancio.',
+    text: 'Per questo turno e i tuoi prossimi 4: un lancio in più e i dadi che fanno 1 o 2 si rilanciano da soli a ogni lancio.',
     target: null,
   },
   bucoNero: {
@@ -325,6 +338,7 @@ export const CARDS = {
     text: "Copia nella tua mano tutte le carte dell'avversario (finché c'è posto, fino a 5).",
     target: null,
   },
+  pioggiaOro: { name: "Pioggia d'Oro", rarity: 'mythic', text: 'Guadagni subito 75 punti.', target: null },
   // ---------------- assurda ----------------
   dominioAssoluto: {
     name: 'Dominio Assoluto',

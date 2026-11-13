@@ -21,6 +21,7 @@ const RARITY_COLORS = {
   epic: ['#ffffff', '#d6b8ff', '#9a5ae0'],
   legendary: ['#fff6c2', '#ffd23f', '#ffffff', '#ffb21e'],
   mythic: ['#ff3fa4', '#7a5cff', '#2fd0ff', '#ffd23f', '#ffffff'],
+  absurd: ['#00d9ff', '#7dffef', '#ffffff', '#ffd23f', '#ff3fa4'],
 };
 
 export class ScratchView {
@@ -157,10 +158,17 @@ export class ScratchView {
         const colors = RARITY_COLORS[def.rarity];
         sparkle(screen, cx, cy, { colors, count: def.rarity === 'common' ? 10 : 22, spread: def.rarity === 'common' ? 120 : 170, size: 11 });
         if (def.rarity === 'legendary') confetti(screen, { colors: ['#ffd23f', '#ffb21e', '#ffffff', '#fff2a8'], count: 60 });
-        if (def.rarity === 'epic' || def.rarity === 'legendary' || def.rarity === 'mythic') sparkle(screen, cx, cy, { colors, count: 16, spread: 230, size: 8, duration: 1100 });
-        if (def.rarity === 'mythic') {
+        if (['epic', 'legendary', 'mythic', 'absurd'].includes(def.rarity)) sparkle(screen, cx, cy, { colors, count: 16, spread: 230, size: 8, duration: 1100 });
+        if (def.rarity === 'mythic' || def.rarity === 'absurd') {
           // MITICA: lampo, terremoto, pioggia di coriandoli cosmici
           screen.classList.add('is-mythic');
+          if (def.rarity === 'absurd') {
+            // ASSURDA (0,1%): onda d'urto azzurra, doppio colpo, pioggia infinita di coriandoli
+            screen.classList.add('is-absurd');
+            sound.yatzyBonus();
+            setTimeout(() => sound.introHit(), 450);
+            confetti(screen, { colors, count: 200, duration: 4000 });
+          }
           sound.introHit();
           confetti(screen, { colors, count: 120, duration: 2600 });
           sparkle(screen, cx, cy, { colors, count: 40, spread: 320, size: 14, duration: 1500 });

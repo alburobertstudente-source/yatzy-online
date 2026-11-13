@@ -57,6 +57,40 @@ export function bestBox(game, me) {
   return best;
 }
 
+/**
+ * Difesa di una casella attaccata: prima lo scudo, poi lo Specchio Riflesso
+ * (annulla l'attacco e dà 10 punti alla vittima). Restituisce 'shield' | 'mirror' | null.
+ */
+export function guard(victim, cat, effectId) {
+  if (cat && victim.card.consumeShield(cat)) return 'shield';
+  if (victim.status.mirror) {
+    victim.status.mirror = null;
+    victim.card.addCardPoints({ id: effectId, amount: 10, kind: 'counter', cat: cat || null });
+    return 'mirror';
+  }
+  return null;
+}
+
+/** Contrattacco: dopo un furto riuscito, la vittima riprende il doppio. */
+export function counterSteal(victim, taken, effectId) {
+  if (taken <= 0 || !victim.status.counter) return 0;
+  victim.status.counter = null;
+  const amount = taken * 2;
+  victim.card.addCardPoints({ id: effectId, amount, kind: 'counter', cat: null });
+  return amount;
+}
+
+/** Maledizione con lo Specchio: torna indietro a chi l'ha lanciata. */
+function placeCurse(me, opp, curse) {
+  if (opp.status.mirror) {
+    opp.status.mirror = null;
+    if (!me.status.curse) me.status.curse = curse;
+    return { target: me, reflected: true };
+  }
+  opp.status.curse = curse;
+  return { target: opp, reflected: false };
+}
+
 /** Caselle proprie su cui si può mettere uno scudo. */
 export function shieldableBoxes(player) {
   return ALL_CATEGORIES.filter((c) => player.card.canShield(c));
@@ -124,7 +158,7 @@ export function cardAvailability(game, entry) {
       return opp.hand.length || !opp.status.curse ? yes : no("Il Buco Nero non ha niente da inghiottire");
     case 'occhioDestino':
       if (dice.rollsLeft <= 0) return no('Non hai più lanci in questo turno');
-      return Object.keys(game.turnState.foresight).length >= DICE - 1 ? no('Conosci già quasi tutti i dadi') : yes;
+      return dice.freeIndexes().some((i) => game.turnState.foresight[i] === undefined) ? yes : no('Conosci già tutti i dadi');
     case 'seiFortunato':
       if (!dice.hasRolled) return no('Prima lancia i dadi');
       return dice.values.some((v) => v < 6) ? yes : no('Sono già tutti 6');
@@ -144,6 +178,32 @@ export function cardAvailability(game, entry) {
       return yes;
     case 'clonazione':
       return opp.hand.length && me.hand.length - 1 < 5 ? yes : no('Niente da clonare');
+    case 'paccaSpalla':
+    case 'investimento':
+    case 'rivincita':
+    case 'fontanaDesideri':
+    case 'pioggiaOro':
+      return entry.id === 'investimento' && me.status.invest ? no('Hai già un investimento') : yes;
+    case 'rimbalzo':
+      return dice.hasRolled && dice.freeIndexes().length ? yes : no(dice.hasRolled ? 'Tutti i dadi sono conservati' : 'Prima lancia i dadi');
+    case 'antidoto':
+      return yes;
+    case 'trappola':
+      return opp.status.trap ? no("L'avversario ha già una trappola") : yes;
+    case 'specchioRiflesso':
+      return me.status.mirror ? no('Hai già uno Specchio') : yes;
+    case 'combo':
+      return game.turnState.cardsPlayed > 0 ? yes : no('Prima gioca un\'altra carta in questo turno');
+    case 'terremoto':
+      return stealableBoxes(game, me).length ? yes : no("L'avversario non ha punti");
+    case 'jackpot':
+      return game.turnState.bonuses?.some((b) => b.kind === 'jackpot') ? no('Già attiva in questo turno') : yes;
+    case 'catene':
+      return opp.status.chains ? no("L'avversario è già incatenato") : yes;
+    case 'contrattacco':
+      return me.status.counter ? no('Contrattacco già pronto') : yes;
+    case 'tempestaPerfetta':
+      return opp.status.curse && opp.status.lessRolls && opp.status.halve ? no("L'avversario è già nella tempesta") : yes;
     case 'dominioAssoluto':
       return me.status.yatzyTurns || game.turnState.yatzyAll ? no('Il Dominio è già attivo') : yes;
     case 'scudoLegno':
@@ -196,15 +256,15 @@ export function applyCard(game, me, entry, params = {}, effectId) {
 
   switch (entry.id) {
     case 'ritiraFortuna': {
-      const list = checkDice(params.dice, 1, 2);
+      const list = checkDice(params.dice, 1, 3);
       const before = list.map((i) => dice.values[i]);
       for (const i of list) dice.setValue(i, game.freshDie(i));
       result = { kind: 'reroll', dice: list, before, after: list.map((i) => dice.values[i]) };
       break;
     }
     case 'occhioDestino': {
-      const list = checkDice(params.dice, 1, 2);
-      if (list.some((i) => game.turnState.foresight[i] !== undefined)) throw new GameError('Conosci già questo dado');
+      const list = dice.freeIndexes().filter((i) => game.turnState.foresight[i] === undefined);
+      if (!list.length) throw new GameError('Conosci già tutti i dadi');
       const values = list.map((i) => (game.turnState.foresight[i] = game.randomDie()));
       result = { kind: 'foresight', die: list[0], value: values[0], dice: list, values };
       break;
@@ -275,8 +335,9 @@ export function applyCard(game, me, entry, params = {}, effectId) {
       const cat = params.cat;
       if (opp.status.sabotage) throw new GameError("L'avversario è già sabotato");
       if (!boxTargets(game, me, 'sabotaggio').includes(cat)) throw new GameError('Scegli una casella libera avversaria');
-      const blocked = opp.card.consumeShield(cat);
+      const blocked = Boolean(guard(opp, cat, effectId));
       if (!blocked) opp.status.sabotage = { cat, effectId };
+      me.card.addCardPoints({ id: effectId, amount: 5, kind: 'bonus', cat: null });
       Object.assign(log, { kind: 'sabotage', victim: opp.id, cat, blocked });
       result = { kind: 'sabotage', victim: opp.id, cat, blocked };
       break;
@@ -285,11 +346,13 @@ export function applyCard(game, me, entry, params = {}, effectId) {
       const cat = params.cat;
       if (!boxTargets(game, me, 'scambioSorte').includes(cat)) throw new GameError("Scegli una casella in cui l'avversario è davanti");
       const amount = opp.card.value(cat) - me.card.value(cat);
-      const blocked = opp.card.consumeShield(cat);
+      const g = guard(opp, cat, effectId);
+      const blocked = Boolean(g);
       const taken = blocked ? 0 : opp.card.applyDebit(cat, amount);
       if (taken > 0) me.card.addCardPoints({ id: effectId, amount: taken, kind: 'steal', cat });
-      Object.assign(log, { kind: 'steal', victim: opp.id, cat, taken, blocked });
-      result = { kind: 'steal', victim: opp.id, cat, amount, taken, blocked };
+      const countered = counterSteal(opp, taken, effectId);
+      Object.assign(log, { kind: 'steal', victim: opp.id, cat, taken, blocked: g === 'shield' });
+      result = { kind: 'steal', victim: opp.id, cat, amount, taken, blocked, mirrored: g === 'mirror', countered };
       break;
     }
     case 'spiccioloFortunato':
@@ -305,9 +368,9 @@ export function applyCard(game, me, entry, params = {}, effectId) {
     }
     case 'geloEterno': {
       if (opp.status.curse) throw new GameError("L'avversario è già maledetto");
-      opp.status.curse = { type: 'freeze', effectId, cardId: entry.id };
-      Object.assign(log, { kind: 'curse', victim: opp.id, curse: 'freeze' });
-      result = { kind: 'curse', curse: 'freeze', victim: opp.id };
+      const pc = placeCurse(me, opp, { type: 'freeze', effectId, cardId: entry.id });
+      Object.assign(log, { kind: 'curse', victim: pc.target.id, curse: 'freeze' });
+      result = { kind: 'curse', curse: 'freeze', victim: pc.target.id, reflected: pc.reflected };
       break;
     }
     case 'manoLesta': {
@@ -322,7 +385,7 @@ export function applyCard(game, me, entry, params = {}, effectId) {
       break;
     }
     case 'lancioBenedetto':
-      game.turnState.blessed = true;
+      game.turnState.blessed = 2;
       result = { kind: 'bless' };
       break;
     case 'mezzaLuna':
@@ -342,6 +405,7 @@ export function applyCard(game, me, entry, params = {}, effectId) {
       const n = CARDS[entry.id].extraRolls;
       if (dice.maxRolls + n > ROLL_CAP) throw new GameError('Troppi lanci extra');
       for (let k = 0; k < n; k++) dice.addRoll();
+      if (entry.id === 'tempoInfinito') game.turnState.blessAll = true;
       result = { kind: 'extraRoll', added: n, maxRolls: dice.maxRolls };
       break;
     }
@@ -357,15 +421,16 @@ export function applyCard(game, me, entry, params = {}, effectId) {
       const cat = bestBox(game, me);
       if (!cat) throw new GameError("L'avversario non ha punti da rubare");
       const amount = opp.card.value(cat);
-      const taken = opp.card.applyDebit(cat, amount); // ignora gli scudi
+      const taken = opp.card.applyDebit(cat, amount); // ignora scudi e specchi
       if (taken > 0) me.card.addCardPoints({ id: effectId, amount: taken, kind: 'steal', cat });
+      counterSteal(opp, taken, effectId);
       Object.assign(log, { kind: 'steal', victim: opp.id, cat, taken, blocked: false });
       result = { kind: 'steal', victim: opp.id, cat, amount, taken, blocked: false, cosmic: true };
       break;
     }
     case 'benedizioneEterna': {
       if (me.status.blessTurns) throw new GameError('Sei già benedetto');
-      me.status.blessTurns = 3;
+      me.status.blessTurns = 4;
       game.turnState.blessAll = true;
       const extraRoll = dice.maxRolls < ROLL_CAP;
       if (extraRoll) dice.addRoll();
@@ -401,11 +466,13 @@ export function applyCard(game, me, entry, params = {}, effectId) {
       const cat = params.cat;
       if (!stealableBoxes(game, me).includes(cat)) throw new GameError('Scegli una casella avversaria con punti');
       const amount = CARDS[entry.id].amount;
-      const blocked = opp.card.consumeShield(cat);
+      const g = guard(opp, cat, effectId);
+      const blocked = Boolean(g);
       const taken = blocked ? 0 : opp.card.applyDebit(cat, amount);
       if (taken > 0) me.card.addCardPoints({ id: effectId, amount: taken, kind: 'steal', cat });
-      Object.assign(log, { kind: 'steal', victim: opp.id, cat, taken, blocked });
-      result = { kind: 'steal', victim: opp.id, cat, amount, taken, blocked };
+      const countered = counterSteal(opp, taken, effectId);
+      Object.assign(log, { kind: 'steal', victim: opp.id, cat, taken, blocked: g === 'shield' });
+      result = { kind: 'steal', victim: opp.id, cat, amount, taken, blocked, mirrored: g === 'mirror', countered };
       break;
     }
     case 'doppioLancio':
@@ -416,9 +483,9 @@ export function applyCard(game, me, entry, params = {}, effectId) {
     case 'apocalisseDadi': {
       if (opp.status.curse) throw new GameError("L'avversario è già maledetto");
       const curse = CARDS[entry.id].curse;
-      opp.status.curse = { type: curse, effectId, cardId: entry.id };
-      Object.assign(log, { kind: 'curse', victim: opp.id, curse });
-      result = { kind: 'curse', curse, victim: opp.id };
+      const pc = placeCurse(me, opp, { type: curse, effectId, cardId: entry.id });
+      Object.assign(log, { kind: 'curse', victim: pc.target.id, curse });
+      result = { kind: 'curse', curse, victim: pc.target.id, reflected: pc.reflected };
       break;
     }
     case 'prigioneTemporale': {
@@ -435,8 +502,9 @@ export function applyCard(game, me, entry, params = {}, effectId) {
     case 'seiFortunato': {
       const i = dice.values.reduce((b, v, k) => (v < dice.values[b] ? k : b), 0);
       const from = dice.values[i];
-      dice.setValue(i, 6);
-      result = { kind: 'setDie', die: i, from, to: 6 };
+      const to = Math.min(6, from + 2);
+      dice.setValue(i, to);
+      result = { kind: 'setDie', die: i, from, to };
       break;
     }
     case 'spintaGentile': {
@@ -453,14 +521,15 @@ export function applyCard(game, me, entry, params = {}, effectId) {
       let taken = 0;
       const parts = [];
       for (const cat of cats) {
-        const blocked = opp.card.consumeShield(cat);
-        const t = blocked ? 0 : opp.card.applyDebit(cat, 6);
+        const blocked = Boolean(guard(opp, cat, effectId));
+        const t = blocked ? 0 : opp.card.applyDebit(cat, 3);
         taken += t;
         parts.push({ cat, taken: t, blocked });
       }
       if (taken > 0) me.card.addCardPoints({ id: effectId, amount: taken, kind: 'steal', cat: cats[0] });
+      counterSteal(opp, taken, effectId);
       Object.assign(log, { kind: 'tax', victim: opp.id, parts, taken });
-      result = { kind: 'steal', victim: opp.id, cat: cats[0], amount: 18, taken, blocked: taken === 0 && parts.some((p) => p.blocked), parts };
+      result = { kind: 'steal', victim: opp.id, cat: cats[0], amount: 9, taken, blocked: taken === 0 && parts.some((p) => p.blocked), parts };
       break;
     }
     case 'raddoppioSuperiore': {
@@ -473,9 +542,10 @@ export function applyCard(game, me, entry, params = {}, effectId) {
     case 'ladroDiLanci': {
       if (opp.status.lessRolls) throw new GameError("L'avversario ha già un lancio in meno");
       dice.addRoll();
+      if (dice.maxRolls < ROLL_CAP) dice.addRoll();
       opp.status.lessRolls = { effectId };
       Object.assign(log, { kind: 'lessRolls', victim: opp.id });
-      result = { kind: 'extraRoll', added: 1, maxRolls: dice.maxRolls, stolen: true };
+      result = { kind: 'extraRoll', added: 2, maxRolls: dice.maxRolls, stolen: true };
       break;
     }
     case 'eco': {
@@ -497,6 +567,118 @@ export function applyCard(game, me, entry, params = {}, effectId) {
       const copies = opp.hand.slice(0, room).map((c) => ({ uid: game.nextUid++, id: c.id, lockedTurn: null, lockedBy: null }));
       me.hand.push(...copies);
       result = { kind: 'clone', cards: copies.map((c) => c.id) };
+      break;
+    }
+    case 'paccaSpalla':
+    case 'pioggiaOro':
+    case 'rivincita':
+    case 'fontanaDesideri': {
+      let amount;
+      if (entry.id === 'paccaSpalla') amount = 6;
+      else if (entry.id === 'pioggiaOro') amount = 75;
+      else if (entry.id === 'fontanaDesideri') amount = Math.min(60, 5 * me.card.filledCount());
+      else {
+        const gap = opp.card.total() - me.card.total();
+        amount = gap > 0 ? Math.min(40, Math.ceil(gap / 2)) : 5;
+      }
+      if (amount > 0) me.card.addCardPoints({ id: effectId, amount, kind: 'bonus', cat: null });
+      Object.assign(log, { kind: 'bonus', amount, cat: null });
+      result = { kind: 'points', amount, cat: null };
+      break;
+    }
+    case 'rimbalzo': {
+      const idx = dice.freeIndexes();
+      const before = idx.map((i) => dice.values[i]);
+      idx.forEach((i) => dice.setValue(i, game.freshDie(i)));
+      result = { kind: 'reroll', dice: idx, before, after: idx.map((i) => dice.values[i]) };
+      break;
+    }
+    case 'antidoto': {
+      const cleared = [];
+      for (const k of ['curse', 'sabotage', 'halve', 'trap', 'chains', 'lessRolls']) {
+        if (me.status[k]) {
+          me.status[k] = null;
+          cleared.push(k);
+        }
+      }
+      if (game.turnState.chaos) {
+        game.turnState.chaos = false;
+        cleared.push('chaos');
+      }
+      if (game.turnState.blocked?.length) game.turnState.blocked = [];
+      me.card.addCardPoints({ id: effectId, amount: 5, kind: 'bonus', cat: null });
+      Object.assign(log, { kind: 'bonus', amount: 5, cat: null });
+      result = { kind: 'status', label: cleared.length ? 'ANTIDOTO: EFFETTI CANCELLATI +5' : 'ANTIDOTO: +5 PUNTI', points: 5 };
+      break;
+    }
+    case 'trappola':
+      opp.status.trap = { effectId };
+      Object.assign(log, { kind: 'trap', victim: opp.id, fired: false, taken: 0, cat: null });
+      result = { kind: 'status', label: `TRAPPOLA PIAZZATA: −12 AL PROSSIMO PUNTEGGIO`, attack: true };
+      break;
+    case 'investimento':
+      me.status.invest = { effectId, amount: 15 };
+      result = { kind: 'status', label: 'INVESTIMENTO: +15 AL TUO PROSSIMO TURNO' };
+      break;
+    case 'specchioRiflesso':
+      me.status.mirror = { effectId };
+      Object.assign(log, { kind: 'mirror', owner: me.id });
+      result = { kind: 'status', label: 'SPECCHIO RIFLESSO PRONTO' };
+      break;
+    case 'combo':
+      me.card.addCardPoints({ id: effectId, amount: 15, kind: 'bonus', cat: null });
+      game.pendingDraws++;
+      Object.assign(log, { kind: 'bonus', amount: 15, cat: null });
+      result = { kind: 'points', amount: 15, cat: null, draw: true };
+      break;
+    case 'terremoto': {
+      const parts = [];
+      let taken = 0;
+      let mirrored = false;
+      if (opp.status.mirror) {
+        guard(opp, null, effectId);
+        mirrored = true;
+      } else {
+        for (const cat of stealableBoxes(game, me)) {
+          const blocked = opp.card.consumeShield(cat);
+          const t = blocked ? 0 : opp.card.applyDebit(cat, 3);
+          taken += t;
+          parts.push({ cat, taken: t, blocked });
+        }
+      }
+      Object.assign(log, { kind: 'tax', victim: opp.id, parts, taken });
+      result = { kind: 'quake', victim: opp.id, taken, mirrored };
+      break;
+    }
+    case 'jackpot': {
+      if (!game.turnState.bonuses) game.turnState.bonuses = [];
+      game.turnState.bonuses.push({ kind: 'jackpot', effectId, cardId: entry.id });
+      Object.assign(log, { kind: 'bonus', amount: 0, cat: null });
+      result = { kind: 'bonusSet', bonus: 'jackpot' };
+      break;
+    }
+    case 'catene':
+      if (opp.status.mirror) {
+        guard(opp, null, effectId);
+        result = { kind: 'status', label: 'RIFLESSO DALLO SPECCHIO!', attack: true };
+        break;
+      }
+      opp.status.chains = { effectId };
+      Object.assign(log, { kind: 'chains', victim: opp.id });
+      result = { kind: 'status', label: "CATENE: L'AVVERSARIO NON POTRÀ CONSERVARE DADI", attack: true };
+      break;
+    case 'contrattacco':
+      me.status.counter = { effectId };
+      result = { kind: 'status', label: 'CONTRATTACCO PRONTO' };
+      break;
+    case 'tempestaPerfetta': {
+      const pc = opp.status.curse ? null : placeCurse(me, opp, { type: 'chaos', effectId, cardId: entry.id });
+      if (!pc?.reflected) {
+        if (!opp.status.lessRolls) opp.status.lessRolls = { effectId };
+        if (!opp.status.halve) opp.status.halve = { effectId };
+      }
+      Object.assign(log, { kind: 'storm', victim: opp.id, fired: false, taken: 0, cat: null });
+      result = { kind: 'status', label: pc?.reflected ? 'LA TEMPESTA RIMBALZA SULLO SPECCHIO!' : "TEMPESTA PERFETTA SULL'AVVERSARIO!", attack: true };
       break;
     }
     case 'dominioAssoluto': {
@@ -555,6 +737,12 @@ export function isReversible(game, e) {
       return e.fired ? e.taken > 0 || e.blocked : victim.status.halve?.effectId === e.id;
     case 'lessRolls':
       return victim.status.lessRolls?.effectId === e.id;
+    case 'trap':
+      return e.fired ? e.taken > 0 : victim.status.trap?.effectId === e.id;
+    case 'chains':
+      return victim.status.chains?.effectId === e.id;
+    case 'storm':
+      return ['curse', 'lessRolls', 'halve'].some((k) => victim.status[k]?.effectId === e.id);
     case 'blackhole':
       return e.swallowed.length > 0 || (e.curse && victim.status.curse?.effectId === e.id);
     case 'shield':
@@ -637,6 +825,17 @@ export function undoEffect(game, e) {
     case 'lessRolls':
       victim.status.lessRolls = null;
       break;
+    case 'trap':
+      if (!e.fired) victim.status.trap = null;
+      else victim.card.removeDebit(e.cat, e.taken);
+      Object.assign(info, { cat: e.cat, amount: e.taken });
+      break;
+    case 'chains':
+      victim.status.chains = null;
+      break;
+    case 'storm':
+      for (const k of ['curse', 'lessRolls', 'halve']) if (victim.status[k]?.effectId === e.id) victim.status[k] = null;
+      break;
     case 'blackhole':
       victim.hand.push(...e.swallowed.map((c) => ({ ...c, lockedTurn: null, lockedBy: null })));
       if (e.curse && victim.status.curse?.effectId === e.id) victim.status.curse = null;
@@ -683,8 +882,12 @@ export function autoParams(game, entry) {
     if (def.choice === 'face') params.value = (dice.values[params.dice[0]] % 6) + 1;
   } else if (t.kind === 'allDice') params.values = [6, 6, 6, 6, 6];
   else if (t.kind === 'ownBoxes') params.cats = shieldableBoxes(me).slice(0, t.count);
-  else if (t.kind === 'oppBox') params.cat = stealableBoxes(game, me)[0];
+  else if (t.kind === 'oppBox') params.cat = [...stealableBoxes(game, me)].sort((a, b) => game.other(me).card.value(b) - game.other(me).card.value(a))[0];
   else if (t.kind === 'oppCard') params.uid = game.opponent.hand.find((x) => t.any || !isLocked(game, x))?.uid;
-  else if (t.kind === 'box') params.cat = boxTargets(game, me, entry.id)[0];
+  else if (t.kind === 'box') {
+    const opp = game.other(me);
+    const list = boxTargets(game, me, entry.id);
+    params.cat = entry.id === 'scambioSorte' ? [...list].sort((a, b) => opp.card.value(b) - me.card.value(b) - (opp.card.value(a) - me.card.value(a)))[0] : list[0];
+  }
   return params;
 }

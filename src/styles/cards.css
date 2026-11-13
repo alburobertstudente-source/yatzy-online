@@ -27,6 +27,7 @@
 .r-epic { --rc: var(--r-epic); --rd: var(--r-epic-d); --rl: var(--r-epic-l); }
 .r-legendary { --rc: var(--r-legendary); --rd: var(--r-legendary-d); --rl: var(--r-legendary-l); }
 .r-mythic { --rc: var(--r-mythic); --rd: var(--r-mythic-d); --rl: var(--r-mythic-l); }
+.r-absurd { --rc: #00d9ff; --rd: #00384d; --rl: #d4fbff; }
 
 /* ---------- faccia grande ---------- */
 .card-face {
@@ -1292,5 +1293,49 @@
 }
 @keyframes mythic-flash {
   0% { background-color: rgba(255, 255, 255, 0.9); }
+  100% { background-color: transparent; }
+}
+
+/* ---------- rarità ASSURDA (0,1%): ghiaccio elettrico e onda d'urto ---------- */
+.card-face.big.r-absurd {
+  background: linear-gradient(165deg, #00d9ff, #001a26 40%, #00384d 60%, #7dffef);
+  background-size: 240% 240%;
+  animation: mythic-flow 2.6s ease-in-out infinite;
+  box-shadow: 0 0 0 4px #fff, 0 0 34px rgba(0, 217, 255, 0.9), 0 0 80px rgba(125, 255, 239, 0.55), 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+.card-face.big.r-absurd::after {
+  content: '';
+  position: absolute;
+  inset: -50%;
+  background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.8) 49%, rgba(0, 217, 255, 0.5) 52%, transparent 60%);
+  animation: card-shine 1s ease-in-out infinite;
+  pointer-events: none;
+}
+.card-face.mini.r-absurd {
+  background: linear-gradient(160deg, #00d9ff, #001a26 60%, #7dffef);
+  background-size: 200% 200%;
+  animation: mythic-flow 2s ease-in-out infinite;
+  box-shadow: 0 0 0 2px #fff, 0 0 14px rgba(0, 217, 255, 0.95);
+}
+.sc-glow.r-absurd {
+  background: conic-gradient(from 0deg, #00d9ff, #ffffff, #7dffef, #ffd23f, #ff3fa4, #00d9ff);
+  -webkit-mask: radial-gradient(circle, #000 0%, transparent 70%);
+  mask: radial-gradient(circle, #000 0%, transparent 70%);
+  animation: mythic-spin 1.2s linear infinite;
+}
+.sc-sub.sc-rarity.r-absurd {
+  color: #7dffef;
+  text-shadow: 0 0 12px #00d9ff, 0 0 24px #00d9ff;
+  animation: absurd-pulse 0.6s ease-in-out infinite alternate;
+}
+.scratch-screen.is-absurd {
+  animation: absurd-flash 1.2s ease-out;
+}
+@keyframes absurd-pulse {
+  to { transform: scale(1.12); }
+}
+@keyframes absurd-flash {
+  0% { background-color: rgba(0, 217, 255, 0.95); }
+  30% { background-color: rgba(255, 255, 255, 0.8); }
   100% { background-color: transparent; }
 }

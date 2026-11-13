@@ -16,14 +16,14 @@ import { TurnManager, TOTAL_ROUNDS } from './turns.js';
 import { FairRoller, createCryptoRandom, rollDie } from './probability.js';
 import { scoreCategory, contributingDice, isYatzy, notableCombo, CATEGORY_INFO } from './scoring.js';
 import { CARDS, drawCardId } from './cards.js';
-import { cardAvailability, applyCard, isLocked } from './powers.js';
+import { cardAvailability, applyCard, isLocked, guard } from './powers.js';
 import { GameError } from './errors.js';
 import { detectMeme } from './memes.js';
 
 export { GameError };
 
-const newStatus = () => ({ curse: null, noHoldDie: null, sabotage: null, halve: null, lessRolls: null, blessTurns: 0, yatzyTurns: 0 });
-const newTurnState = () => ({ foresight: {}, crown: null, noHold: [], frozen: [], blocked: [], bonuses: [], blessed: false, blessAll: false, cardNotes: null, chaos: false, yatzyAll: false });
+const newStatus = () => ({ curse: null, noHoldDie: null, sabotage: null, halve: null, lessRolls: null, blessTurns: 0, yatzyTurns: 0, mirror: null, counter: null, trap: null, chains: null, invest: null });
+const newTurnState = () => ({ foresight: {}, crown: null, noHold: [], frozen: [], blocked: [], bonuses: [], blessed: false, blessAll: false, cardNotes: null, chaos: false, yatzyAll: false, cardsPlayed: 0 });
 
 export class Game {
   /**
@@ -209,6 +209,7 @@ export class Game {
     const effectId = this.nextEffectId++;
     const { result, log } = applyCard(this, me, entry, params, effectId);
     me.hand = me.hand.filter((c) => c.uid !== uid);
+    this.turnState.cardsPlayed = (this.turnState.cardsPlayed || 0) + 1;
     this.effectLog.push(log);
     if (this.effectLog.length > 60) this.effectLog.splice(0, this.effectLog.length - 60);
     const out = {
@@ -254,7 +255,7 @@ export class Game {
     // Lancio Benedetto / Benedizione Eterna: gli 1 e i 2 appena lanciati si rilanciano da soli
     let blessed = null;
     if (this.turnState.blessed || this.turnState.blessAll) {
-      this.turnState.blessed = false;
+      this.turnState.blessed = Math.max(0, Number(this.turnState.blessed) - 1);
       const idx = rolled.filter((i) => this.dice.values[i] <= 2);
       const before = idx.map((i) => this.dice.values[i]);
       for (const i of idx) this.dice.setValue(i, this.randomDie());
@@ -286,6 +287,7 @@ export class Game {
       const before = idx.map((i) => this.dice.values[i]);
       for (const i of idx) this.dice.setValue(i, this.randomDie());
       let noHold = null;
+      if (c.type === 'apocalypse') this.dice.removeRoll();
       if (c.type === 'apocalypse' && this.dice.rollsLeft > 0) {
         noHold = Math.floor(this.rng() * RULES.DICE_COUNT);
         me.status.noHoldDie = noHold;
@@ -304,7 +306,8 @@ export class Game {
       curse = { ...(curse || { cardId: 'maledizioneCaos', noHoldDie: null, frozen: null }), type: 'chaos', dice: idx, before, after: idx.map((i) => this.dice.values[i]) };
     }
     // Dominio Assoluto: ogni lancio diventa uno Yatzy
-    if (this.turnState.yatzyAll) this.makeYatzy();
+    const dominion = Boolean(this.turnState.yatzyAll);
+    if (dominion) this.makeYatzy();
 
     this.selected = null;
     const boss = this.hooks?.afterRoll?.(this, { rolled, rollIndex, rolledValues }) || null;
@@ -320,6 +323,7 @@ export class Game {
       yatzyBonusReady: me.card.qualifiesForYatzyBonus(this.dice.values),
       curse,
       blessed,
+      dominion,
     };
     this.emit('roll', result);
     return result;
@@ -388,6 +392,7 @@ export class Game {
       if (def.kind === 'plus') amount = score > 0 ? def.amount : 0;
       else if (def.kind === 'mult') amount = Math.min(Math.floor(score / 2), def.cap);
       else if (def.kind === 'net') amount = score === 0 ? def.amount : 0;
+      else if (def.kind === 'jackpot') amount = ['fullHouse', 'smallStraight', 'largeStraight', 'fourKind', 'yatzy'].includes(id) && score > 0 ? def.amount : 0;
       else if (def.kind === 'upper2') amount = CATEGORY_INFO[id].section === 'upper' ? Math.min(score, def.cap) : 0;
       if (amount > 0) {
         card.addCardPoints({ id: b.effectId, amount, kind: 'bonus', cat: id });
@@ -403,11 +408,23 @@ export class Game {
     if (me.status.halve) {
       const hv = me.status.halve;
       me.status.halve = null;
-      const blocked = card.consumeShield(id);
+      const blocked = Boolean(guard(me, id, hv.effectId));
       const taken = blocked ? 0 : card.applyDebit(id, Math.floor((card.value(id) ?? 0) / 2));
       halved = { cat: id, taken, blocked };
       const log = this.effectLog.find((e) => e.id === hv.effectId);
       if (log) Object.assign(log, { fired: true, cat: id, taken, blocked });
+    }
+
+    // Trappola dell'avversario: −12 al punteggio segnato
+    let trapped = null;
+    if (me.status.trap) {
+      const tp = me.status.trap;
+      me.status.trap = null;
+      const blocked = Boolean(guard(me, id, tp.effectId));
+      const taken = blocked ? 0 : card.applyDebit(id, 12);
+      trapped = { cat: id, taken, blocked };
+      const log = this.effectLog.find((e) => e.id === tp.effectId);
+      if (log) Object.assign(log, { fired: true, cat: id, taken });
     }
 
     const result = {
@@ -426,6 +443,7 @@ export class Game {
       cardExtra,
       extras,
       halved,
+      trapped,
       meme: detectMeme({ category: id, score, dice, fullHouseOpen: card.scores.fullHouse === null }),
       prevTotal,
       total: card.total(),
@@ -495,6 +513,22 @@ export class Game {
       if (this.dice.maxRolls < ROLL_CAP) this.dice.addRoll();
       notes.bless = me.status.blessTurns + 1;
     }
+    if (me.status.invest) {
+      const inv = me.status.invest;
+      me.status.invest = null;
+      me.card.addCardPoints({ id: inv.effectId, amount: inv.amount, kind: 'bonus', cat: null });
+      notes.invest = inv.amount;
+    }
+    if (me.status.chains) {
+      me.status.chains = null;
+      this.turnState.noHold = [0, 1, 2, 3, 4];
+      notes.chains = true;
+    }
+    // rimonta: chi è indietro di 60 punti o più pesca una carta in più (vale per tutti e due)
+    if (this.cardsEnabled && this.other(me).card.total() - me.card.total() >= 60) {
+      this.pendingDraws++;
+      notes.comeback = true;
+    }
     if (me.status.yatzyTurns > 0) {
       me.status.yatzyTurns--;
       this.turnState.yatzyAll = true;
@@ -541,10 +575,12 @@ export class Game {
         foresight: { ...this.turnState.foresight },
         crown: this.turnState.crown,
         bonuses: (this.turnState.bonuses || []).map((b) => ({ ...b })),
-        blessed: Boolean(this.turnState.blessed),
+        blessed: Number(this.turnState.blessed) || 0,
         blessAll: Boolean(this.turnState.blessAll),
         chaos: Boolean(this.turnState.chaos),
         yatzyAll: Boolean(this.turnState.yatzyAll),
+        cardsPlayed: this.turnState.cardsPlayed || 0,
+        noHold: [...(this.turnState.noHold || [])],
         frozen: [...(this.turnState.frozen || [])],
         blocked: [...(this.turnState.blocked || [])],
       },
@@ -589,10 +625,12 @@ export class Game {
       foresight: { ...(ts.foresight || {}) },
       crown: ts.crown ?? null,
       bonuses: Array.isArray(ts.bonuses) ? ts.bonuses.map((b) => ({ ...b })) : [],
-      blessed: Boolean(ts.blessed),
+      blessed: Number(ts.blessed) || 0,
       blessAll: Boolean(ts.blessAll),
       chaos: Boolean(ts.chaos),
       yatzyAll: Boolean(ts.yatzyAll),
+      cardsPlayed: Number(ts.cardsPlayed) || 0,
+      noHold: Array.isArray(ts.noHold) ? [...ts.noHold] : [],
       frozen: Array.isArray(ts.frozen) ? [...ts.frozen] : [],
       blocked: Array.isArray(ts.blocked) ? [...ts.blocked] : [],
     };

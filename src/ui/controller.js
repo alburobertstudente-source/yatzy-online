@@ -5,6 +5,7 @@
  * Turno: banner → (rotazione) → carta da grattare → lanci / carte → punteggio.
  */
 import { h, localRect, wait, buzz } from './dom.js';
+import { setThumbGate } from '../three/core.js';
 import { HudView } from './hudView.js';
 import { ScorecardView } from './scorecardView.js';
 import { TrayView } from './trayView.js';
@@ -57,6 +58,8 @@ export class Controller {
     this.onGameOver = onGameOver;
     this.game = null;
     this.busy = false;
+    // le immagini 3D dei menu non si disegnano mentre la partita anima dadi e carte
+    setThumbGate(() => document.getElementById('app')?.dataset.screen === 'game' || Boolean(document.querySelector('.scratch-screen')));
     this.targeting = null;
     /* modalità online: giocatore di questo telefono e coda delle azioni dell'avversario */
     this.viewer = null;
@@ -545,6 +548,13 @@ export class Controller {
       await this.tray.roll(res.rolledValues, res.rolled, {
         entering: res.rollIndex === 0,
       });
+      if (res.dominion) {
+        const tr = this.#rect(this.tray.el);
+        sound.yatzyBonus();
+        this.cardFx.godRays(this.tray.el);
+        await this.tray.roll(res.values, [0, 1, 2, 3, 4]);
+        toast(this.fx, 'DOMINIO ASSOLUTO: YATZY!', { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'gold' });
+      }
       if (res.blessed?.dice.length) {
         const tr = this.#rect(this.tray.el);
         res.blessed.dice.forEach((i) => this.cardFx.glowDie(this.tray.slotEl(i), 'legendary'));
@@ -567,7 +577,8 @@ export class Controller {
     sound.curseHit();
     buzz([40, 30, 60]);
     this.hud.setCardInfo(this.game.players);
-    await this.cardFx.curseBanner(c.type);
+    // il Caos dura tutto il turno: il banner solo al primo lancio
+    if (!(c.type === 'chaos' && res.rollIndex > 0)) await this.cardFx.curseBanner(c.type);
     if (c.dice.length) {
       await this.tray.roll(res.values, c.dice);
     }
@@ -985,8 +996,8 @@ export class Controller {
       case 'foresight':
         this.tray.setDecor({ foresight: g.turnState.foresight, noHold: me.status.noHoldDie });
         sound.reveal('common');
-        await this.cardFx.foresight(this.tray.slotEl(res.die));
-        toast(this.fx, `IL PROSSIMO LANCIO DI QUESTO DADO SARÀ ${res.value}`, { x: tr.x + tr.w / 2, y: tr.y + tr.h + 30, kind: 'hint' });
+        await Promise.all((res.dice || [res.die]).map((i) => this.cardFx.foresight(this.tray.slotEl(i))));
+        toast(this.fx, res.dice?.length > 1 ? `PROSSIMO LANCIO: ${res.values.join(' · ')}` : `IL PROSSIMO LANCIO DI QUESTO DADO SARÀ ${res.value}`, { x: tr.x + tr.w / 2, y: tr.y + tr.h + 30, kind: 'hint' });
         break;
       case 'draw':
         await this.#drawPhase({ extra: true });
@@ -995,6 +1006,7 @@ export class Controller {
         await this.tray.roll(res.values, [res.die]);
         this.cardFx.glowDie(this.tray.slotEl(res.die), def.rarity);
         this.#diceChangedCombo();
+        if (res.draw && g.pendingDraws > 0) await this.#drawPhase({ extra: true });
         break;
       case 'setAll':
         sound.godHand();
@@ -1067,6 +1079,11 @@ export class Controller {
         break;
       case 'steal': {
         const cell = this.card.cell(opp.id, res.cat).el;
+        if (res.mirrored) {
+          sound.shieldUp();
+          toast(this.fx, 'RIFLESSO DALLO SPECCHIO! +10 AL DIFENSORE', { x: tr.x + tr.w / 2, y: tr.y - 40, kind: 'hint' });
+        }
+        if (res.countered) toast(this.fx, `CONTRATTACCO! +${res.countered} AL DIFENSORE`, { x: tr.x + tr.w / 2, y: tr.y - 40, kind: 'hint' });
         if (res.cosmic) {
           sound.satan();
           shake(this.stage.table.querySelector('.play-area') || this.stage.table, 8, 600);
@@ -1091,6 +1108,10 @@ export class Controller {
         await wait(ms(500));
         break;
       case 'curse':
+        if (res.reflected) {
+          sound.shieldUp();
+          toast(this.fx, 'LA MALEDIZIONE RIMBALZA SULLO SPECCHIO!', { x: tr.x + tr.w / 2, y: tr.y - 40, kind: 'hint' });
+        }
         sound.curse();
         await this.cardFx.curseCast(this.hud.totalEl(opp.id), res.curse);
         this.hud.setCardInfo(g.players);
@@ -1099,7 +1120,48 @@ export class Controller {
       case 'prison':
         sound.prison();
         await this.cardFx.prison(res.cardId);
-        toast(this.fx, `${CARDS[res.cardId].name.toUpperCase()} BLOCCATA`, { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'hint' });
+        toast(this.fx, res.count > 1 ? `${res.count} CARTE BLOCCATE` : `${CARDS[res.cardId].name.toUpperCase()} BLOCCATA`, { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'hint' });
+        break;
+      case 'points': {
+        sound.coins();
+        const h0 = this.#rect(this.hud.totalEl(me.id));
+        sparkle(this.fx, h0.x + h0.w / 2, h0.y + h0.h / 2, { colors: ['#ffd23f', '#ffffff', RARITY_HEX[def.rarity]], count: 14, spread: 50 });
+        toast(this.fx, `+${res.amount} PUNTI`, { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'gold' });
+        await wait(ms(500));
+        if (res.draw && g.pendingDraws > 0) await this.#drawPhase({ extra: true });
+        break;
+      }
+      case 'status':
+        (res.attack ? sound.curse() : sound.shieldUp());
+        if (res.attack) await this.cardFx.curseCast(this.hud.totalEl(opp.id), 'chaos');
+        else pop(this.hud.totalEl(me.id), 1.15, 300);
+        this.hud.setCardInfo(g.players);
+        this.card.render(g, { interactive: false });
+        toast(this.fx, res.label, { x: tr.x + tr.w / 2, y: tr.y - 8, kind: res.attack ? 'hint' : 'gold' });
+        await wait(ms(500));
+        break;
+      case 'quake':
+        sound.stamp();
+        buzz([50, 30, 50]);
+        shake(this.stage.table.querySelector('.play-area') || this.stage.table, 9, 700);
+        this.card.render(g, { interactive: false });
+        toast(this.fx, res.mirrored ? 'TERREMOTO RIFLESSO DALLO SPECCHIO!' : `TERREMOTO: −${res.taken} ALL'AVVERSARIO`, { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'hint' });
+        await wait(ms(600));
+        break;
+      case 'clone':
+        sound.reveal('epic');
+        this.hand.render(g, { interactive: false, player: this.#handOwner() });
+        this.hud.setCardInfo(g.players);
+        toast(this.fx, `CLONATE ${res.cards.length} CARTE!`, { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'gold' });
+        await wait(ms(500));
+        break;
+      case 'dominion':
+        sound.yatzyBonus();
+        buzz([60, 40, 60, 40, 120]);
+        this.cardFx.godRays(this.tray.el);
+        if (g.dice.hasRolled) await this.tray.roll(res.values, [0, 1, 2, 3, 4]);
+        toast(this.fx, 'DOMINIO ASSOLUTO: 5 TURNI DI SOLI YATZY!', { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'gold' });
+        await wait(ms(700));
         break;
       case 'rewind': {
         sound.rewind();
@@ -1245,6 +1307,16 @@ export class Controller {
     const cardExtra = res.cardExtra || 0;
     await Promise.all([this.hud.setTotal(pid, res.total - yb - res.crownExtra - cardExtra, true), clearing]);
 
+    // Trappola dell'avversario: −12
+    if (res.trapped && (res.trapped.taken > 0 || res.trapped.blocked)) {
+      const c = this.#rect(cell.el);
+      sound.curseHit();
+      shake(cell.el, 5);
+      toast(this.fx, res.trapped.blocked ? 'TRAPPOLA PARATA!' : `TRAPPOLA −${res.trapped.taken}`, { x: c.x + c.w / 2, y: c.y - 6, kind: 'hint' });
+      await wait(ms(450));
+      this.card.render(g, { interactive: false, holdRingFor: pid, holdChecksFor: res.yatzyBonus ? pid : null });
+    }
+
     // Mezza Luna dell'avversario: metà punteggio se ne va
     if (res.halved) {
       const c = this.#rect(cell.el);
@@ -1318,6 +1390,26 @@ export class Controller {
       sound.curseHit();
       toast(this.fx, 'LANCIO RUBATO: UN LANCIO IN MENO', { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'hint' });
       await wait(ms(700));
+    }
+    if (n.invest) {
+      sound.coins();
+      toast(this.fx, `INVESTIMENTO: +${n.invest} PUNTI`, { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'gold' });
+      for (const p of g.players) await this.hud.setTotal(p.id, p.card.total(), true);
+    }
+    if (n.chains) {
+      sound.prison();
+      toast(this.fx, 'CATENE: NESSUN DADO SI PUÒ CONSERVARE', { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'hint' });
+      await wait(ms(700));
+    }
+    if (n.comeback) {
+      sound.reveal('rare');
+      toast(this.fx, 'RIMONTA: UNA CARTA IN PIÙ!', { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'gold' });
+      await wait(ms(600));
+    }
+    if (n.dominion) {
+      sound.yatzyBonus();
+      toast(this.fx, `DOMINIO ASSOLUTO (${n.dominion} TURNI)`, { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'gold' });
+      await wait(ms(600));
     }
     if (n.bless) {
       sound.holy();
