@@ -56,6 +56,7 @@ export class Scorecard {
     if (!this.isOpen(id)) throw new Error(`Categoria già usata: ${id}`);
     if (!Number.isInteger(value) || value < 0) throw new Error(`Punteggio non valido: ${value}`);
     this.scores[id] = value;
+    this.lastScored = id;
     if (this.upperTotal() >= (this.bonusThreshold || RULES.UPPER_BONUS_THRESHOLD)) this.upperBonusLocked = true;
   }
 
@@ -198,6 +199,7 @@ export class Scorecard {
       cardPoints: this.cardPoints.map((e) => ({ ...e })),
       upperBonusLocked: this.upperBonusLocked,
       yatzyBonusTurns: [...this.yatzyBonusTurns],
+      lastScored: this.lastScored ?? null,
     };
   }
 
@@ -215,6 +217,7 @@ export class Scorecard {
       ? data.cardPoints.filter((e) => e && Number.isInteger(e.amount)).map((e) => ({ ...e }))
       : [];
     card.upperBonusLocked = Boolean(data?.upperBonusLocked) || card.upperTotal() >= RULES.UPPER_BONUS_THRESHOLD;
+    card.lastScored = typeof data?.lastScored === 'string' && data.lastScored in card.scores ? data.lastScored : null;
     card.yatzyBonusTurns = Array.isArray(data?.yatzyBonusTurns) ? [...new Set(data.yatzyBonusTurns)] : [];
     return card;
   }

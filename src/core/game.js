@@ -22,8 +22,8 @@ import { detectMeme } from './memes.js';
 
 export { GameError };
 
-const newStatus = () => ({ curse: null, noHoldDie: null, sabotage: null, halve: null, lessRolls: null, blessTurns: 0 });
-const newTurnState = () => ({ foresight: {}, crown: null, noHold: [], frozen: [], blocked: [], bonuses: [], blessed: false, blessAll: false, cardNotes: null });
+const newStatus = () => ({ curse: null, noHoldDie: null, sabotage: null, halve: null, lessRolls: null, blessTurns: 0, yatzyTurns: 0 });
+const newTurnState = () => ({ foresight: {}, crown: null, noHold: [], frozen: [], blocked: [], bonuses: [], blessed: false, blessAll: false, cardNotes: null, chaos: false, yatzyAll: false });
 
 export class Game {
   /**
@@ -270,7 +270,9 @@ export class Game {
       let idx = rolled.filter((i) => !this.dice.held[i]);
       let frozen = null;
       if (c.type === 'chaos') {
-        idx = shuffle(idx, this.rng).slice(0, 2).sort((a, b) => a - b);
+        // il Caos dura tutto il turno: scatta a ogni lancio (vedi sotto)
+        this.turnState.chaos = true;
+        idx = [];
       } else if (c.type === 'apocalypse') {
         // l'Apocalisse travolge anche i dadi conservati
         idx = [0, 1, 2, 3, 4];
@@ -291,6 +293,18 @@ export class Game {
       }
       curse = { type: c.type, cardId: c.cardId, dice: idx, before, after: idx.map((i) => this.dice.values[i]), noHoldDie: noHold, frozen };
     }
+    // Maledizione del Caos: dopo OGNI lancio del turno, due dadi a caso (anche conservati) si rilanciano
+    if (this.turnState.chaos) {
+      const idx = shuffle([0, 1, 2, 3, 4], this.rng).slice(0, 2).sort((a, b) => a - b);
+      const before = idx.map((i) => this.dice.values[i]);
+      idx.forEach((i) => {
+        this.dice.release(i);
+        this.dice.setValue(i, this.randomDie());
+      });
+      curse = { ...(curse || { cardId: 'maledizioneCaos', noHoldDie: null, frozen: null }), type: 'chaos', dice: idx, before, after: idx.map((i) => this.dice.values[i]) };
+    }
+    // Dominio Assoluto: ogni lancio diventa uno Yatzy
+    if (this.turnState.yatzyAll) this.makeYatzy();
 
     this.selected = null;
     const boss = this.hooks?.afterRoll?.(this, { rolled, rollIndex, rolledValues }) || null;
@@ -374,6 +388,7 @@ export class Game {
       if (def.kind === 'plus') amount = score > 0 ? def.amount : 0;
       else if (def.kind === 'mult') amount = Math.min(Math.floor(score / 2), def.cap);
       else if (def.kind === 'net') amount = score === 0 ? def.amount : 0;
+      else if (def.kind === 'upper2') amount = CATEGORY_INFO[id].section === 'upper' ? Math.min(score, def.cap) : 0;
       if (amount > 0) {
         card.addCardPoints({ id: b.effectId, amount, kind: 'bonus', cat: id });
         cardExtra += amount;
@@ -450,6 +465,16 @@ export class Game {
     return info;
   }
 
+  /** Dominio Assoluto: i dadi diventano cinque uguali (il valore più presente, a parità il più alto). */
+  makeYatzy() {
+    const counts = [0, 0, 0, 0, 0, 0, 0];
+    this.dice.values.forEach((v) => counts[v]++);
+    let best = 6;
+    for (let v = 6; v >= 1; v--) if (counts[v] > counts[best]) best = v;
+    for (let i = 0; i < 5; i++) this.dice.setValue(i, best);
+    return best;
+  }
+
   /** Effetti delle carte che scattano all'inizio del turno del giocatore. */
   #turnStartCards() {
     const me = this.current;
@@ -469,6 +494,11 @@ export class Game {
       this.turnState.blessAll = true;
       if (this.dice.maxRolls < ROLL_CAP) this.dice.addRoll();
       notes.bless = me.status.blessTurns + 1;
+    }
+    if (me.status.yatzyTurns > 0) {
+      me.status.yatzyTurns--;
+      this.turnState.yatzyAll = true;
+      notes.dominion = me.status.yatzyTurns + 1;
     }
     this.turnState.cardNotes = Object.keys(notes).length ? notes : null;
   }
@@ -513,6 +543,8 @@ export class Game {
         bonuses: (this.turnState.bonuses || []).map((b) => ({ ...b })),
         blessed: Boolean(this.turnState.blessed),
         blessAll: Boolean(this.turnState.blessAll),
+        chaos: Boolean(this.turnState.chaos),
+        yatzyAll: Boolean(this.turnState.yatzyAll),
         frozen: [...(this.turnState.frozen || [])],
         blocked: [...(this.turnState.blocked || [])],
       },
@@ -559,6 +591,8 @@ export class Game {
       bonuses: Array.isArray(ts.bonuses) ? ts.bonuses.map((b) => ({ ...b })) : [],
       blessed: Boolean(ts.blessed),
       blessAll: Boolean(ts.blessAll),
+      chaos: Boolean(ts.chaos),
+      yatzyAll: Boolean(ts.yatzyAll),
       frozen: Array.isArray(ts.frozen) ? [...ts.frozen] : [],
       blocked: Array.isArray(ts.blocked) ? [...ts.blocked] : [],
     };

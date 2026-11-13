@@ -4,7 +4,7 @@
  */
 import { CARD_RULES } from '../config.js';
 
-export const RARITIES = ['common', 'rare', 'epic', 'legendary', 'mythic'];
+export const RARITIES = ['common', 'rare', 'epic', 'legendary', 'mythic', 'absurd'];
 
 export const RARITY_INFO = {
   common: { label: 'Comune' },
@@ -12,6 +12,7 @@ export const RARITY_INFO = {
   epic: { label: 'Epica' },
   legendary: { label: 'Leggendaria' },
   mythic: { label: 'Mitica' },
+  absurd: { label: 'Assurda' },
 };
 
 /**
@@ -37,16 +38,16 @@ export const CARDS = {
   scudoLegno: {
     name: 'Scudo di Legno',
     rarity: 'common',
-    text: 'Protegge una casella da un attacco.',
-    target: { kind: 'ownBoxes', count: 1 },
-    prompt: 'Scegli una tua casella da proteggere',
+    text: 'Protegge due caselle da un attacco.',
+    target: { kind: 'ownBoxes', count: 2 },
+    prompt: 'Scegli due tue caselle da proteggere',
   },
   occhioDestino: {
     name: 'Occhio del Destino',
     rarity: 'common',
-    text: 'Rivela il risultato di un dado prima di decidere.',
-    target: { kind: 'dice', min: 1, max: 1, foresight: true },
-    prompt: 'Scegli il dado di cui vedere il prossimo risultato',
+    text: 'Rivela il prossimo risultato di due dadi prima di decidere.',
+    target: { kind: 'dice', min: 1, max: 2, foresight: true },
+    prompt: 'Scegli fino a 2 dadi di cui vedere il prossimo risultato',
   },
   manoVeloce: {
     name: 'Mano Veloce',
@@ -75,11 +76,23 @@ export const CARDS = {
     target: null,
     bonus: { kind: 'plus', amount: 8 },
   },
+  seiFortunato: {
+    name: 'Sei Fortunato',
+    rarity: 'common',
+    text: 'Il dado più basso diventa un 6.',
+    target: null,
+  },
+  spintaGentile: {
+    name: 'Spinta Gentile',
+    rarity: 'common',
+    text: 'Tutti gli 1 diventano 2 e tutti i 2 diventano 3.',
+    target: null,
+  },
   // ---------------- rare ----------------
   dadoTruccato: {
     name: 'Dado Truccato',
     rarity: 'rare',
-    text: 'Modifica il risultato di un dado di +1 o -1.',
+    text: 'Modifica il risultato di un dado di +1 o −1 e pesca una carta.',
     target: { kind: 'dice', min: 1, max: 1 },
     choice: 'plusMinus',
     prompt: 'Scegli un dado, poi +1 o −1',
@@ -95,9 +108,9 @@ export const CARDS = {
   scudoArcano: {
     name: 'Scudo Arcano',
     rarity: 'rare',
-    text: 'Protegge due caselle dagli effetti nemici.',
-    target: { kind: 'ownBoxes', count: 2 },
-    prompt: 'Scegli due tue caselle da proteggere',
+    text: 'Protegge tre caselle dagli effetti nemici.',
+    target: { kind: 'ownBoxes', count: 3 },
+    prompt: 'Scegli tre tue caselle da proteggere',
   },
   doppioLancio: {
     name: 'Doppio Lancio',
@@ -135,15 +148,28 @@ export const CARDS = {
   reteSalvataggio: {
     name: 'Rete di Salvataggio',
     rarity: 'rare',
-    text: 'Se in questo turno segni 0, ricevi comunque 15 punti.',
+    text: 'Se in questo turno segni 0, ricevi comunque 20 punti.',
     target: null,
-    bonus: { kind: 'net', amount: 15 },
+    bonus: { kind: 'net', amount: 20 },
+  },
+  tassaDelRe: {
+    name: 'Tassa del Re',
+    rarity: 'rare',
+    text: "Ruba 6 punti da ognuna delle tre caselle migliori dell'avversario (gli scudi le proteggono).",
+    target: null,
+  },
+  raddoppioSuperiore: {
+    name: 'Raddoppio Superiore',
+    rarity: 'rare',
+    text: 'Se in questo turno segni nella parte sinistra (Uno…Sei), il punteggio vale doppio.',
+    target: null,
+    bonus: { kind: 'upper2', cap: 30 },
   },
   // ---------------- epiche ----------------
   maledizioneCaos: {
     name: 'Maledizione del Caos',
     rarity: 'epic',
-    text: "L'avversario deve rilanciare due dadi non conservati.",
+    text: "Per tutto il prossimo turno dell'avversario, dopo OGNI suo lancio due dadi a caso (anche conservati) vengono rilanciati.",
     target: null,
     curse: 'chaos',
   },
@@ -166,9 +192,8 @@ export const CARDS = {
   prigioneTemporale: {
     name: 'Prigione Temporale',
     rarity: 'epic',
-    text: 'Blocca una carta avversaria per un turno.',
-    target: { kind: 'oppCard' },
-    prompt: "Scegli la carta dell'avversario da bloccare",
+    text: "Blocca TUTTE le carte dell'avversario per il suo prossimo turno.",
+    target: null,
   },
   mezzaLuna: {
     name: 'Mezza Luna',
@@ -202,6 +227,18 @@ export const CARDS = {
     text: 'Il punteggio di questo turno vale una volta e mezza (fino a 40 punti extra).',
     target: null,
     bonus: { kind: 'mult', cap: 40 },
+  },
+  ladroDiLanci: {
+    name: 'Ladro di Lanci',
+    rarity: 'epic',
+    text: "Un lancio in più per te adesso e uno in meno per l'avversario nel suo prossimo turno.",
+    target: null,
+  },
+  eco: {
+    name: 'Eco',
+    rarity: 'epic',
+    text: 'Guadagni di nuovo i punti della tua ultima casella segnata (fino a 30).',
+    target: null,
   },
   // ---------------- leggendarie ----------------
   manoDegliDei: {
@@ -244,6 +281,12 @@ export const CARDS = {
     text: 'Protegge tutte le tue caselle con uno scudo.',
     target: null,
   },
+  tesoroDraghi: {
+    name: 'Tesoro dei Draghi',
+    rarity: 'legendary',
+    text: 'Guadagni subito 40 punti.',
+    target: null,
+  },
   // ---------------- mitiche ----------------
   bigBang: {
     name: 'Big Bang',
@@ -274,6 +317,19 @@ export const CARDS = {
     name: 'Buco Nero',
     rarity: 'mythic',
     text: "Inghiotte tutte le carte dell'avversario e lo maledice con l'Apocalisse dei Dadi.",
+    target: null,
+  },
+  clonazione: {
+    name: 'Clonazione',
+    rarity: 'mythic',
+    text: "Copia nella tua mano tutte le carte dell'avversario (finché c'è posto, fino a 5).",
+    target: null,
+  },
+  // ---------------- assurda ----------------
+  dominioAssoluto: {
+    name: 'Dominio Assoluto',
+    rarity: 'absurd',
+    text: 'Per questo turno e i tuoi prossimi 4 turni, ogni lancio è uno YATZY.',
     target: null,
   },
 };

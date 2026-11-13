@@ -42,7 +42,7 @@ export const RULES = {
  */
 export const CARD_RULES = {
   /** Probabilità di ogni rarità (in percentuale, somma 100). */
-  RARITY_WEIGHTS: { common: 45, rare: 28, epic: 16, legendary: 9, mythic: 2 },
+  RARITY_WEIGHTS: { common: 44.9, rare: 28, epic: 16, legendary: 9, mythic: 2, absurd: 0.1 },
   /** Carte massime in mano: oltre, se ne scarta una. */
   HAND_MAX: 5,
   /** Cariche di scudo massime su una casella. */

@@ -124,7 +124,28 @@ export function cardAvailability(game, entry) {
       return opp.hand.length || !opp.status.curse ? yes : no("Il Buco Nero non ha niente da inghiottire");
     case 'occhioDestino':
       if (dice.rollsLeft <= 0) return no('Non hai più lanci in questo turno');
-      return Object.keys(game.turnState.foresight).length >= DICE ? no('Conosci già tutti i dadi') : yes;
+      return Object.keys(game.turnState.foresight).length >= DICE - 1 ? no('Conosci già quasi tutti i dadi') : yes;
+    case 'seiFortunato':
+      if (!dice.hasRolled) return no('Prima lancia i dadi');
+      return dice.values.some((v) => v < 6) ? yes : no('Sono già tutti 6');
+    case 'spintaGentile':
+      if (!dice.hasRolled) return no('Prima lancia i dadi');
+      return dice.values.some((v) => v <= 2) ? yes : no('Nessun 1 o 2 da spingere');
+    case 'tassaDelRe':
+      return stealableBoxes(game, me).length ? yes : no("L'avversario non ha ancora punti");
+    case 'raddoppioSuperiore':
+      return game.turnState.bonuses?.some((b) => b.kind === 'upper2') ? no('Già attiva in questo turno') : yes;
+    case 'ladroDiLanci':
+      if (dice.maxRolls >= ROLL_CAP) return no('Troppi lanci extra');
+      return opp.status.lessRolls ? no("L'avversario ha già un lancio in meno") : yes;
+    case 'eco':
+      return me.card.lastScored && (me.card.value(me.card.lastScored) ?? 0) > 0 ? yes : no('Nessun punteggio da ripetere');
+    case 'tesoroDraghi':
+      return yes;
+    case 'clonazione':
+      return opp.hand.length && me.hand.length - 1 < 5 ? yes : no('Niente da clonare');
+    case 'dominioAssoluto':
+      return me.status.yatzyTurns || game.turnState.yatzyAll ? no('Il Dominio è già attivo') : yes;
     case 'scudoLegno':
       return shieldableBoxes(me).length >= 1 ? yes : no('Nessuna casella da proteggere');
     case 'scudoArcano':
@@ -182,11 +203,10 @@ export function applyCard(game, me, entry, params = {}, effectId) {
       break;
     }
     case 'occhioDestino': {
-      const [i] = checkDice(params.dice, 1, 1);
-      if (game.turnState.foresight[i] !== undefined) throw new GameError('Conosci già questo dado');
-      const value = game.randomDie();
-      game.turnState.foresight[i] = value;
-      result = { kind: 'foresight', die: i, value };
+      const list = checkDice(params.dice, 1, 2);
+      if (list.some((i) => game.turnState.foresight[i] !== undefined)) throw new GameError('Conosci già questo dado');
+      const values = list.map((i) => (game.turnState.foresight[i] = game.randomDie()));
+      result = { kind: 'foresight', die: list[0], value: values[0], dice: list, values };
       break;
     }
     case 'manoVeloce':
@@ -201,7 +221,8 @@ export function applyCard(game, me, entry, params = {}, effectId) {
       const to = from + delta;
       if (to < 1 || to > 6) throw new GameError('Il dado deve restare tra 1 e 6');
       dice.setValue(i, to);
-      result = { kind: 'setDie', die: i, from, to };
+      game.pendingDraws++;
+      result = { kind: 'setDie', die: i, from, to, draw: true };
       break;
     }
     case 'riscritturaDestino': {
@@ -401,12 +422,88 @@ export function applyCard(game, me, entry, params = {}, effectId) {
       break;
     }
     case 'prigioneTemporale': {
-      const target = opp.hand.find((c) => c.uid === params.uid);
-      if (!target || isLocked(game, target)) throw new GameError('Scegli una carta avversaria libera');
-      target.lockedTurn = game.turnId + 1; // il prossimo turno è dell'avversario
-      target.lockedBy = effectId;
-      Object.assign(log, { kind: 'prison', victim: opp.id, uid: target.uid, lockedCard: target.id });
-      result = { kind: 'prison', victim: opp.id, uid: target.uid, cardId: target.id };
+      const targets = opp.hand.filter((c) => !isLocked(game, c));
+      if (!targets.length) throw new GameError("L'avversario non ha carte da bloccare");
+      for (const t of targets) {
+        t.lockedTurn = game.turnId + 1; // il prossimo turno è dell'avversario
+        t.lockedBy = effectId;
+      }
+      Object.assign(log, { kind: 'prison', victim: opp.id, uid: targets[0].uid, uids: targets.map((c) => c.uid), lockedCard: targets[0].id });
+      result = { kind: 'prison', victim: opp.id, uid: targets[0].uid, cardId: targets[0].id, count: targets.length };
+      break;
+    }
+    case 'seiFortunato': {
+      const i = dice.values.reduce((b, v, k) => (v < dice.values[b] ? k : b), 0);
+      const from = dice.values[i];
+      dice.setValue(i, 6);
+      result = { kind: 'setDie', die: i, from, to: 6 };
+      break;
+    }
+    case 'spintaGentile': {
+      const idx = [0, 1, 2, 3, 4].filter((i) => dice.values[i] <= 2);
+      const from = [...dice.values];
+      idx.forEach((i) => dice.setValue(i, dice.values[i] + 1));
+      result = { kind: 'reroll', dice: idx, before: idx.map((i) => from[i]), after: idx.map((i) => dice.values[i]) };
+      break;
+    }
+    case 'tassaDelRe': {
+      const cats = stealableBoxes(game, me)
+        .sort((a, b) => opp.card.value(b) - opp.card.value(a))
+        .slice(0, 3);
+      let taken = 0;
+      const parts = [];
+      for (const cat of cats) {
+        const blocked = opp.card.consumeShield(cat);
+        const t = blocked ? 0 : opp.card.applyDebit(cat, 6);
+        taken += t;
+        parts.push({ cat, taken: t, blocked });
+      }
+      if (taken > 0) me.card.addCardPoints({ id: effectId, amount: taken, kind: 'steal', cat: cats[0] });
+      Object.assign(log, { kind: 'tax', victim: opp.id, parts, taken });
+      result = { kind: 'steal', victim: opp.id, cat: cats[0], amount: 18, taken, blocked: taken === 0 && parts.some((p) => p.blocked), parts };
+      break;
+    }
+    case 'raddoppioSuperiore': {
+      if (!game.turnState.bonuses) game.turnState.bonuses = [];
+      game.turnState.bonuses.push({ kind: 'upper2', effectId, cardId: entry.id });
+      Object.assign(log, { kind: 'bonus', amount: 0, cat: null });
+      result = { kind: 'bonusSet', bonus: 'upper2' };
+      break;
+    }
+    case 'ladroDiLanci': {
+      if (opp.status.lessRolls) throw new GameError("L'avversario ha già un lancio in meno");
+      dice.addRoll();
+      opp.status.lessRolls = { effectId };
+      Object.assign(log, { kind: 'lessRolls', victim: opp.id });
+      result = { kind: 'extraRoll', added: 1, maxRolls: dice.maxRolls, stolen: true };
+      break;
+    }
+    case 'eco': {
+      const cat = me.card.lastScored;
+      const amount = Math.min(30, me.card.value(cat) ?? 0);
+      if (amount <= 0) throw new GameError('Nessun punteggio da ripetere');
+      me.card.addCardPoints({ id: effectId, amount, kind: 'bonus', cat });
+      Object.assign(log, { kind: 'bonus', amount, cat });
+      result = { kind: 'points', amount, cat };
+      break;
+    }
+    case 'tesoroDraghi':
+      me.card.addCardPoints({ id: effectId, amount: 40, kind: 'bonus', cat: null });
+      Object.assign(log, { kind: 'bonus', amount: 40, cat: null });
+      result = { kind: 'points', amount: 40, cat: null };
+      break;
+    case 'clonazione': {
+      const room = Math.max(0, 5 - (me.hand.length - 1));
+      const copies = opp.hand.slice(0, room).map((c) => ({ uid: game.nextUid++, id: c.id, lockedTurn: null, lockedBy: null }));
+      me.hand.push(...copies);
+      result = { kind: 'clone', cards: copies.map((c) => c.id) };
+      break;
+    }
+    case 'dominioAssoluto': {
+      me.status.yatzyTurns = 4; // questo turno + i prossimi 4
+      game.turnState.yatzyAll = true;
+      if (dice.hasRolled) game.makeYatzy();
+      result = { kind: 'dominion', turns: 5 };
       break;
     }
     case 'rewindTemporale': {
@@ -443,10 +540,10 @@ export function isReversible(game, e) {
       return true;
     case 'curse':
       return victim.status.curse?.effectId === e.id;
-    case 'prison': {
-      const c = victim.hand.find((x) => x.uid === e.uid);
-      return Boolean(c && c.lockedBy === e.id && isLocked(game, c));
-    }
+    case 'prison':
+      return victim.hand.some((c) => (e.uids || [e.uid]).includes(c.uid) && c.lockedBy === e.id && isLocked(game, c));
+    case 'tax':
+      return e.taken > 0 || e.parts.some((p) => p.blocked);
     case 'crown':
     case 'bonus':
       return e.amount > 0 && owner.card.cardPoints.some((p) => p.id === e.id);
@@ -497,14 +594,24 @@ export function undoEffect(game, e) {
       info.curse = e.curse;
       break;
     case 'prison': {
-      const c = victim.hand.find((x) => x.uid === e.uid);
-      if (c) {
-        c.lockedTurn = null;
-        c.lockedBy = null;
+      for (const c of victim.hand) {
+        if ((e.uids || [e.uid]).includes(c.uid) && c.lockedBy === e.id) {
+          c.lockedTurn = null;
+          c.lockedBy = null;
+        }
       }
       info.uid = e.uid;
       break;
     }
+    case 'tax':
+      for (const p of e.parts) {
+        if (p.blocked) {
+          if (victim.card.canShield(p.cat)) victim.card.addShield(p.cat);
+        } else if (p.taken) victim.card.removeDebit(p.cat, p.taken);
+      }
+      owner.card.removeCardPoints(e.id);
+      Object.assign(info, { kind: 'steal', cat: e.parts[0]?.cat, amount: e.taken, victim: victim.id });
+      break;
     case 'crown':
     case 'bonus':
       owner.card.removeCardPoints(e.id);
