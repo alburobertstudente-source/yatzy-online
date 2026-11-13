@@ -5,6 +5,7 @@
  * Turno: banner → (rotazione) → carta da grattare → lanci / carte → punteggio.
  */
 import { h, localRect, wait, buzz } from './dom.js';
+import { setThumbGate } from '../three/core.js';
 import { HudView } from './hudView.js';
 import { ScorecardView } from './scorecardView.js';
 import { TrayView } from './trayView.js';
@@ -57,6 +58,8 @@ export class Controller {
     this.onGameOver = onGameOver;
     this.game = null;
     this.busy = false;
+    // le immagini 3D dei menu non si disegnano durante le animazioni della partita
+    setThumbGate(() => (this.busy || Boolean(document.querySelector('.scratch-screen'))) && document.getElementById('app')?.dataset.screen === 'game');
     this.targeting = null;
     /* modalità online: giocatore di questo telefono e coda delle azioni dell'avversario */
     this.viewer = null;

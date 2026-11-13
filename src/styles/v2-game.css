@@ -1,1 +1,391 @@
-/* v2: game — vedi v2-tokens.css per la direzione artistica */
+/* v2: game — tutto ciò che si vede in partita (vedi v2-tokens.css per la direzione artistica) */
+
+/* ================= fondo del tavolo: profondità e vignettatura ================= */
+#app[data-screen='game'] .bg-pattern::after,
+#app[data-screen='gameover'] .bg-pattern::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(90% 46% at 50% 0%, rgba(255, 255, 255, 0.22), transparent 70%),
+    radial-gradient(130% 90% at 50% 42%, transparent 52%, rgba(14, 8, 34, 0.42) 100%);
+}
+
+/* ================= HUD ================= */
+.hud .icon-btn {
+  background: var(--gloss), linear-gradient(180deg, #ffffff, #e6e9f5);
+  box-shadow:
+    inset 0 -3px 0 rgba(20, 24, 60, 0.14),
+    inset 0 1px 0 #fff,
+    0 3px 0 rgba(12, 16, 40, 0.2),
+    0 8px 16px -4px rgba(12, 16, 40, 0.45);
+  transition: transform var(--t-fast) var(--ease-back), filter var(--t-fast);
+}
+.hud .icon-btn:active {
+  transform: translateY(2px) scale(0.94);
+  filter: brightness(0.96);
+}
+
+.scoreboard {
+  background: linear-gradient(180deg, rgba(18, 14, 44, 0.5), rgba(18, 14, 44, 0.32));
+  box-shadow:
+    inset 0 2px 7px rgba(0, 0, 0, 0.38),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.18),
+    0 1px 0 rgba(255, 255, 255, 0.22),
+    0 8px 18px -8px rgba(12, 8, 34, 0.5);
+  -webkit-backdrop-filter: blur(6px) saturate(1.2);
+  backdrop-filter: blur(6px) saturate(1.2);
+}
+.sb-player {
+  padding: 0 8px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.05));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  transition:
+    background 0.35s ease,
+    color 0.35s ease,
+    box-shadow 0.35s ease,
+    transform 0.35s var(--ease-back);
+}
+.sb-name {
+  letter-spacing: 0.05em;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+.sb-cards {
+  margin: 0 3px;
+  flex: none;
+  background: rgba(8, 6, 30, 0.3);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+.sb-total {
+  flex: none;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.18);
+}
+.sb-player.red.is-active {
+  background: var(--gloss), linear-gradient(180deg, var(--red-hi), var(--red));
+  box-shadow:
+    inset 0 -3px 0 var(--red-lo),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 0 0 2px #fff,
+    0 0 16px 2px rgba(255, 120, 130, 0.65);
+  transform: scale(1.03);
+}
+.sb-player.blue.is-active {
+  background: var(--gloss), linear-gradient(180deg, var(--blue-hi), var(--blue));
+  box-shadow:
+    inset 0 -3px 0 var(--blue-lo),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 0 0 2px #fff,
+    0 0 16px 2px rgba(110, 180, 255, 0.7);
+  transform: scale(1.03);
+}
+.sb-mid small {
+  opacity: 0.85;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+}
+.sb-round {
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.22);
+}
+
+/* ================= tabella dei punteggi: tavoletta spessa ================= */
+.play-area > .card {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0) 22%),
+    linear-gradient(180deg, var(--paper), var(--paper-2));
+  box-shadow:
+    0 0 0 3px rgba(255, 255, 255, 0.78),
+    0 0 0 4px rgba(120, 70, 30, 0.14),
+    inset 0 2px 0 #fff,
+    inset 0 -7px 0 rgba(150, 100, 40, 0.13),
+    0 7px 0 rgba(96, 40, 40, 0.3),
+    0 26px 38px -10px rgba(30, 6, 30, 0.55);
+}
+.sc-stripe.even {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+/* etichette delle categorie: tessere lucide in rilievo */
+.sc-chip {
+  background: linear-gradient(180deg, #ffffff 0%, #fffaf0 55%, #f6ead2 100%);
+  border-color: #e6cfa4;
+  box-shadow:
+    inset 0 1.5px 0 #fff,
+    0 3px 0 #dcc396,
+    0 6px 8px -3px rgba(110, 70, 20, 0.35);
+}
+.chip-yatzy {
+  background: linear-gradient(180deg, #fffdf2 0%, #fff3c4 60%, #ffe59a 100%);
+  border-color: #f0c860;
+  box-shadow:
+    inset 0 1.5px 0 #fff,
+    0 3px 0 #e2b23c,
+    0 6px 10px -3px rgba(200, 140, 0, 0.5);
+}
+
+/* caselle: vuote = incavo, segnate = tessera in rilievo */
+.cell.red {
+  background: linear-gradient(180deg, #f9c2bd, var(--red-soft) 45%);
+  box-shadow:
+    inset 0 2.5px 4px rgba(170, 40, 50, 0.3),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.75);
+}
+.cell.blue {
+  background: linear-gradient(180deg, #b9d5f6, var(--blue-soft) 45%);
+  box-shadow:
+    inset 0 2.5px 4px rgba(30, 80, 160, 0.3),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.75);
+}
+.cell.red.is-filled {
+  background: var(--gloss-soft), linear-gradient(180deg, #ffb9b2, var(--red-mid));
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -3px 0 rgba(190, 60, 70, 0.28),
+    0 2px 0 rgba(170, 50, 60, 0.35),
+    0 5px 7px -3px rgba(150, 30, 40, 0.4);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+.cell.blue.is-filled {
+  background: var(--gloss-soft), linear-gradient(180deg, #b4d6fb, var(--blue-mid));
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -3px 0 rgba(40, 100, 190, 0.28),
+    0 2px 0 rgba(30, 90, 170, 0.35),
+    0 5px 7px -3px rgba(20, 60, 140, 0.4);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+.cell.is-selected {
+  background-image: var(--gloss), linear-gradient(180deg, var(--green-hi), var(--green));
+}
+.cell.is-selectable {
+  transition:
+    background 0.25s ease,
+    box-shadow 0.25s ease,
+    transform var(--t-fast) var(--ease-back),
+    color 0.25s ease;
+}
+
+/* anello del bonus */
+.sc-ring {
+  filter: drop-shadow(0 3px 3px rgba(110, 70, 20, 0.3));
+}
+.sc-bonus-label {
+  text-shadow: 0 1px 0 #fff;
+}
+
+/* ================= vassoio dei dadi: cassetta di feltro ================= */
+.tray {
+  background:
+    radial-gradient(120% 90% at 50% 0%, rgba(120, 132, 220, 0.3), transparent 62%),
+    linear-gradient(180deg, #2c3152, var(--tray-lo, #191c33));
+  box-shadow:
+    inset 0 5px 14px rgba(0, 0, 0, 0.62),
+    inset 0 -2px 0 rgba(255, 255, 255, 0.08),
+    0 0 0 3px rgba(255, 255, 255, 0.3),
+    0 0 0 4px rgba(20, 14, 50, 0.3),
+    0 5px 0 rgba(16, 10, 40, 0.45),
+    0 20px 30px -10px rgba(16, 6, 34, 0.6);
+}
+.tray::before {
+  /* trama del feltro */
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 18px;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.07) 0.8px, transparent 1.1px),
+    radial-gradient(rgba(0, 0, 0, 0.14) 0.8px, transparent 1.1px);
+  background-size:
+    5px 5px,
+    7px 7px;
+  background-position:
+    0 0,
+    2px 3px;
+}
+.slot {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.2), rgba(255, 255, 255, 0.06));
+  box-shadow:
+    inset 0 3px 6px rgba(0, 0, 0, 0.45),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.09);
+}
+.slot.is-held {
+  box-shadow:
+    inset 0 0 0 2.5px var(--gold),
+    inset 0 3px 8px rgba(0, 0, 0, 0.35),
+    0 0 14px 1px rgba(255, 197, 49, 0.55);
+}
+
+/* ================= pulsanti LANCIA / SEGNA ================= */
+.controls .btn {
+  box-shadow:
+    inset 0 -6px 0 rgba(0, 0, 0, 0.2),
+    inset 0 2px 0 rgba(255, 255, 255, 0.45),
+    0 4px 0 rgba(30, 10, 40, 0.28),
+    0 16px 22px -8px rgba(30, 6, 40, 0.5);
+  text-shadow:
+    0 2px 0 rgba(0, 0, 0, 0.2),
+    0 0 12px rgba(255, 255, 255, 0.25);
+}
+.controls .btn-roll {
+  overflow: hidden;
+}
+.controls .btn-roll:not(.is-disabled) {
+  background: var(--gloss), linear-gradient(180deg, var(--c-hi), var(--c));
+}
+.controls .btn-roll:not(.is-disabled)::after {
+  /* riflesso che scorre: invita a lanciare */
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -40%;
+  width: 34%;
+  pointer-events: none;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.38), transparent);
+  transform: skewX(-18deg);
+  animation: v2-sheen 3.6s ease-in-out infinite;
+}
+@keyframes v2-sheen {
+  0%,
+  62% {
+    transform: translateX(0) skewX(-18deg);
+  }
+  100% {
+    transform: translateX(520%) skewX(-18deg);
+  }
+}
+.controls .btn-roll.is-disabled,
+.controls .btn-confirm:not(.is-ready) {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0) 50%), linear-gradient(180deg, #a9b1c6, #8a93aa);
+  box-shadow:
+    inset 0 -6px 0 rgba(0, 0, 0, 0.14),
+    inset 0 2px 0 rgba(255, 255, 255, 0.3),
+    0 3px 0 rgba(30, 10, 40, 0.16),
+    0 10px 14px -8px rgba(30, 6, 40, 0.3);
+}
+.controls .btn-confirm.is-ready {
+  background: var(--gloss), linear-gradient(180deg, var(--green-hi), var(--green));
+}
+.roll-pip {
+  box-shadow:
+    inset 0 -2px 0 rgba(0, 0, 0, 0.12),
+    0 2px 3px rgba(0, 0, 0, 0.25);
+}
+
+/* ================= carte in mano ================= */
+.card-face.mini {
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.55),
+    0 3px 0 rgba(12, 16, 40, 0.3),
+    0 10px 14px -6px rgba(12, 10, 40, 0.55);
+  transition:
+    transform var(--t-fast) var(--ease-back),
+    filter var(--t-fast);
+}
+.card-face.mini .cf-medal {
+  box-shadow:
+    inset 0 -2px 0 rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 #fff,
+    0 2px 4px rgba(0, 0, 0, 0.25);
+}
+.hand-slot {
+  box-shadow: inset 0 2px 5px rgba(20, 10, 40, 0.18);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* ================= carta grande (grattata, finestra) ================= */
+.card-face.big .cf-medal {
+  box-shadow:
+    inset 0 -5px 0 rgba(0, 0, 0, 0.08),
+    inset 0 3px 0 #fff,
+    0 0 0 4px rgba(255, 255, 255, 0.35),
+    0 10px 18px -4px rgba(0, 0, 0, 0.4);
+}
+.card-face.big .cf-name {
+  text-shadow:
+    0 2px 0 rgba(0, 0, 0, 0.22),
+    0 0 14px rgba(255, 255, 255, 0.3);
+}
+.card-face.big .cf-text {
+  box-shadow:
+    inset 0 2px 5px rgba(120, 80, 20, 0.2),
+    0 1px 0 rgba(255, 255, 255, 0.35);
+}
+.sc-title {
+  text-shadow:
+    0 3px 0 rgba(0, 0, 0, 0.3),
+    0 0 22px rgba(255, 255, 255, 0.35);
+}
+.sc-take,
+.card-popup .btn-menu.primary {
+  background-image: var(--gloss), linear-gradient(180deg, var(--green-hi), var(--green));
+}
+
+/* ================= barra dei bersagli ================= */
+.target-bar {
+  box-shadow: var(--sh-2);
+}
+.tb-btn,
+.tb-choice {
+  box-shadow:
+    inset 0 -3px 0 rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 4px 8px -2px rgba(12, 16, 40, 0.35);
+}
+
+/* ================= annuncio del turno ================= */
+.turn-banner .tb-inner {
+  background-image: var(--gloss);
+  box-shadow:
+    inset 0 -6px 0 rgba(0, 0, 0, 0.18),
+    inset 0 2px 0 rgba(255, 255, 255, 0.5),
+    0 0 0 3px #fff,
+    0 6px 0 rgba(20, 10, 40, 0.3),
+    0 26px 40px -10px rgba(20, 6, 40, 0.6);
+}
+.turn-banner .tb-text {
+  text-shadow:
+    0 3px 0 rgba(0, 0, 0, 0.22),
+    0 0 18px rgba(255, 255, 255, 0.35);
+}
+
+/* ================= fine partita ================= */
+.go-card {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 18%),
+    linear-gradient(180deg, var(--paper), var(--paper-2));
+  box-shadow:
+    0 0 0 3px rgba(255, 255, 255, 0.8),
+    inset 0 -7px 0 rgba(150, 100, 40, 0.12),
+    0 7px 0 rgba(40, 20, 60, 0.35),
+    0 30px 46px -12px rgba(10, 6, 40, 0.65);
+}
+.go-title {
+  text-shadow: 0 2px 0 rgba(255, 255, 255, 0.9);
+}
+.go-total {
+  text-shadow:
+    0 3px 0 rgba(255, 255, 255, 0.9),
+    0 8px 12px rgba(60, 40, 20, 0.18);
+}
+.go-trophy {
+  filter: drop-shadow(0 6px 6px rgba(120, 70, 0, 0.45));
+}
+.go-line {
+  border-radius: 6px;
+}
+.go-center .btn-menu {
+  box-shadow:
+    inset 0 -5px 0 rgba(0, 0, 0, 0.18),
+    inset 0 2px 0 rgba(255, 255, 255, 0.4),
+    0 4px 0 rgba(20, 10, 40, 0.3),
+    0 14px 20px -8px rgba(10, 6, 40, 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .controls .btn-roll:not(.is-disabled)::after {
+    animation: none;
+  }
+}

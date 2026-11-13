@@ -119,6 +119,69 @@ export function thumbRenderer() {
   return thumbR;
 }
 
+/* ---- [squadra 5] cache permanente delle anteprime (IndexedDB) ----
+ * Le immagini 3D si disegnano una volta sola: alle visite successive le pagine
+ * si riempiono subito. Cambiare ART_VERSION quando cambia l'aspetto degli oggetti.
+ */
+export const ART_VERSION = 'v7';
+const DISK_OFF = params.has('nocache') || typeof indexedDB === 'undefined';
+let dbP = null;
+function db() {
+  if (DISK_OFF) return Promise.resolve(null);
+  if (!dbP)
+    dbP = new Promise((resolve) => {
+      try {
+        const rq = indexedDB.open('yatzy-art', 1);
+        rq.onupgradeneeded = () => rq.result.createObjectStore('thumbs');
+        rq.onsuccess = () => {
+          const d = rq.result;
+          // toglie le anteprime delle versioni vecchie
+          try {
+            const st = d.transaction('thumbs', 'readwrite').objectStore('thumbs');
+            st.openKeyCursor().onsuccess = (e) => {
+              const c = e.target.result;
+              if (!c) return;
+              if (!String(c.key).startsWith(`${ART_VERSION}|`)) st.delete(c.key);
+              c.continue();
+            };
+          } catch {
+            /* niente pulizia */
+          }
+          resolve(d);
+        };
+        rq.onerror = rq.onblocked = () => resolve(null);
+      } catch {
+        resolve(null);
+      }
+    });
+  return dbP;
+}
+const diskKey = (ck) => `${ART_VERSION}|${DPR}|${ck}`;
+function diskGet(ck) {
+  return db().then(
+    (d) =>
+      d &&
+      new Promise((resolve) => {
+        try {
+          const rq = d.transaction('thumbs').objectStore('thumbs').get(diskKey(ck));
+          rq.onsuccess = () => resolve(rq.result instanceof Blob ? rq.result : null);
+          rq.onerror = () => resolve(null);
+        } catch {
+          resolve(null);
+        }
+      }),
+  );
+}
+function diskPut(ck, blob) {
+  db().then((d) => {
+    try {
+      d?.transaction('thumbs', 'readwrite').objectStore('thumbs').put(blob, diskKey(ck));
+    } catch {
+      /* spazio finito o navigazione privata */
+    }
+  });
+}
+
 const thumbCache = new Map();
 const queue = [];
 let busy = false;
@@ -130,17 +193,38 @@ let busy = false;
 export function renderThumb(key, build, size = 128) {
   const ck = `${key}@${size}`;
   if (thumbCache.has(ck)) return thumbCache.get(ck);
-  const p = new Promise((resolve, reject) => {
-    queue.push({ build, size, resolve, reject });
-    pump();
-  });
+  // [squadra 5] prima la copia salvata sul telefono, poi il disegno vero
+  const p = diskGet(ck).then(
+    (blob) =>
+      blob
+        ? URL.createObjectURL(blob)
+        : new Promise((resolve, reject) => {
+            queue.push({ build, size, resolve, reject, ck });
+            pump();
+          }),
+  );
   thumbCache.set(ck, p);
   p.catch(() => thumbCache.delete(ck));
   return p;
 }
 
+/**
+ * Cancello: mentre un'animazione di gioco è in corso (lancio, grattata, carta)
+ * le immagini 3D aspettano, così la partita resta fluida.
+ */
+let thumbGate = null;
+let gateTimer = 0;
+export function setThumbGate(fn) {
+  thumbGate = fn;
+}
+
 function pump() {
   if (busy || !queue.length) return;
+  if (thumbGate && thumbGate()) {
+    clearTimeout(gateTimer);
+    gateTimer = setTimeout(pump, 180);
+    return;
+  }
   busy = true;
   const job = queue.shift();
   const next = () => {
@@ -159,7 +243,12 @@ function pump() {
       camera.aspect = 1;
       camera.updateProjectionMatrix?.();
       r.render(scene, camera);
-      const url = await new Promise((res) => r.domElement.toBlob((b) => res(b ? URL.createObjectURL(b) : r.domElement.toDataURL('image/png')), 'image/png'));
+      const url = await new Promise((res) =>
+        r.domElement.toBlob((b) => {
+          if (b && job.ck) diskPut(job.ck, b);
+          res(b ? URL.createObjectURL(b) : r.domElement.toDataURL('image/png'));
+        }, 'image/png'),
+      );
       if (dispose) dispose();
       else disposeScene(scene);
       return url;
@@ -217,10 +306,25 @@ function hydrate(el) {
     });
 }
 
+// [squadra 5] si disegna prima ciò che si vede: i segnaposti fuori schermo aspettano
+const seen =
+  typeof IntersectionObserver !== 'undefined'
+    ? new IntersectionObserver(
+        (list) => {
+          for (const e of list)
+            if (e.isIntersecting) {
+              seen.unobserve(e.target);
+              hydrate(e.target);
+            }
+        },
+        { rootMargin: '300px' },
+      )
+    : null;
+const watch = (el) => (seen ? seen.observe(el) : hydrate(el));
 function scan(root) {
   if (!root || !root.querySelectorAll) return;
-  if (root.classList?.contains('art3d')) hydrate(root);
-  root.querySelectorAll('.art3d:not([data-done])').forEach(hydrate);
+  if (root.classList?.contains('art3d') && !root.dataset.done) watch(root);
+  root.querySelectorAll('.art3d:not([data-done])').forEach(watch);
 }
 
 if (typeof document !== 'undefined' && typeof MutationObserver !== 'undefined') {
