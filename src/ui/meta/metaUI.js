@@ -199,7 +199,7 @@ export class MetaUI {
       const daily = P.canClaimDaily(p);
       const title = ITEMS[p.equip.title]?.name ?? '';
       const btn = (cls, icon, label, sub, onclick, badge = null) =>
-        h('button', { class: `hub-btn ${cls}`, type: 'button', onclick }, h('span', { class: 'hb-ico', html: icon }), h('span', { class: 'hb-label' }, label), sub ? h('span', { class: 'hb-sub' }, sub) : null, badge);
+        h('button', { class: `hub-btn ${cls}`, type: 'button', onclick }, cls.startsWith('mini') ? null : h('span', { class: 'hb-deco', html: icon, 'aria-hidden': 'true' }), h('span', { class: 'hb-ico', html: icon }), h('span', { class: 'hb-label' }, label), sub ? h('span', { class: 'hb-sub' }, sub) : null, badge);
       el.replaceChildren(
         h(
           'div',
@@ -259,6 +259,9 @@ export class MetaUI {
       );
     };
     render();
+    // ingresso a cascata solo all'apertura (non a ogni aggiornamento)
+    el.classList.add('is-enter');
+    setTimeout(() => el.classList.remove('is-enter'), 1100);
     await this.#open(el);
     this.refresh = render;
     this.#every(() => {
@@ -575,7 +578,7 @@ export class MetaUI {
           h('span', { class: 'br-rank', style: { '--rc': rank.color } }, h('span', { html: rankBadge(rank, 24) }), h('small', {}, String(pl.rank))),
         );
       }),
-      players.length ? null : h('div', { class: 'board-wait' }, 'Ancora nessun giocatore: sii il primo!'),
+      ...(players.length ? [] : [h('div', { class: 'board-wait' }, 'Ancora nessun giocatore: sii il primo!')]),
     );
   }
 

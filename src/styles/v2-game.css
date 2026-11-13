@@ -389,3 +389,43 @@
     animation: none;
   }
 }
+
+/* HUD: nome sopra, carte sotto, punteggio a lato — così il nome non viene tagliato */
+.sb-player {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'name total'
+    'cards total';
+  align-content: center;
+  align-items: center;
+  column-gap: 6px;
+  row-gap: 1px;
+}
+.sb-player.blue {
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    'total name'
+    'total cards';
+}
+.sb-player .sb-name {
+  grid-area: name;
+  font-size: 10px;
+  line-height: 1.1;
+}
+.sb-player .sb-cards {
+  grid-area: cards;
+  justify-self: start;
+  margin: 0;
+  font-size: 9.5px;
+  padding: 0 5px 0 3px;
+}
+.sb-player.blue .sb-name {
+  text-align: right;
+}
+.sb-player.blue .sb-cards {
+  justify-self: end;
+}
+.sb-player .sb-total {
+  grid-area: total;
+}

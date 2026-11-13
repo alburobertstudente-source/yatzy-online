@@ -1076,3 +1076,8 @@ body {
     animation: none !important;
   }
 }
+
+/* lo sfondo resta nel suo livello (i suoi strati non salgono sopra le schermate) */
+.bg {
+  isolation: isolate;
+}
