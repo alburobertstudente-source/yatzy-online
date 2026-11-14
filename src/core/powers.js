@@ -263,7 +263,7 @@ export function applyCard(game, me, entry, params = {}, effectId) {
       break;
     }
     case 'occhioDestino': {
-      const list = dice.freeIndexes().filter((i) => game.turnState.foresight[i] === undefined);
+      const list = dice.freeIndexes().filter((i) => game.turnState.foresight[i] === undefined).slice(0, 3);
       if (!list.length) throw new GameError('Conosci già tutti i dadi');
       const values = list.map((i) => (game.turnState.foresight[i] = game.randomDie()));
       result = { kind: 'foresight', die: list[0], value: values[0], dice: list, values };
@@ -295,9 +295,21 @@ export function applyCard(game, me, entry, params = {}, effectId) {
       result = { kind: 'setDie', die: i, from, to };
       break;
     }
-    case 'manoDegliDei':
     case 'bigBang': {
-      const vals = entry.id === 'bigBang' ? [6, 6, 6, 6, 6] : params.values;
+      const counts = [0, 0, 0, 0, 0, 0, 0];
+      dice.values.forEach((v) => counts[v]++);
+      let best = 6;
+      for (let v = 6; v >= 1; v--) if (counts[v] > counts[best]) best = v;
+      const from = [...dice.values];
+      const keep = dice.values.findIndex((v) => v !== best); // un dado resta com'è (se ce n'è uno diverso)
+      const to = dice.values.map((v, i) => (i === keep && counts[best] < 5 ? v : best));
+      if (counts[best] >= 4) to.fill(best); // già Poker: diventa Yatzy
+      to.forEach((v, i) => dice.setValue(i, v));
+      result = { kind: 'setAll', from, to, extraRoll: false };
+      break;
+    }
+    case 'manoDegliDei': {
+      const vals = params.values;
       if (!Array.isArray(vals) || vals.length !== DICE || vals.some((v) => !Number.isInteger(v) || v < 1 || v > 6)) {
         throw new GameError('Scegli il valore di tutti e cinque i dadi');
       }
@@ -362,7 +374,9 @@ export function applyCard(game, me, entry, params = {}, effectId) {
       if (!game.turnState.bonuses) game.turnState.bonuses = [];
       if (game.turnState.bonuses.some((x) => x.kind === b.kind)) throw new GameError('Già attiva in questo turno');
       game.turnState.bonuses.push({ kind: b.kind, effectId, cardId: entry.id });
-      Object.assign(log, { kind: 'bonus', amount: 0, cat: null });
+      const now = entry.id === 'reteSalvataggio' ? 5 : 0;
+      if (now) me.card.addCardPoints({ id: effectId, amount: now, kind: 'bonus', cat: null });
+      Object.assign(log, { kind: 'bonus', amount: now, cat: null });
       result = { kind: 'bonusSet', bonus: b.kind };
       break;
     }
@@ -391,6 +405,7 @@ export function applyCard(game, me, entry, params = {}, effectId) {
     case 'mezzaLuna':
       if (opp.status.halve) throw new GameError("L'avversario ha già la Mezza Luna");
       opp.status.halve = { effectId };
+      me.card.addCardPoints({ id: effectId, amount: 5, kind: 'bonus', cat: null });
       Object.assign(log, { kind: 'halve', victim: opp.id, cat: null, taken: 0, blocked: false, fired: false });
       result = { kind: 'halveSet', victim: opp.id };
       break;
@@ -405,7 +420,8 @@ export function applyCard(game, me, entry, params = {}, effectId) {
       const n = CARDS[entry.id].extraRolls;
       if (dice.maxRolls + n > ROLL_CAP) throw new GameError('Troppi lanci extra');
       for (let k = 0; k < n; k++) dice.addRoll();
-      if (entry.id === 'tempoInfinito') game.turnState.blessAll = true;
+      game.turnState.blessAll = true; // lanci "benedetti": 1 e 2 si rilanciano da soli
+      if (entry.id === 'tempoInfinito') me.status.tempoTurns = 2;
       result = { kind: 'extraRoll', added: n, maxRolls: dice.maxRolls };
       break;
     }
@@ -420,7 +436,7 @@ export function applyCard(game, me, entry, params = {}, effectId) {
     case 'furtoCosmico': {
       const cat = bestBox(game, me);
       if (!cat) throw new GameError("L'avversario non ha punti da rubare");
-      const amount = opp.card.value(cat);
+      const amount = Math.min(30, opp.card.value(cat));
       const taken = opp.card.applyDebit(cat, amount); // ignora scudi e specchi
       if (taken > 0) me.card.addCardPoints({ id: effectId, amount: taken, kind: 'steal', cat });
       counterSteal(opp, taken, effectId);
@@ -434,6 +450,7 @@ export function applyCard(game, me, entry, params = {}, effectId) {
       game.turnState.blessAll = true;
       const extraRoll = dice.maxRolls < ROLL_CAP;
       if (extraRoll) dice.addRoll();
+      if (dice.maxRolls < ROLL_CAP) dice.addRoll();
       result = { kind: 'bless', eternal: true, extraRoll };
       break;
     }
@@ -535,7 +552,8 @@ export function applyCard(game, me, entry, params = {}, effectId) {
     case 'raddoppioSuperiore': {
       if (!game.turnState.bonuses) game.turnState.bonuses = [];
       game.turnState.bonuses.push({ kind: 'upper2', effectId, cardId: entry.id });
-      Object.assign(log, { kind: 'bonus', amount: 0, cat: null });
+      me.card.addCardPoints({ id: effectId, amount: 6, kind: 'bonus', cat: null });
+      Object.assign(log, { kind: 'bonus', amount: 6, cat: null });
       result = { kind: 'bonusSet', bonus: 'upper2' };
       break;
     }
@@ -543,30 +561,33 @@ export function applyCard(game, me, entry, params = {}, effectId) {
       if (opp.status.lessRolls) throw new GameError("L'avversario ha già un lancio in meno");
       dice.addRoll();
       if (dice.maxRolls < ROLL_CAP) dice.addRoll();
+      game.pendingDraws++;
       opp.status.lessRolls = { effectId };
       Object.assign(log, { kind: 'lessRolls', victim: opp.id });
-      result = { kind: 'extraRoll', added: 2, maxRolls: dice.maxRolls, stolen: true };
+      result = { kind: 'extraRoll', added: 2, maxRolls: dice.maxRolls, stolen: true, draw: true };
       break;
     }
     case 'eco': {
       const cat = me.card.lastScored;
-      const amount = Math.min(30, me.card.value(cat) ?? 0);
-      if (amount <= 0) throw new GameError('Nessun punteggio da ripetere');
+      const base = Math.min(40, me.card.value(cat) ?? 0);
+      if (base <= 0) throw new GameError('Nessun punteggio da ripetere');
+      const amount = base + 5;
       me.card.addCardPoints({ id: effectId, amount, kind: 'bonus', cat });
       Object.assign(log, { kind: 'bonus', amount, cat });
       result = { kind: 'points', amount, cat };
       break;
     }
     case 'tesoroDraghi':
-      me.card.addCardPoints({ id: effectId, amount: 40, kind: 'bonus', cat: null });
-      Object.assign(log, { kind: 'bonus', amount: 40, cat: null });
-      result = { kind: 'points', amount: 40, cat: null };
+      me.card.addCardPoints({ id: effectId, amount: 30, kind: 'bonus', cat: null });
+      Object.assign(log, { kind: 'bonus', amount: 30, cat: null });
+      result = { kind: 'points', amount: 30, cat: null };
       break;
     case 'clonazione': {
       const room = Math.max(0, 5 - (me.hand.length - 1));
       const copies = opp.hand.slice(0, room).map((c) => ({ uid: game.nextUid++, id: c.id, lockedTurn: null, lockedBy: null }));
       me.hand.push(...copies);
-      result = { kind: 'clone', cards: copies.map((c) => c.id) };
+      game.pendingDraws++;
+      result = { kind: 'clone', cards: copies.map((c) => c.id), draw: true };
       break;
     }
     case 'paccaSpalla':
@@ -575,7 +596,7 @@ export function applyCard(game, me, entry, params = {}, effectId) {
     case 'fontanaDesideri': {
       let amount;
       if (entry.id === 'paccaSpalla') amount = 6;
-      else if (entry.id === 'pioggiaOro') amount = 75;
+      else if (entry.id === 'pioggiaOro') amount = 45;
       else if (entry.id === 'fontanaDesideri') amount = Math.min(60, 5 * me.card.filledCount());
       else {
         const gap = opp.card.total() - me.card.total();
@@ -617,8 +638,8 @@ export function applyCard(game, me, entry, params = {}, effectId) {
       result = { kind: 'status', label: `TRAPPOLA PIAZZATA: −12 AL PROSSIMO PUNTEGGIO`, attack: true };
       break;
     case 'investimento':
-      me.status.invest = { effectId, amount: 15 };
-      result = { kind: 'status', label: 'INVESTIMENTO: +15 AL TUO PROSSIMO TURNO' };
+      me.status.invest = { effectId, amount: 12 };
+      result = { kind: 'status', label: 'INVESTIMENTO: +12 AL TUO PROSSIMO TURNO' };
       break;
     case 'specchioRiflesso':
       me.status.mirror = { effectId };
@@ -626,10 +647,10 @@ export function applyCard(game, me, entry, params = {}, effectId) {
       result = { kind: 'status', label: 'SPECCHIO RIFLESSO PRONTO' };
       break;
     case 'combo':
-      me.card.addCardPoints({ id: effectId, amount: 15, kind: 'bonus', cat: null });
+      me.card.addCardPoints({ id: effectId, amount: 8, kind: 'bonus', cat: null });
       game.pendingDraws++;
-      Object.assign(log, { kind: 'bonus', amount: 15, cat: null });
-      result = { kind: 'points', amount: 15, cat: null, draw: true };
+      Object.assign(log, { kind: 'bonus', amount: 8, cat: null });
+      result = { kind: 'points', amount: 8, cat: null, draw: true };
       break;
     case 'terremoto': {
       const parts = [];
@@ -641,7 +662,7 @@ export function applyCard(game, me, entry, params = {}, effectId) {
       } else {
         for (const cat of stealableBoxes(game, me)) {
           const blocked = opp.card.consumeShield(cat);
-          const t = blocked ? 0 : opp.card.applyDebit(cat, 3);
+          const t = blocked ? 0 : opp.card.applyDebit(cat, 4);
           taken += t;
           parts.push({ cat, taken: t, blocked });
         }
@@ -676,6 +697,7 @@ export function applyCard(game, me, entry, params = {}, effectId) {
       if (!pc?.reflected) {
         if (!opp.status.lessRolls) opp.status.lessRolls = { effectId };
         if (!opp.status.halve) opp.status.halve = { effectId };
+        if (!opp.status.chains) opp.status.chains = { effectId };
       }
       Object.assign(log, { kind: 'storm', victim: opp.id, fired: false, taken: 0, cat: null });
       result = { kind: 'status', label: pc?.reflected ? 'LA TEMPESTA RIMBALZA SULLO SPECCHIO!' : "TEMPESTA PERFETTA SULL'AVVERSARIO!", attack: true };
@@ -871,6 +893,16 @@ export function autoParams(game, entry) {
       const best = dice.values.reduce((b, v, i) => (counts[v] > counts[dice.values[b]] || (counts[v] === counts[dice.values[b]] && v > dice.values[b]) ? i : b), 0);
       const target = dice.values.findIndex((v) => v !== dice.values[best]);
       params.dice = [target, best];
+    } else if (entry.id === 'riscritturaDestino') {
+      // il dado che non segue il numero più presente diventa quel numero
+      const counts = [0, 0, 0, 0, 0, 0, 0];
+      dice.values.forEach((v) => counts[v]++);
+      let best = 6;
+      for (let v = 6; v >= 1; v--) if (counts[v] > counts[best]) best = v;
+      const i = dice.values.findIndex((v) => v !== best);
+      params.dice = [i < 0 ? 0 : i];
+      params.value = i < 0 ? (best % 6) + 1 : best;
+      return params;
     } else if (entry.id === 'calamita') {
       const counts = [0, 0, 0, 0, 0, 0, 0];
       dice.values.forEach((v) => counts[v]++);

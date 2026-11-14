@@ -199,7 +199,7 @@ export class CardFx {
   /** Banner della maledizione quando scatta sul lancio del giocatore. */
   async curseBanner(type) {
     const name = type === 'apocalypse' ? 'APOCALISSE DEI DADI!' : type === 'freeze' ? 'GELO ETERNO!' : 'MALEDIZIONE DEL CAOS!';
-    const sub = type === 'apocalypse' ? 'Tutti i dadi vengono rilanciati, anche quelli conservati' : type === 'freeze' ? 'Due dadi si congelano' : 'Due dadi liberi vengono rilanciati';
+    const sub = type === 'apocalypse' ? 'Tutti i dadi rilanciati, un lancio in meno, niente dadi conservati' : type === 'freeze' ? 'Tre dadi si congelano' : 'Dopo ogni lancio tre dadi vengono rilanciati';
     const el = h('div', { class: `curse-banner ${type}` }, h('div', { class: 'cb-icon', html: MINI.curse }), h('div', {}, h('b', {}, name), h('small', {}, sub)));
     this.fx.append(el);
     shake(this.table.querySelector('.play-area'), 7, 500);

@@ -368,15 +368,24 @@ async function fullGameTest(browser) {
   check(mismatches === 0, `dadi, anteprime, caselle e totali sempre coerenti con il motore (${rolls} lanci, ${holdsChecked} rilanci con dadi tenuti)`);
   check(used.size >= 3, `carte usate durante la partita: ${[...used].join(', ') || 'nessuna'}`);
   await page.waitForSelector('.gameover', { timeout: 20000 });
-  await page.waitForTimeout(1200);
+  // i totali contano da 0 in su: aspetta la fine del conteggio (su macchine lente dura di più)
+  await page
+    .waitForFunction(() => {
+      const g = window.yatzyDebug.game;
+      const shown = [...document.querySelectorAll('.go-total')].map((e) => Number(e.textContent));
+      return shown.length === 2 && shown[0] === g.player('blue').card.total() && shown[1] === g.player('red').card.total();
+    }, null, { timeout: 10000 })
+    .catch(() => {});
+  await page.waitForTimeout(300);
   await page.screenshot({ path: join(OUT, 'fine-partita.png') });
   const res = await page.evaluate(() => {
     const g = window.yatzyDebug.game;
     const totals = [...document.querySelectorAll('.go-total')].map((e) => Number(e.textContent));
-    return { phase: g.phase, totals, expected: [g.player('blue').card.total(), g.player('red').card.total()], titles: [...document.querySelectorAll('.go-title')].map((e) => e.textContent) };
+    const final = g.results();
+    return { phase: g.phase, totals, expected: [g.player('blue').card.total(), g.player('red').card.total()], final: [final.totals.blue, final.totals.red], titles: [...document.querySelectorAll('.go-title')].map((e) => e.textContent) };
   });
   check(res.phase === 'over', 'la partita termina dopo 13 round');
-  check(JSON.stringify(res.totals) === JSON.stringify(res.expected), `schermata finale con i totali corretti (${res.titles.join(' / ')} ${res.totals.join(' - ')})`);
+  check(JSON.stringify(res.totals) === JSON.stringify(res.expected) && JSON.stringify(res.final) === JSON.stringify(res.expected), `schermata finale con i totali corretti (${res.titles.join(' / ')} ${res.totals.join(' - ')})`);
   check(errors.length === 0, `nessun errore in console ${errors.join(' | ')}`);
   await ctx.close();
 }

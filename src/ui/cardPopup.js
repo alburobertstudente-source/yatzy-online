@@ -4,7 +4,7 @@
  * Usato anche per scegliere una carta dell'avversario (Prigione Temporale).
  */
 import { h } from './dom.js';
-import { bigCard, miniCard } from './cardArt.js';
+import { bigCard, miniCard, CARD_BACK } from './cardArt.js';
 import { play, EASE } from '../anim/animations.js';
 
 export class CardPopup {
@@ -51,11 +51,14 @@ export class CardPopup {
   }
 
   /** Scelta di una carta avversaria. */
-  pickOpponentCard({ cards, isLocked, title, onPick, onCancel }) {
+  pickOpponentCard({ cards, isLocked, title, onPick, onCancel, hidden = false }) {
     const row = h('div', { class: 'cp-pick-row' });
     for (const c of cards) {
       const locked = isLocked(c);
-      const m = miniCard(c, { locked, onTap: (uid) => !locked && onPick(uid) });
+      // carte dell'avversario: si vedono solo coperte
+      const m = hidden
+        ? h('button', { class: `card-face mini card-hidden${locked ? ' is-locked' : ''}`, type: 'button', 'aria-label': 'Carta coperta', dataset: { uid: String(c.uid) }, html: CARD_BACK, onpointerdown: (e) => (e.preventDefault(), !locked && onPick(c.uid)) })
+        : miniCard(c, { locked, onTap: (uid) => !locked && onPick(uid) });
       row.append(m);
     }
     const el = h(

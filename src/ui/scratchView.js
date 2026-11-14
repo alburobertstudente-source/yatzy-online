@@ -233,17 +233,12 @@ export class ScratchView {
     play(box, [{ transform: 'translateY(40px) scale(.7) rotate(6deg)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 460, easing: EASE.back });
     return {
       reveal: async (entry, discardedId) => {
-        const def = CARDS[entry.id];
-        const face = bigCard(entry.id);
-        await play(box, [{ transform: 'rotateY(0deg)' }, { transform: 'rotateY(90deg)' }], { duration: 220, easing: EASE.inOut });
-        box.replaceChildren(h('div', { class: `sc-glow r-${def.rarity}` }), face);
-        box.classList.add('is-revealed');
-        await play(box, [{ transform: 'rotateY(-90deg)' }, { transform: 'rotateY(0deg)' }], { duration: 260, easing: EASE.out });
-        sound.reveal(def.rarity);
-        title.textContent = `${playerName} HA TROVATO:`;
-        sub.textContent = `${RARITY_INFO[def.rarity].label.toUpperCase()}!`;
-        sub.className = `sc-sub sc-rarity r-${def.rarity}`;
-        note.textContent = discardedId ? `e ha scartato ${CARDS[discardedId].name}` : '';
+        // le carte dell'avversario restano segrete: si vede solo che ne ha presa una
+        await play(box, [{ transform: 'scale(1)' }, { transform: 'scale(1.08)', offset: 0.5 }, { transform: 'scale(1)' }], { duration: 320, easing: EASE.out });
+        sound.tap();
+        title.textContent = `${playerName} HA PRESO UNA CARTA`;
+        sub.textContent = 'Carta segreta: la scoprirai quando la gioca';
+        note.textContent = discardedId ? 'e ne ha scartata una' : '';
         await wait(ms(1300));
         await play(screen, [{ opacity: 1 }, { opacity: 0 }], { duration: 220, easing: 'linear' });
         screen.remove();

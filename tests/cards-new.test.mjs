@@ -58,8 +58,8 @@ test('Spicciolo, Moltiplicatore e Rete di Salvataggio sommano punti al turno', (
   game.roll();
   game.select('chance'); // 28
   const r = game.confirm();
-  assert.equal(r.cardExtra, 8 + 14);
-  assert.equal(game.player('red').card.total(), 28 + 22);
+  assert.equal(r.cardExtra, 8 + 28, 'Spicciolo +8 e Moltiplicatore ×2');
+  assert.equal(game.player('red').card.total(), 28 + 36);
   game.endTurn();
   drawAll(game);
   game.useCard(give(game, 'reteSalvataggio'));
@@ -79,7 +79,7 @@ test('Gelo Eterno: due dadi dell avversario si congelano al suo prossimo lancio'
   roller.push([2, 2, 2, 5, 6]);
   const r = roll(game);
   assert.equal(r.curse.type, 'freeze');
-  assert.equal(r.curse.frozen.length, 2);
+  assert.equal(r.curse.frozen.length, 3);
   assert.deepEqual(r.values, [2, 2, 2, 5, 6], 'i valori non cambiano');
   for (const i of r.curse.frozen) assert.throws(() => game.toggleHold(i), GameError);
 });
@@ -160,10 +160,11 @@ test('Tempesta di Lanci e Tempo Infinito aggiungono lanci', () => {
   const { game } = scriptedGame();
   drawAll(game);
   game.useCard(give(game, 'tempestaLanci'));
-  assert.equal(game.dice.maxRolls, 6);
-  game.useCard(give(game, 'tempoInfinito'));
-  assert.equal(game.dice.maxRolls, 14);
+  assert.equal(game.dice.maxRolls, 5);
   assert.equal(game.turnState.blessAll, true);
+  game.useCard(give(game, 'tempoInfinito'));
+  assert.equal(game.dice.maxRolls, 8);
+  assert.equal(game.current.status.tempoTurns, 2, 'vale anche per i prossimi 2 turni');
 });
 
 test('Mano degli Dei (potenziata): sceglie i dadi e dà un lancio in più', () => {
@@ -175,44 +176,45 @@ test('Mano degli Dei (potenziata): sceglie i dadi e dà un lancio in più', () =
   assert.equal(game.dice.rollsLeft, 3);
 });
 
-test('Re dei Ladri ruba 50, Scudo Divino protegge tutte le caselle', () => {
+test('Re dei Ladri ruba 15, Scudo Divino protegge tutte le caselle', () => {
   const { game, roller } = scriptedGame();
   playTurn(game, roller, [6, 6, 6, 6, 6], 'yatzy');
   drawAll(game);
   game.useCard(give(game, 'reDeiLadri'), { cat: 'yatzy' });
-  assert.equal(game.player('blue').card.total(), 50);
-  assert.equal(game.player('red').card.total(), 0);
+  assert.equal(game.player('blue').card.total(), 15);
+  assert.equal(game.player('red').card.total(), 35);
   const r = game.useCard(give(game, 'scudoDivino'));
   assert.equal(r.cats.length, 13);
 });
 
-test('Big Bang: Yatzy di sei e un lancio in più', () => {
+test('Big Bang (leggendaria): Poker garantito del numero più presente; da Poker diventa Yatzy', () => {
   const { game, roller } = scriptedGame();
-  roller.push([1, 2, 3, 4, 6]);
+  roller.push([3, 3, 1, 4, 6]);
   roll(game);
   const r = game.useCard(give(game, 'bigBang'));
-  assert.deepEqual(r.values, [6, 6, 6, 6, 6]);
-  game.select('yatzy');
-  assert.equal(game.confirm().score, 50);
+  assert.deepEqual(r.values, [3, 3, 1, 3, 3]);
+  assert.equal(game.dice.rollsLeft, 2, 'nessun lancio extra');
+  const r2 = game.useCard(give(game, 'bigBang'));
+  assert.deepEqual(r2.values, [3, 3, 3, 3, 3]);
 });
 
-test('Furto Cosmico: ruba tutta la casella migliore, anche con lo scudo', () => {
+test('Furto Cosmico: ruba fino a 30 punti dalla casella migliore, anche con lo scudo', () => {
   const { game, roller } = scriptedGame();
   playTurn(game, roller, [6, 6, 6, 6, 6], 'yatzy');
   drawAll(game);
   game.player('red').card.addShield('yatzy');
   const r = game.useCard(give(game, 'furtoCosmico'));
   assert.equal(r.cat, 'yatzy');
-  assert.equal(r.taken, 50);
-  assert.equal(game.player('red').card.total(), 0);
-  assert.equal(game.player('blue').card.total(), 50);
+  assert.equal(r.taken, 30);
+  assert.equal(game.player('red').card.total(), 20);
+  assert.equal(game.player('blue').card.total(), 30);
 });
 
 test('Benedizione Eterna: lancio extra e 1-2 rilanciati per questo turno e i 3 successivi', () => {
   const { game, roller } = scriptedGame();
   drawAll(game);
   game.useCard(give(game, 'benedizioneEterna'));
-  assert.equal(game.dice.maxRolls, 4);
+  assert.equal(game.dice.maxRolls, 5);
   roller.push([1, 6, 6, 6, 6]);
   roller.pushDie(3);
   assert.equal(game.roll().values[0], 3);
@@ -221,7 +223,7 @@ test('Benedizione Eterna: lancio extra e 1-2 rilanciati per questo turno e i 3 s
   game.endTurn();
   playTurn(game, roller, [1, 2, 3, 4, 6], 'ones');
   assert.equal(game.turnState.blessAll, true);
-  assert.equal(game.dice.maxRolls, 4);
+  assert.equal(game.dice.maxRolls, 5);
   assert.equal(game.player('red').status.blessTurns, 3);
 });
 
@@ -285,7 +287,7 @@ test('Maledizione del Caos (nuova): dura tutto il turno, dopo ogni lancio rilanc
   roller.push([5, 5, 5, 5, 5]);
   const r1 = roll(game);
   assert.equal(r1.curse.type, 'chaos');
-  assert.equal(r1.curse.dice.length, 2);
+  assert.equal(r1.curse.dice.length, 3);
   game.toggleHold(0);
   roller.push([4, 4, 4, 4, 4]);
   const r2 = game.roll();
@@ -333,16 +335,16 @@ test('Pacca, Pioggia d Oro, Tesoro, Fontana, Rivincita, Eco danno punti', () => 
   drawAll(game);
   assert.equal(game.useCard(give(game, 'rivincita')).amount, 25);
   assert.equal(game.useCard(give(game, 'paccaSpalla')).amount, 6);
-  assert.equal(game.useCard(give(game, 'tesoroDraghi')).amount, 40);
+  assert.equal(game.useCard(give(game, 'tesoroDraghi')).amount, 30);
   roller.push([1, 2, 3, 4, 6]);
   game.roll();
   game.select('chance');
   game.confirm();
   game.endTurn();
   drawAll(game);
-  assert.equal(game.useCard(give(game, 'eco')).amount, 30);
+  assert.equal(game.useCard(give(game, 'eco')).amount, 45);
   assert.equal(game.useCard(give(game, 'fontanaDesideri')).amount, 5);
-  assert.equal(game.useCard(give(game, 'pioggiaOro')).amount, 75);
+  assert.equal(game.useCard(give(game, 'pioggiaOro')).amount, 45);
 });
 
 test('Tassa del Re, Terremoto e Contrattacco', () => {
@@ -357,7 +359,7 @@ test('Tassa del Re, Terremoto e Contrattacco', () => {
   assert.equal(r.taken, 6, '3 punti da due caselle con punti');
   assert.equal(game.player('red').card.total(), 50 + 25 - 6 + 12, 'il rosso riprende il doppio');
   const q = game.useCard(give(game, 'terremoto'));
-  assert.equal(q.taken, 6);
+  assert.equal(q.taken, 8);
 });
 
 test('Specchio Riflesso: annulla un furto e rimanda indietro una maledizione', () => {
@@ -395,9 +397,9 @@ test('Trappola −12, Catene, Investimento, Combo, Antidoto, Jackpot, Raddoppio 
   game.select('fullHouse');
   const r = game.confirm();
   assert.equal(r.trapped.taken, 12);
-  assert.equal(r.cardExtra, 30);
+  assert.equal(r.cardExtra, 25);
   game.endTurn();
-  assert.equal(game.turnState.cardNotes.invest, 15);
+  assert.equal(game.turnState.cardNotes.invest, 12);
   drawAll(game);
   game.player('red').status.trap = { effectId: 1 };
   game.useCard(give(game, 'antidoto'));
@@ -414,10 +416,13 @@ test('Ladro di Lanci, Tempesta Perfetta e Clonazione', () => {
   drawAll(game);
   game.useCard(give(game, 'ladroDiLanci'));
   assert.equal(game.dice.maxRolls, 5);
+  drawAll(game);
   give(game, 'coronaDestino', game.player('blue'));
   give(game, 'rimbalzo', game.player('blue'));
+  game.current.hand = [];
   const c = game.useCard(give(game, 'clonazione'));
   assert.deepEqual(c.cards, ['coronaDestino', 'rimbalzo']);
+  drawAll(game);
   playTurn(game, roller, [1, 2, 3, 4, 6], 'ones');
   assert.equal(game.dice.maxRolls, 2);
   drawAll(game);

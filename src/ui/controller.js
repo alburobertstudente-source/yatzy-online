@@ -781,6 +781,7 @@ export class Controller {
     if (def.target.kind === 'oppCard') {
       this.popup.pickOpponentCard({
         cards: g.opponent.hand,
+        hidden: true,
         isLocked: (c) => !def.target.any && g.isCardLocked(c),
         title: def.prompt,
         onPick: async (uid) => {

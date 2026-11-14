@@ -15,7 +15,7 @@ function give(game, id) {
 
 test('60 carte in 6 rarità (comprese mitiche e Assurda), con i nomi richiesti', () => {
   assert.equal(CARD_IDS.length, 60);
-  const per = { common: 11, rare: 18, epic: 14, legendary: 9, mythic: 7, absurd: 1 };
+  const per = { common: 11, rare: 20, epic: 12, legendary: 9, mythic: 7, absurd: 1 };
   for (const r of RARITIES) assert.equal(cardsOfRarity(r).length, per[r], r);
   assert.ok(Math.abs(Object.values(CARD_RULES.RARITY_WEIGHTS).reduce((a, b) => a + b, 0) - 100) < 1e-9);
   assert.equal(CARD_RULES.RARITY_WEIGHTS.absurd, 0.1);
@@ -133,15 +133,15 @@ test('Scudo di Legno (2 caselle) blocca un furto; Scudo Arcano protegge tre case
   assert.equal(game.current.card.shieldCount('yatzy'), 1);
 });
 
-test('Occhio del Destino: rivela tutti i dadi non conservati e si avverano', () => {
+test('Occhio del Destino: rivela 3 dadi non conservati e si avverano', () => {
   const { game, roller } = scriptedGame([[1, 1, 1, 1, 1]]);
   drawAll(game);
   const uid = give(game, 'occhioDestino');
-  roller.pushDie(6, 5, 4, 3, 2);
+  roller.pushDie(6, 5, 4);
   const r = game.useCard(uid);
-  assert.deepEqual(r.dice, [0, 1, 2, 3, 4]);
+  assert.deepEqual(r.dice, [0, 1, 2]);
   game.roll();
-  assert.deepEqual(game.dice.values, [6, 5, 4, 3, 2], 'i risultati rivelati si avverano');
+  assert.deepEqual(game.dice.values, [6, 5, 4, 1, 1], 'i risultati rivelati si avverano');
 });
 
 test('Mano Veloce: fa grattare un\'altra carta', () => {
@@ -165,20 +165,20 @@ test('Dado Truccato: +1 o −1 restando tra 1 e 6', () => {
   assert.deepEqual(game.dice.values, [2, 3, 3, 3, 6]);
 });
 
-test('Furto di Fortuna ruba 10 punti da una casella; Saccheggio Reale 20', () => {
+test('Furto di Fortuna ruba 6 punti da una casella; Saccheggio Reale 8', () => {
   const { game, roller } = scriptedGame();
   playTurn(game, roller, [6, 6, 6, 6, 6], 'yatzy'); // rosso 50
   drawAll(game);
   const t = give(game, 'furtoFortuna');
   const r = game.useCard(t, { cat: 'yatzy' });
-  assert.equal(r.taken, 10);
-  assert.equal(game.player('red').card.value('yatzy'), 40);
-  assert.equal(game.player('red').card.total(), 40);
-  assert.equal(game.player('blue').card.total(), 10);
+  assert.equal(r.taken, 6);
+  assert.equal(game.player('red').card.value('yatzy'), 44);
+  assert.equal(game.player('red').card.total(), 44);
+  assert.equal(game.player('blue').card.total(), 6);
   const s = give(game, 'saccheggioReale');
   game.useCard(s, { cat: 'yatzy' });
-  assert.equal(game.player('red').card.total(), 20);
-  assert.equal(game.player('blue').card.total(), 30);
+  assert.equal(game.player('red').card.total(), 36);
+  assert.equal(game.player('blue').card.total(), 14);
   // il furto non toglie il diritto al bonus +100 dei prossimi Yatzy
   assert.equal(game.player('red').card.qualifiesForYatzyBonus([2, 2, 2, 2, 2]), true);
 });
@@ -206,8 +206,8 @@ test('il bonus +35 non si perde se poi vengono rubati punti', () => {
   assert.equal(red.upperBonus(), 35);
   drawAll(game);
   game.useCard(give(game, 'saccheggioReale'), { cat: 'sixes' });
-  assert.equal(red.value('sixes'), 4, 'la casella da 24 perde 20 punti');
-  assert.equal(red.upperTotal(), 45);
+  assert.equal(red.value('sixes'), 16, 'la casella da 24 perde 8 punti');
+  assert.equal(red.upperTotal(), 57);
   assert.equal(red.upperBonus(), 35, 'bonus mantenuto');
 });
 
@@ -225,7 +225,7 @@ test('Doppio Lancio: un lancio in più nel turno', () => {
 });
 
 /* ---------------- epiche ---------------- */
-test('Maledizione del Caos: al prossimo lancio l\'avversario rilancia 2 dadi non conservati', () => {
+test('Maledizione del Caos: al primo lancio dell\'avversario rilancia 3 dadi', () => {
   const { game, roller } = scriptedGame();
   drawAll(game);
   game.useCard(give(game, 'maledizioneCaos'));
@@ -234,17 +234,17 @@ test('Maledizione del Caos: al prossimo lancio l\'avversario rilancia 2 dadi non
   playTurn(game, roller, [1, 2, 3, 4, 5], 'chance');
   // turno del blu
   roller.push([5, 5, 5, 5, 5]);
-  roller.pushDie(1, 2);
+  roller.pushDie(1, 2, 3);
   const r = roll(game);
   assert.ok(r.curse);
   assert.equal(r.curse.type, 'chaos');
-  assert.equal(r.curse.dice.length, 2);
+  assert.equal(r.curse.dice.length, 3);
   assert.deepEqual(r.rolledValues, [5, 5, 5, 5, 5]);
-  assert.equal(r.values.filter((v) => v === 5).length, 3);
+  assert.equal(r.values.filter((v) => v === 5).length, 2);
   assert.equal(game.player('blue').status.curse, null, 'la maledizione scatta una volta');
 });
 
-test('Maledizione: non tocca i dadi conservati', () => {
+test('Maledizione del Caos: colpisce 3 dadi a ogni lancio', () => {
   const { game, roller } = scriptedGame();
   drawAll(game);
   roller.push([4, 4, 1, 2, 3]);
@@ -263,9 +263,9 @@ test('Maledizione: non tocca i dadi conservati', () => {
   game.endTurn();
   roller.push([3, 3, 3, 1, 2]);
   drawAll(game);
-  // primo lancio del blu: maledizione su 2 dei 5 dadi (nessuno conservato)
+  // primo lancio del blu: maledizione su 3 dei 5 dadi
   const r = game.roll();
-  assert.equal(r.curse.dice.length, 2);
+  assert.equal(r.curse.dice.length, 3);
 });
 
 test('Riscrittura del Destino: un dado diventa un altro numero', () => {
@@ -311,7 +311,7 @@ test('Mano degli Dei: imposta tutti e cinque i dadi (anche uno Yatzy con bonus)'
   assert.equal(game.player('red').card.total(), 50 + 30 + 100);
 });
 
-test('Corona del Destino: raddoppia il punteggio del turno, fino a +100', () => {
+test('Corona del Destino: triplica il punteggio del turno, fino a +100', () => {
   const { game, roller } = scriptedGame();
   drawAll(game);
   game.useCard(give(game, 'coronaDestino'));
@@ -319,8 +319,8 @@ test('Corona del Destino: raddoppia il punteggio del turno, fino a +100', () => 
   game.roll();
   game.select('yatzy');
   const r = game.confirm();
-  assert.equal(r.crownExtra, 50);
-  assert.equal(game.player('red').card.total(), 100);
+  assert.equal(r.crownExtra, 100);
+  assert.equal(game.player('red').card.total(), 150);
   game.endTurn();
   playTurn(game, roller, [1, 2, 3, 4, 6], 'chance');
   drawAll(game);
@@ -342,7 +342,7 @@ test('Corona: due Corone nello stesso turno non si sommano', () => {
   assert.equal(game.cardAvailability(second).ok, false);
 });
 
-test('Apocalisse dei Dadi: rilancia tutti i non conservati e un dado non si può conservare', () => {
+test('Apocalisse dei Dadi: rilancia tutto, un lancio in meno, nessun dado conservabile nel turno', () => {
   const { game, roller } = scriptedGame();
   drawAll(game);
   game.useCard(give(game, 'apocalisseDadi'));
@@ -353,15 +353,11 @@ test('Apocalisse dei Dadi: rilancia tutti i non conservati e un dado non si può
   assert.equal(r.curse.type, 'apocalypse');
   assert.equal(r.curse.dice.length, 5);
   assert.deepEqual(r.values, [1, 2, 3, 4, 5]);
-  const nh = r.curse.noHoldDie;
-  assert.ok(nh >= 0 && nh < 5);
-  assert.equal(game.canHold(nh), false);
-  assert.throws(() => game.toggleHold(nh), GameError);
-  const other = (nh + 1) % 5;
-  game.toggleHold(other);
-  roller.push([2, 2, 2, 2, 2]);
-  game.roll();
-  assert.equal(game.player('blue').status.noHoldDie, null, 'il divieto vale per un solo lancio');
+  assert.equal(game.dice.maxRolls, 2, 'un lancio in meno');
+  for (let i = 0; i < 5; i++) {
+    assert.equal(game.canHold(i), false);
+    assert.throws(() => game.toggleHold(i), GameError);
+  }
 });
 
 test('Rewind Temporale: annulla un furto subito', () => {
@@ -369,7 +365,7 @@ test('Rewind Temporale: annulla un furto subito', () => {
   playTurn(game, roller, [6, 6, 6, 6, 6], 'yatzy');
   drawAll(game);
   game.useCard(give(game, 'saccheggioReale'), { cat: 'yatzy' });
-  assert.equal(game.player('red').card.total(), 30);
+  assert.equal(game.player('red').card.total(), 42);
   roller.push([1, 2, 3, 4, 6]);
   game.roll();
   game.select('chance');
@@ -404,14 +400,14 @@ test('Rewind Temporale: libera una carta imprigionata e toglie i punti della Cor
   const { game, roller } = scriptedGame();
   drawAll(game);
   game.player('blue').hand.push({ uid: 777, id: 'doppioLancio', lockedTurn: null, lockedBy: null });
-  game.useCard(give(game, 'prigioneTemporale'), { uid: 777 });
+  game.useCard(give(game, 'prigioneTemporale'));
   game.useCard(give(game, 'coronaDestino'));
   roller.push([3, 3, 3, 3, 3]);
   game.roll();
   game.select('yatzy');
   game.confirm();
   game.endTurn();
-  assert.equal(game.player('red').card.total(), 100);
+  assert.equal(game.player('red').card.total(), 150);
   drawAll(game);
   // l'effetto più recente annullabile è la Corona
   let r = game.useCard(give(game, 'rewindTemporale'));
@@ -447,8 +443,8 @@ test('salvataggio e ripresa con carte, scudi, maledizioni e furti', () => {
   game.useCard(give(game, 'occhioDestino'));
   const json = JSON.parse(JSON.stringify(game.toJSON()));
   const copy = Game.fromJSON(json, { roller });
-  assert.equal(copy.player('red').card.total(), 40);
-  assert.equal(copy.player('blue').card.total(), 10);
+  assert.equal(copy.player('red').card.total(), 44);
+  assert.equal(copy.player('blue').card.total(), 6);
   assert.equal(copy.player('blue').card.shieldCount('ones'), 1);
   assert.equal(copy.player('red').status.curse.type, 'chaos');
   assert.equal(copy.current.hand.some((c) => c.id === 'coronaDestino'), true);

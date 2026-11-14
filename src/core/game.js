@@ -22,7 +22,7 @@ import { detectMeme } from './memes.js';
 
 export { GameError };
 
-const newStatus = () => ({ curse: null, noHoldDie: null, sabotage: null, halve: null, lessRolls: null, blessTurns: 0, yatzyTurns: 0, mirror: null, counter: null, trap: null, chains: null, invest: null });
+const newStatus = () => ({ curse: null, noHoldDie: null, sabotage: null, halve: null, lessRolls: null, blessTurns: 0, yatzyTurns: 0, tempoTurns: 0, mirror: null, counter: null, trap: null, chains: null, invest: null });
 const newTurnState = () => ({ foresight: {}, crown: null, noHold: [], frozen: [], blocked: [], bonuses: [], blessed: false, blessAll: false, cardNotes: null, chaos: false, yatzyAll: false, cardsPlayed: 0 });
 
 export class Game {
@@ -279,7 +279,7 @@ export class Game {
         idx = [0, 1, 2, 3, 4];
         idx.forEach((i) => this.dice.release(i));
       } else if (c.type === 'freeze') {
-        frozen = shuffle(idx.length ? idx : [0, 1, 2, 3, 4], this.rng).slice(0, 2).sort((a, b) => a - b);
+        frozen = shuffle(idx.length ? idx : [0, 1, 2, 3, 4], this.rng).slice(0, 3).sort((a, b) => a - b);
         frozen.forEach((i) => this.dice.release(i));
         this.turnState.frozen = [...(this.turnState.frozen || []), ...frozen];
         idx = [];
@@ -287,17 +287,17 @@ export class Game {
       const before = idx.map((i) => this.dice.values[i]);
       for (const i of idx) this.dice.setValue(i, this.randomDie());
       let noHold = null;
-      if (c.type === 'apocalypse') this.dice.removeRoll();
-      if (c.type === 'apocalypse' && this.dice.rollsLeft > 0) {
-        noHold = Math.floor(this.rng() * RULES.DICE_COUNT);
-        me.status.noHoldDie = noHold;
-        this.dice.release(noHold);
+      if (c.type === 'apocalypse') {
+        // l'Apocalisse: un lancio in meno e per tutto il turno nessun dado si può conservare
+        this.dice.removeRoll();
+        this.turnState.noHold = [0, 1, 2, 3, 4];
+        if (this.dice.rollsLeft > 0) noHold = Math.floor(this.rng() * RULES.DICE_COUNT);
       }
       curse = { type: c.type, cardId: c.cardId, dice: idx, before, after: idx.map((i) => this.dice.values[i]), noHoldDie: noHold, frozen };
     }
     // Maledizione del Caos: dopo OGNI lancio del turno, due dadi a caso (anche conservati) si rilanciano
     if (this.turnState.chaos) {
-      const idx = shuffle([0, 1, 2, 3, 4], this.rng).slice(0, 2).sort((a, b) => a - b);
+      const idx = shuffle([0, 1, 2, 3, 4], this.rng).slice(0, 3).sort((a, b) => a - b);
       const before = idx.map((i) => this.dice.values[i]);
       idx.forEach((i) => {
         this.dice.release(i);
@@ -376,7 +376,7 @@ export class Game {
     // Corona del Destino: punteggio raddoppiato (max CROWN_CAP extra)
     let crownExtra = 0;
     if (this.turnState.crown) {
-      crownExtra = Math.min(score, CARD_RULES.CROWN_CAP);
+      crownExtra = Math.min(score * 2, CARD_RULES.CROWN_CAP);
       const log = this.effectLog.find((e) => e.id === this.turnState.crown);
       if (crownExtra > 0) card.addCardPoints({ id: this.turnState.crown, amount: crownExtra, kind: 'crown', cat: id });
       if (log) Object.assign(log, { amount: crownExtra, cat: id });
@@ -390,7 +390,7 @@ export class Game {
       if (!def) continue;
       let amount = 0;
       if (def.kind === 'plus') amount = score > 0 ? def.amount : 0;
-      else if (def.kind === 'mult') amount = Math.min(Math.floor(score / 2), def.cap);
+      else if (def.kind === 'mult') amount = Math.min(score, def.cap);
       else if (def.kind === 'net') amount = score === 0 ? def.amount : 0;
       else if (def.kind === 'jackpot') amount = ['fullHouse', 'smallStraight', 'largeStraight', 'fourKind', 'yatzy'].includes(id) && score > 0 ? def.amount : 0;
       else if (def.kind === 'upper2') amount = CATEGORY_INFO[id].section === 'upper' ? Math.min(score, def.cap) : 0;
@@ -507,10 +507,16 @@ export class Game {
       me.status.lessRolls = null;
       notes.lessRolls = this.dice.removeRoll();
     }
+    if (me.status.tempoTurns > 0) {
+      me.status.tempoTurns--;
+      this.turnState.blessAll = true;
+      for (let k = 0; k < 3 && this.dice.maxRolls < ROLL_CAP; k++) this.dice.addRoll();
+      notes.tempo = me.status.tempoTurns + 1;
+    }
     if (me.status.blessTurns > 0) {
       me.status.blessTurns--;
       this.turnState.blessAll = true;
-      if (this.dice.maxRolls < ROLL_CAP) this.dice.addRoll();
+      for (let k = 0; k < 2 && this.dice.maxRolls < ROLL_CAP; k++) this.dice.addRoll();
       notes.bless = me.status.blessTurns + 1;
     }
     if (me.status.invest) {

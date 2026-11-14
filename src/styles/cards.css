@@ -1339,3 +1339,15 @@
   30% { background-color: rgba(255, 255, 255, 0.8); }
   100% { background-color: transparent; }
 }
+
+/* carta dell'avversario coperta (Mano Lesta): si vede solo il retro */
+.card-face.mini.card-hidden {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(160deg, #5f6a82, #262a3d);
+  box-shadow: 0 0 0 2px #fff, 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+.card-face.mini.card-hidden svg {
+  width: 70%;
+  height: 70%;
+}
