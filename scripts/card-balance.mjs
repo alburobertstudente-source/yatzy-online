@@ -14,6 +14,9 @@ import { botMove, applyMove } from '../src/ai/bot.js';
 const N = Number(process.argv[2]) || 40;
 const [PART, PARTS] = (process.argv[3] || '1/1').split('/').map(Number);
 const SKILL = 0.6;
+const LATE = ['seiFortunato', 'spintaGentile', 'bigBang', 'colpoDiFortuna'];
+const EARLY = ['piccolaScommessa', 'scommessaYatzy', 'grandeScommessa', 'jackpotCosmico', 'primoPasso', 'occhioDestino'];
+const ONLY = process.env.CARDS ? process.env.CARDS.split(',') : null;
 
 function drawAll(g) {
   while (g.mustDraw) {
@@ -33,19 +36,28 @@ function turn(g, rng, card = null, seed = null) {
   drawAll(g);
   g.current.hand = []; // il bot non gioca altre carte: si misura solo quella in prova
   let used = false;
-  const tryUse = () => {
+  // le carte che cambiano i dadi si giocano dopo l'ultimo lancio, le altre dopo il primo
+  const late = card && (['dice', 'allDice'].includes(CARDS[card].target?.kind) || LATE.includes(card));
+  const tryUse = (force = false) => {
     if (!card || used) return;
+    if (late && !force && g.dice.rollsLeft > 0 && g.canRoll()) return;
     const entry = { uid: g.nextUid++, id: card, lockedTurn: null, lockedBy: null };
     g.current.hand.push(entry);
     if (g.cardAvailability(entry.uid).ok) {
       g.useCard(entry.uid, autoParams(g, entry));
       used = true;
+      g._botPlan = null; // il bot rivaluta i dadi dopo la carta
       drawAll(g);
     } else g.current.hand = g.current.hand.filter((c) => c.uid !== entry.uid);
   };
   for (let k = 0; k < 80; k++) {
-    if (g.dice.hasRolled) tryUse();
-    const m = botMove(g, { skill: SKILL, rng });
+    if (g.dice.hasRolled || EARLY.includes(card)) tryUse();
+    let m = botMove(g, { skill: SKILL, rng });
+    if (late && !used && m.type === 'select') {
+      // il bot ha finito di lanciare: ora la carta che cambia i dadi
+      tryUse(true);
+      if (used) m = botMove(g, { skill: SKILL, rng });
+    }
     applyMove(g, m);
     if (m.type === 'confirm') break;
   }
@@ -68,7 +80,7 @@ for (let i = 0; i < N; i++) {
 }
 
 const rows = [];
-for (const id of CARD_IDS.filter((_, k) => k % PARTS === PART - 1)) {
+for (const id of (ONLY || CARD_IDS).filter((_, k) => k % PARTS === PART - 1)) {
   let sum = 0;
   let usedN = 0;
   for (let i = 0; i < N; i++) {

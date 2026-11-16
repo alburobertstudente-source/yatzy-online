@@ -444,7 +444,7 @@ test('salvataggio e ripresa con carte, scudi, maledizioni e furti', () => {
   const json = JSON.parse(JSON.stringify(game.toJSON()));
   const copy = Game.fromJSON(json, { roller, playLimit: 99 });
   assert.equal(copy.player('red').card.total(), 44);
-  assert.equal(copy.player('blue').card.total(), 6);
+  assert.equal(copy.player('blue').card.total(), 6 + 8 + 2, 'più i punti di Caos e Occhio');
   assert.equal(copy.player('blue').card.shieldCount('ones'), 1);
   assert.equal(copy.player('red').status.curse.type, 'chaos');
   assert.equal(copy.current.hand.some((c) => c.id === 'coronaDestino'), true);

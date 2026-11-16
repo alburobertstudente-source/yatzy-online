@@ -221,6 +221,16 @@ export class Game {
     }
     const { result, log } = applyCard(this, me, entry, params, effectId);
     me.hand = me.hand.filter((c) => c.uid !== uid);
+    // punti e lancio extra "di contorno" scritti sulla carta
+    const def = CARDS[entry.id];
+    if (def.points) {
+      me.card.addCardPoints({ id: effectId, amount: def.points, kind: 'bonus', cat: null });
+      result.sidePoints = def.points;
+    }
+    if (def.bonusRoll && this.dice.maxRolls < ROLL_CAP) {
+      this.dice.addRoll();
+      result.extraRoll = true;
+    }
     this.turnState.cardsPlayed = (this.turnState.cardsPlayed || 0) + 1;
     // Spia dell'avversario: 5 punti per ogni carta giocata
     let spied = 0;
@@ -290,8 +300,9 @@ export class Game {
       let idx = rolled.filter((i) => !this.dice.held[i]);
       let frozen = null;
       if (c.type === 'chaos') {
-        // il Caos dura tutto il turno: scatta a ogni lancio (vedi sotto)
+        // il Caos dura tutto il turno (scatta a ogni lancio, vedi sotto) e anche il turno dopo
         this.turnState.chaos = true;
+        me.status.chaosNext = 1;
         idx = [];
       } else if (c.type === 'apocalypse') {
         // l'Apocalisse travolge anche i dadi conservati
@@ -414,7 +425,7 @@ export class Game {
       else if (def.kind === 'mult') amount = Math.min(score, def.cap);
       else if (def.kind === 'net') amount = score === 0 ? def.amount : 0;
       else if (def.kind === 'bet' || def.kind === 'cosmicBet') amount = score >= def.min ? def.win : -def.lose;
-      else if (def.kind === 'betYatzy') amount = isYatzy(dice) ? def.win : -def.lose;
+      else if (def.kind === 'betYatzy') amount = [1, 2, 3, 4, 5, 6].some((v) => dice.filter((d) => d === v).length >= 4) ? def.win : -def.lose;
       else if (def.kind === 'final') amount = this.round >= 10 ? Math.min(score, def.cap) : def.early;
       else if (def.kind === 'perfect') amount = score >= def.min ? def.win : 0;
       else if (def.kind === 'jackpot') amount = ['fullHouse', 'smallStraight', 'largeStraight', 'fourKind', 'yatzy'].includes(id) && score > 0 ? def.amount : 0;
@@ -582,6 +593,11 @@ export class Game {
       me.status.invest = null;
       me.card.addCardPoints({ id: inv.effectId, amount: inv.amount, kind: 'bonus', cat: null });
       notes.invest = inv.amount;
+    }
+    if (me.status.chaosNext) {
+      me.status.chaosNext = 0;
+      this.turnState.chaos = true;
+      notes.chaos = true;
     }
     if (me.status.chains) {
       me.status.chains = null;

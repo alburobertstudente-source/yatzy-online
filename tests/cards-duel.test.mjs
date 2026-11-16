@@ -106,7 +106,7 @@ test('Allarme, Muro Invalicabile, Sfondamento', () => {
   const r = use(game, 'sfondamento');
   assert.equal(game.player('blue').card.shieldCount('chance'), 0);
   assert.equal(game.player('blue').status.mirror, null);
-  assert.equal(r.taken, 6);
+  assert.equal(r.taken, 9);
 });
 
 test('Muro Invalicabile dura due turni avversari', () => {
@@ -132,7 +132,7 @@ test('scommesse: si vince o si perde', () => {
   roller.push([1, 1, 2, 2, 3]);
   game.roll();
   game.select('ones');
-  assert.equal(game.confirm().cardExtra, -4);
+  assert.equal(game.confirm().cardExtra, -3);
   game.endTurn();
   playTurn(game, roller, [1, 2, 3, 4, 6], 'ones');
   drawAll(game);
@@ -141,7 +141,7 @@ test('scommesse: si vince o si perde', () => {
   roller.push([4, 4, 4, 4, 4]);
   game.roll();
   game.select('fourKind');
-  assert.equal(game.confirm().cardExtra, 50 - 12, 'Yatzy vinto, 20 punti non bastano per la grande');
+  assert.equal(game.confirm().cardExtra, 50 - 6, 'Poker/Yatzy vinto, 20 punti non bastano per la grande');
 });
 
 test('Jackpot Cosmico, Turno Perfetto, Ultimo Atto', () => {
@@ -152,7 +152,7 @@ test('Jackpot Cosmico, Turno Perfetto, Ultimo Atto', () => {
   roller.push([6, 6, 6, 5, 5]);
   game.roll();
   game.select('fullHouse');
-  assert.equal(game.confirm().cardExtra, 10 + 12);
+  assert.equal(game.confirm().cardExtra, 20 + 12);
   game.endTurn();
   playTurn(game, roller, [1, 2, 3, 4, 6], 'ones');
   drawAll(game);
@@ -174,7 +174,7 @@ test('carte di punti: Salvadanaio, Elemosina, Rimonta Furiosa, Gran Finale, Feni
   game.confirm();
   game.endTurn();
   drawAll(game);
-  assert.equal(use(game, 'rimontaFuriosa').amount, 25, 'il blu è indietro di 30+');
+  assert.equal(use(game, 'rimontaFuriosa').amount, 30, 'il blu è indietro di 30+');
   assert.equal(use(game, 'granFinale').amount, 3, 'una casella segnata × 3');
   game.current.hand = [];
   roller.push([1, 2, 3, 4, 6]);
@@ -184,9 +184,9 @@ test('carte di punti: Salvadanaio, Elemosina, Rimonta Furiosa, Gran Finale, Feni
   game.endTurn();
   assert.equal(game.turnState.cardNotes.invest, 6);
   drawAll(game);
-  assert.equal(use(game, 'fenice').amount, 20, 'nessuno 0 per il rosso');
+  assert.equal(use(game, 'fenice').amount, 35, 'nessuno 0 per il rosso');
   const p = use(game, 'pattoDiavolo');
-  assert.equal(p.amount, 40);
+  assert.equal(p.amount, 33);
   roller.push([1, 2, 3, 4, 6]);
   game.roll();
   game.select('ones');
@@ -194,7 +194,7 @@ test('carte di punti: Salvadanaio, Elemosina, Rimonta Furiosa, Gran Finale, Feni
   game.endTurn();
   drawAll(game);
   assert.equal(game.player('blue').status.bonusDraw, 0);
-  assert.equal(use(game, 'fenice').amount, 15, 'il blu ha uno 0 nello Yatzy');
+  assert.equal(use(game, 'fenice').amount, 20, 'il blu ha uno 0 nello Yatzy');
 });
 
 test('pesca: Pesca Doppia, Biblioteca, Tempesta di Carte, Mano del Re', () => {
@@ -225,7 +225,7 @@ test('dadi: Colpo di Fortuna, Primo Passo, Ritmo, Onnipotenza', () => {
   assert.equal(game.dice.values[0], 5);
   use(game, 'ritmo');
   assert.equal(game.dice.maxRolls, 5);
-  assert.equal(use(game, 'slancio').amount, 20, '4 carte giocate in questo turno × 5');
+  assert.equal(use(game, 'slancio').amount, 16, '4 carte giocate in questo turno × 4');
   use(game, 'onnipotenza');
   assert.equal(new Set(game.dice.values).size, 1);
   roller.push([1, 2, 3, 4, 6]);
@@ -236,7 +236,7 @@ test('attacchi: Spintone, Rapina, Valanga, Tiro Mancino, Rogo, Bancarotta', () =
   const { game, roller } = midGame();
   game.player('blue').card.scores.sixes = 18;
   game.player('blue').card.addShield('sixes');
-  assert.equal(use(game, 'rapina').taken, 12, 'ignora lo scudo');
+  assert.equal(use(game, 'rapina').taken, 9, 'ignora lo scudo');
   assert.equal(use(game, 'valanga').taken, 0, 'lo scudo protegge la casella');
   game.current.hand = [];
   roller.push([1, 2, 3, 4, 6]);

@@ -193,7 +193,7 @@ test('Big Bang (leggendaria): Poker garantito del numero più presente; da Poker
   roll(game);
   const r = game.useCard(give(game, 'bigBang'));
   assert.deepEqual(r.values, [3, 3, 1, 3, 3]);
-  assert.equal(game.dice.rollsLeft, 2, 'nessun lancio extra');
+  assert.equal(game.dice.rollsLeft, 3, 'più un lancio per cercare lo Yatzy');
   const r2 = game.useCard(give(game, 'bigBang'));
   assert.deepEqual(r2.values, [3, 3, 3, 3, 3]);
 });

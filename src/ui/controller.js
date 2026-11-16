@@ -1201,6 +1201,7 @@ export class Controller {
       default:
         break;
     }
+    if (res.sidePoints) toast(this.fx, `+${res.sidePoints} PUNTI`, { x: tr.x + tr.w / 2, y: tr.y + tr.h + 52, kind: 'gold' });
     if (res.spied) toast(this.fx, `SPIA: +${res.spied} ALL'AVVERSARIO`, { x: tr.x + tr.w / 2, y: tr.y + tr.h + 30, kind: 'hint' });
     // carte che fanno pescare (Pesca Doppia, Biblioteca, Tempesta di Carte…)
     if (g === this.game && g.pendingDraws > 0 && !g.scoredThisTurn && g.phase === 'playing') await this.#drawPhase({ extra: true });

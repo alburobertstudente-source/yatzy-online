@@ -173,6 +173,7 @@ export function cardAvailability(game, entry) {
     case 'grandeScommessa':
     case 'jackpotCosmico': {
       const kind = def.bonus.kind;
+      if (['bet', 'betYatzy', 'cosmicBet'].includes(kind) && dice.hasRolled) return no('Le scommesse si fanno prima del primo lancio');
       return game.turnState.bonuses?.some((b) => b.kind === kind) ? no('Già attiva in questo turno') : yes;
     }
     case 'geloEterno':
@@ -476,7 +477,7 @@ export function applyCard(game, me, entry, params = {}, effectId) {
       if (!game.turnState.bonuses) game.turnState.bonuses = [];
       if (game.turnState.bonuses.some((x) => x.kind === b.kind)) throw new GameError('Già attiva in questo turno');
       game.turnState.bonuses.push({ kind: b.kind, effectId, cardId: entry.id });
-      const now = entry.id === 'reteSalvataggio' ? 5 : 0;
+      const now = entry.id === 'reteSalvataggio' ? 7 : 0;
       if (now) me.card.addCardPoints({ id: effectId, amount: now, kind: 'bonus', cat: null });
       Object.assign(log, { kind: 'bonus', amount: now, cat: null });
       result = { kind: 'bonusSet', bonus: b.kind };
@@ -689,6 +690,7 @@ export function applyCard(game, me, entry, params = {}, effectId) {
       const copies = opp.hand.slice(0, room).map((c) => ({ uid: game.nextUid++, id: c.id, lockedTurn: null, lockedBy: null }));
       me.hand.push(...copies);
       game.pendingDraws++;
+      me.card.addCardPoints({ id: effectId, amount: 10, kind: 'bonus', cat: null });
       result = { kind: 'clone', cards: copies.map((c) => c.id), draw: true };
       break;
     }
@@ -718,6 +720,7 @@ export function applyCard(game, me, entry, params = {}, effectId) {
     }
     case 'antidoto': {
       const cleared = [];
+      if (me.status.chaosNext) me.status.chaosNext = 0;
       for (const k of ['curse', 'sabotage', 'halve', 'trap', 'chains', 'lessRolls']) {
         if (me.status[k]) {
           me.status[k] = null;
@@ -749,10 +752,10 @@ export function applyCard(game, me, entry, params = {}, effectId) {
       result = { kind: 'status', label: 'SPECCHIO RIFLESSO PRONTO' };
       break;
     case 'combo':
-      me.card.addCardPoints({ id: effectId, amount: 8, kind: 'bonus', cat: null });
+      me.card.addCardPoints({ id: effectId, amount: 6, kind: 'bonus', cat: null });
       game.pendingDraws++;
-      Object.assign(log, { kind: 'bonus', amount: 8, cat: null });
-      result = { kind: 'points', amount: 8, cat: null, draw: true };
+      Object.assign(log, { kind: 'bonus', amount: 6, cat: null });
+      result = { kind: 'points', amount: 6, cat: null, draw: true };
       break;
     case 'terremoto': {
       const parts = [];
@@ -829,13 +832,13 @@ export function applyCard(game, me, entry, params = {}, effectId) {
         amount = 3;
         me.status.invest = { effectId, amount: (me.status.invest?.amount || 0) + 6 };
       } else if (entry.id === 'elemosina') amount = gap > 0 ? 9 : 3;
-      else if (entry.id === 'rimontaFuriosa') amount = gap >= 30 ? 25 : 8;
+      else if (entry.id === 'rimontaFuriosa') amount = gap >= 30 ? 30 : 10;
       else if (entry.id === 'granFinale') amount = me.card.filledCount() * 3 * (game.round >= 10 ? 2 : 1);
       else if (entry.id === 'fenice') {
         const zeros = ALL_CATEGORIES.filter((c) => me.card.scores[c] === 0).length;
-        amount = zeros > 0 ? Math.min(60, 15 * zeros) : 20;
+        amount = zeros > 0 ? Math.min(80, 20 * zeros) : 35;
       } else {
-        amount = 40;
+        amount = 33;
         me.status.lessNext = (me.status.lessNext || 0) + 1;
         opp.status.bonusDraw = (opp.status.bonusDraw || 0) + 1;
       }
@@ -848,11 +851,11 @@ export function applyCard(game, me, entry, params = {}, effectId) {
     case 'biblioteca':
     case 'tempestaCarte':
     case 'manoDelRe': {
-      const n = entry.id === 'pescaDoppia' || entry.id === 'biblioteca' ? 2 : 3;
+      const n = { pescaDoppia: 2, biblioteca: 2, tempestaCarte: 3, manoDelRe: 4 }[entry.id];
       game.pendingDraws += n;
       let amount = 0;
-      if (entry.id === 'biblioteca') {
-        amount = 6;
+      if (entry.id !== 'pescaDoppia') {
+        amount = { biblioteca: 6, tempestaCarte: 6, manoDelRe: 10 }[entry.id];
         me.card.addCardPoints({ id: effectId, amount, kind: 'bonus', cat: null });
         Object.assign(log, { kind: 'bonus', amount, cat: null });
       }
@@ -866,7 +869,7 @@ export function applyCard(game, me, entry, params = {}, effectId) {
       const opts = { ignoreShield: entry.id !== 'spintone' };
       const best = [...stealableBoxes(game, me)].sort((a, b) => opp.card.value(b) - opp.card.value(a));
       const cats = entry.id === 'ladroSupremo' ? best.slice(0, 3) : best.slice(0, 1);
-      const per = { spintone: 5, rapina: 12, ladroSupremo: 10 }[entry.id];
+      const per = { spintone: 5, rapina: 9, ladroSupremo: 10 }[entry.id];
       const g = guard(opp, cats[0], effectId, opts);
       let taken = 0;
       const parts = [];
@@ -890,7 +893,7 @@ export function applyCard(game, me, entry, params = {}, effectId) {
       if (!attackCheck(opp, effectId)) {
         for (const cat of stealableBoxes(game, me).filter((c) => UPPER_CATS.includes(c))) {
           const blocked = opp.card.consumeShield(cat);
-          const t = blocked ? 0 : take(game, opp, cat, 3);
+          const t = blocked ? 0 : take(game, opp, cat, 5);
           taken += t;
           parts.push({ cat, taken: t, blocked });
         }
@@ -907,7 +910,7 @@ export function applyCard(game, me, entry, params = {}, effectId) {
       for (const k of ['mirror', 'counter', 'negate', 'alarm']) opp.status[k] = null;
       let taken = 0;
       const cat = [...stealableBoxes(game, me)].sort((a, b) => opp.card.value(b) - opp.card.value(a))[0];
-      if (cat && !opp.status.immune) taken = take(game, opp, cat, 6);
+      if (cat && !opp.status.immune) taken = take(game, opp, cat, 9);
       if (taken > 0) me.card.addCardPoints({ id: effectId, amount: taken, kind: 'steal', cat });
       Object.assign(log, { kind: 'tax', victim: opp.id, parts: cat ? [{ cat, taken, blocked: false }] : [], taken });
       result = { kind: 'quake', victim: opp.id, taken, mirrored: false, label: `SFONDAMENTO: ${removed} SCUDI DISTRUTTI, −${taken}` };
@@ -935,7 +938,7 @@ export function applyCard(game, me, entry, params = {}, effectId) {
       const cats = params.cats;
       if (!Array.isArray(cats) || cats.length !== 1 || !me.card.canShield(cats[0])) throw new GameError('Scegli una casella');
       me.card.addShield(cats[0]);
-      me.card.addCardPoints({ id: effectId, amount: 3, kind: 'bonus', cat: null });
+      me.card.addCardPoints({ id: effectId, amount: 5, kind: 'bonus', cat: null });
       Object.assign(log, { kind: 'shield', owner: me.id, cats: [...cats] });
       result = { kind: 'shield', cats: [...cats] };
       break;
@@ -943,6 +946,7 @@ export function applyCard(game, me, entry, params = {}, effectId) {
     case 'esorcismo': {
       const curse = me.status.curse;
       for (const k of ['curse', 'sabotage', 'halve', 'trap', 'chains', 'lessRolls', 'sealed']) me.status[k] = null;
+      me.status.chaosNext = 0;
       game.turnState.chaos = false;
       game.turnState.blocked = [];
       if (curse && !opp.status.curse && !opp.status.immune) opp.status.curse = { ...curse, effectId };
@@ -953,7 +957,7 @@ export function applyCard(game, me, entry, params = {}, effectId) {
     }
     case 'slancio': {
       dice.addRoll();
-      const amount = 5 * ((game.turnState.cardsPlayed || 0) + 1);
+      const amount = 4 * ((game.turnState.cardsPlayed || 0) + 1);
       me.card.addCardPoints({ id: effectId, amount, kind: 'bonus', cat: null });
       Object.assign(log, { kind: 'bonus', amount, cat: null });
       result = { kind: 'points', amount, cat: null };
@@ -1249,7 +1253,22 @@ export function autoParams(game, entry) {
     } else {
       params.dice = [0, 1, 2, 3, 4].filter((i) => !t.foresight || game.turnState.foresight[i] === undefined).slice(0, t.max === 2 ? 2 : 1);
     }
-    if (def.choice === 'plusMinus') params.delta = dice.values[params.dice[0]] > 1 ? -1 : 1;
+    if (entry.id === 'dadoTruccato') {
+      const counts = [0, 0, 0, 0, 0, 0, 0];
+      dice.values.forEach((v) => counts[v]++);
+      let best = 6;
+      for (let v = 6; v >= 1; v--) if (counts[v] > counts[best]) best = v;
+      let pick = null;
+      dice.values.forEach((v, i) => {
+        if (pick === null && Math.abs(v - best) === 1) pick = { i, d: best - v };
+      });
+      if (!pick) {
+        const low = dice.values.reduce((b, v, i) => (v < dice.values[b] ? i : b), 0);
+        pick = { i: low, d: dice.values[low] < 6 ? 1 : -1 };
+      }
+      params.dice = [pick.i];
+      params.delta = pick.d;
+    } else if (def.choice === 'plusMinus') params.delta = dice.values[params.dice[0]] > 1 ? -1 : 1;
     if (def.choice === 'face') params.value = (dice.values[params.dice[0]] % 6) + 1;
   } else if (t.kind === 'allDice') params.values = [6, 6, 6, 6, 6];
   else if (t.kind === 'ownBoxes') params.cats = shieldableBoxes(me).slice(0, t.count);
