@@ -8,7 +8,7 @@
 import { Game } from '../src/core/game.js';
 import { CARDS, CARD_IDS } from '../src/core/cards.js';
 import { autoParams } from '../src/core/powers.js';
-import { createSeededRandom } from '../src/core/probability.js';
+import { createSeededRandom, FairRoller } from '../src/core/probability.js';
 import { botMove, applyMove } from '../src/ai/bot.js';
 
 const N = Number(process.argv[2]) || 40;
@@ -23,7 +23,13 @@ function drawAll(g) {
 }
 
 /** Turno del bot; se `card` è dato lo usa dopo il primo lancio (o prima, se serve). */
-function turn(g, rng, card = null) {
+function turn(g, rng, card = null, seed = null) {
+  // dadi "a numeri comuni": ogni turno ha i suoi dadi, uguali con e senza la carta
+  if (seed !== null) {
+    g.roller = new FairRoller({ rng: createSeededRandom(seed) });
+    g.rng = createSeededRandom(seed + 1);
+    rng = createSeededRandom(seed + 2);
+  }
   drawAll(g);
   g.current.hand = []; // il bot non gioca altre carte: si misura solo quella in prova
   let used = false;
@@ -71,9 +77,9 @@ for (const id of CARD_IDS.filter((_, k) => k % PARTS === PART - 1)) {
       const g = Game.fromJSON(JSON.parse(JSON.stringify(start[i])), { rng: createSeededRandom(1) });
       const rng = createSeededRandom(9000 + i);
       const pid = g.current.id;
-      const u = turn(g, rng, withCard ? id : null);
+      const u = turn(g, rng, withCard ? id : null, 100000 + i * 100);
       if (withCard && u) usedN++;
-      for (let t = 0; t < 7 && g.phase === 'playing'; t++) turn(g, rng);
+      for (let t = 0; t < 7 && g.phase === 'playing'; t++) turn(g, rng, null, 100000 + i * 100 + (t + 1) * 7);
       res.push(margin(g, pid));
     }
     sum += res[0] - res[1];

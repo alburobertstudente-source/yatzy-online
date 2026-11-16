@@ -495,7 +495,7 @@ async function cardsTest(browser) {
   await page.screenshot({ path: join(OUT, 'saccheggio.png') });
   await idle(page);
   t = await page.evaluate(() => [window.yatzyDebug.game.player('red').card.total(), window.yatzyDebug.game.player('blue').card.total(), document.querySelector('.cell.red[data-cat="yatzy"] .val').textContent]);
-  check(t[0] === 30 && t[1] === 20 && t[2] === '30', `Saccheggio Reale: 20 punti passano dal rosso al blu (${t[0]} - ${t[1]})`);
+  check(t[0] === 42 && t[1] === 8 && t[2] === '42', `Saccheggio Reale: 8 punti passano dal rosso al blu (${t[0]} - ${t[1]})`);
   // prigione: blocca tutte le carte del rosso (compreso il Rewind)
   // (terza carta del turno: in questa prova si azzera il limite di 2 carte per turno)
   await page.evaluate(() => (window.yatzyDebug.game.turnState.cardsPlayed = 0));
