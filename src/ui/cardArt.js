@@ -24,6 +24,14 @@ const P5 = [[0.28, 0.28], [0.72, 0.28], [0.5, 0.5], [0.28, 0.72], [0.72, 0.72]];
 const P6 = [[0.28, 0.25], [0.72, 0.25], [0.28, 0.5], [0.72, 0.5], [0.28, 0.75], [0.72, 0.75]];
 
 const svg = (inner) => `<svg viewBox="0 0 64 64" aria-hidden="true">${inner}</svg>`;
+/** Bollino con un testo corto (per le icone delle carte più nuove). */
+const badge = (t, fill = RED, x = 48, y = 48, r = 11) =>
+  `<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}" stroke="#fff" stroke-width="2.5"/><text x="${x}" y="${y + 4}" text-anchor="middle" font-size="${t.length > 2 ? 9 : 11}" font-weight="700" fill="#fff" font-family="Fredoka, sans-serif">${t}</text>`;
+const coin = (x, y, r = 8) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${GOLD}" stroke="${GOLD_D}" stroke-width="2.2"/><circle cx="${x}" cy="${y}" r="${r * 0.55}" fill="none" stroke="${GOLD_D}" stroke-width="1.4" opacity=".6"/>`;
+const cardShape = (x, y, fill = '#fff', rot = 0) => `<rect x="${x}" y="${y}" width="20" height="28" rx="4" fill="${fill}" stroke="${INK}" stroke-width="2.4" transform="rotate(${rot} ${x + 10} ${y + 14})"/>`;
+const shieldShape = (fill = '#5b7bd5') => `<path d="M32 6l20 7v16c0 14-9 23-20 29C21 52 12 43 12 29V13z" fill="${fill}" stroke="${INK}" stroke-width="2.6" stroke-linejoin="round"/>`;
+const orb = (fill = '#3b1f5e') => `<circle cx="32" cy="30" r="20" fill="${fill}"/><path d="M32 30m-3 0a3 3 0 1 1 6 0a7 7 0 1 1-14 0a11 11 0 1 1 22 0" fill="none" stroke="#b98cff" stroke-width="3" stroke-linecap="round"/>`;
+
 
 export const CARD_ICONS = {
   ritiraFortuna: svg(
@@ -315,6 +323,123 @@ export const CARD_ICONS = {
   ),
   pioggiaOro: svg(
     `<circle cx="32" cy="32" r="28" fill="#1a0b3a"/><circle cx="18" cy="16" r="6" fill="${GOLD}" stroke="${GOLD_D}" stroke-width="2"/><circle cx="40" cy="12" r="5" fill="${GOLD}" stroke="${GOLD_D}" stroke-width="2"/><circle cx="50" cy="28" r="6" fill="${GOLD}" stroke="${GOLD_D}" stroke-width="2"/><circle cx="14" cy="34" r="5" fill="${GOLD}" stroke="${GOLD_D}" stroke-width="2"/><text x="32" y="52" text-anchor="middle" font-size="14" font-weight="700" fill="${GOLD}" font-family="Fredoka, sans-serif">+100</text>`,
+  ),
+  colpoDiFortuna: svg(
+    `${die(14, 18, 30, [[0.5, 0.5]])}<path d="M50 10a12 12 0 1 1-6 22" fill="none" stroke="${AZURE}" stroke-width="4" stroke-linecap="round"/><path d="M40 30l4 4 5-4" fill="none" stroke="${AZURE}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>`,
+  ),
+  piccolaScommessa: svg(
+    `${coin(22, 28, 12)}${coin(38, 36, 10)}${badge('+12', '#35c46a', 50, 14, 10)}${badge('−4', RED, 14, 52, 9)}`,
+  ),
+  salvadanaio: svg(
+    `<ellipse cx="30" cy="36" rx="22" ry="16" fill="#ff9fb4" stroke="${INK}" stroke-width="2.6"/><rect x="24" y="20" width="12" height="4" rx="2" fill="${INK}"/><circle cx="42" cy="32" r="2.4" fill="${INK}"/><path d="M18 50v8M40 50v8" stroke="${INK}" stroke-width="4" stroke-linecap="round"/>${coin(30, 10, 7)}`,
+  ),
+  spintone: svg(
+    `<path d="M8 34h22l-6-8M30 34l-6 8" fill="none" stroke="${RED}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><rect x="34" y="18" width="24" height="30" rx="5" fill="#fff" stroke="${INK}" stroke-width="2.6" transform="rotate(12 46 33)"/>${badge('−5', RED, 48, 54, 9)}`,
+  ),
+  allarme: svg(
+    `<path d="M18 46V30a14 14 0 0 1 28 0v16z" fill="${RED}" stroke="${INK}" stroke-width="2.6"/><rect x="12" y="46" width="40" height="8" rx="3" fill="#7b8399" stroke="${INK}" stroke-width="2.4"/><path d="M6 18l6 4M58 18l-6 4M32 6v8" stroke="${GOLD}" stroke-width="3.5" stroke-linecap="round"/>`,
+  ),
+  primoPasso: svg(
+    `<path d="M16 52c-4-10 2-18 8-18s8 8 4 18z" fill="#f0bf98" stroke="${INK}" stroke-width="2.4"/><path d="M34 30c-4-10 2-18 8-18s8 8 4 18z" fill="#f0bf98" stroke="${INK}" stroke-width="2.4"/>${badge('+1', AZURE, 50, 48, 10)}`,
+  ),
+  elemosina: svg(
+    `<path d="M10 40c8 0 14 4 22 4s14-6 22-6v14H10z" fill="#f0bf98" stroke="${INK}" stroke-width="2.4"/>${coin(26, 22, 8)}${coin(40, 16, 7)}`,
+  ),
+  tiroMancino: svg(
+    `${die(16, 18, 32, [[0.5, 0.5]])}<path d="M6 10c6-4 12-2 14 4" fill="none" stroke="${VIOLET}" stroke-width="3.5" stroke-linecap="round"/>${badge('1', VIOLET, 50, 50, 10)}`,
+  ),
+  amuleto: svg(
+    `<path d="M20 6c0 10 24 10 24 0" fill="none" stroke="${GOLD_D}" stroke-width="3"/><path d="M32 16l14 10-6 24H24l-6-24z" fill="#7fd6f5" stroke="${INK}" stroke-width="2.6" stroke-linejoin="round"/><circle cx="32" cy="32" r="5" fill="#fff"/>`,
+  ),
+  pescaDoppia: svg(
+    `${cardShape(10, 16, '#fff', -10)}${cardShape(34, 16, GOLD, 10)}${badge('+2', AZURE, 32, 52, 10)}`,
+  ),
+  contromossa: svg(
+    `${cardShape(20, 12, GOLD)}<path d="M10 10l44 44" stroke="${RED}" stroke-width="6" stroke-linecap="round"/><circle cx="32" cy="32" r="26" fill="none" stroke="${RED}" stroke-width="5"/>`,
+  ),
+  scommessaYatzy: svg(
+    `${die(4, 26, 14, [[0.5, 0.5]])}${die(17, 26, 14, [[0.5, 0.5]])}${die(30, 26, 14, [[0.5, 0.5]])}${die(43, 26, 14, [[0.5, 0.5]])}${badge('+50', '#35c46a', 32, 12, 10)}`,
+  ),
+  invidia: svg(
+    `<circle cx="32" cy="32" r="22" fill="#35c46a" stroke="${INK}" stroke-width="2.6"/><path d="M20 28l8 2M44 28l-8 2" stroke="${INK}" stroke-width="3" stroke-linecap="round"/><circle cx="25" cy="34" r="3" fill="${INK}"/><circle cx="39" cy="34" r="3" fill="${INK}"/><path d="M24 46c6-4 10-4 16 0" fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>`,
+  ),
+  spia: svg(
+    `<path d="M10 30c6-10 14-14 22-14s16 4 22 14" fill="#3b2a24" stroke="${INK}" stroke-width="2.6"/><rect x="8" y="28" width="48" height="6" rx="3" fill="#3b2a24"/><circle cx="22" cy="44" r="7" fill="#c9ecfa" stroke="${INK}" stroke-width="2.6"/><circle cx="42" cy="44" r="7" fill="#c9ecfa" stroke="${INK}" stroke-width="2.6"/><path d="M29 44h6" stroke="${INK}" stroke-width="2.6"/>`,
+  ),
+  esorcismo: svg(
+    `${orb()}<path d="M32 52V40M26 46h12" stroke="${GOLD}" stroke-width="4" stroke-linecap="round"/><path d="M50 12l-8 6" stroke="${GOLD}" stroke-width="3" stroke-linecap="round"/>`,
+  ),
+  slancio: svg(
+    `<path d="M8 50L28 30l8 8 20-24" fill="none" stroke="${AZURE}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>${cardShape(10, 8, '#fff', -8)}${badge('+5', GOLD_D, 50, 50, 10)}`,
+  ),
+  rogo: svg(
+    `${cardShape(22, 18, '#fff')}<path d="M18 58c-6-10 2-16 6-20 0 6 4 8 6 8-2-10 6-18 14-22-2 8 2 12 6 16 4-4 4-6 4-10 6 8 8 20 0 28z" fill="#ff7a2f" stroke="#c4321b" stroke-width="2.4" stroke-linejoin="round" opacity=".92"/>`,
+  ),
+  ritmo: svg(
+    `<path d="M14 48V16l26-6v32" fill="none" stroke="${INK}" stroke-width="3.5"/><ellipse cx="10" cy="48" rx="6" ry="5" fill="${INK}"/><ellipse cx="36" cy="42" rx="6" ry="5" fill="${INK}"/>${badge('+1', AZURE, 50, 50, 10)}`,
+  ),
+  ultimoAtto: svg(
+    `<path d="M6 10h52v8H6z" fill="${RED}"/><path d="M6 18c6 14 6 30 0 40M58 18c-6 14-6 30 0 40" fill="${RED}" stroke="#a0262f" stroke-width="2"/>${badge('×2', VIOLET, 32, 40, 12)}`,
+  ),
+  scambioCarte: svg(
+    `${cardShape(8, 14, '#fff', -12)}${cardShape(36, 14, GOLD, 12)}<path d="M22 50c6 6 14 6 20 0M42 50l0-6M22 50l6 0" fill="none" stroke="${AZURE}" stroke-width="3.5" stroke-linecap="round"/>`,
+  ),
+  sfondamento: svg(
+    `${shieldShape('#9aa3b5')}<path d="M22 14l10 16-8 6 12 18" fill="none" stroke="${RED}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`,
+  ),
+  rapina: svg(
+    `<rect x="10" y="22" width="44" height="14" rx="7" fill="#262a3d"/><circle cx="22" cy="29" r="4" fill="#fff"/><circle cx="42" cy="29" r="4" fill="#fff"/>${coin(32, 48, 9)}${badge('12', RED, 52, 12, 9)}`,
+  ),
+  grandeScommessa: svg(
+    `${coin(16, 40, 10)}${coin(32, 32, 12)}${coin(48, 40, 10)}${badge('+35', '#35c46a', 32, 12, 10)}`,
+  ),
+  sigillo: svg(
+    `<circle cx="32" cy="30" r="20" fill="${RED}" stroke="#a0262f" stroke-width="3"/><path d="M24 30l6 6 10-12" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 48l-4 12 8-4M42 48l4 12-8-4" fill="${RED}"/>`,
+  ),
+  valanga: svg(
+    `<path d="M4 52L24 16l10 14 8-10 18 32z" fill="#e3f4ff" stroke="${INK}" stroke-width="2.6" stroke-linejoin="round"/><circle cx="18" cy="46" r="4" fill="#fff" stroke="${INK}" stroke-width="1.6"/><circle cx="30" cy="48" r="3" fill="#fff" stroke="${INK}" stroke-width="1.6"/>${badge('−3', RED, 52, 14, 9)}`,
+  ),
+  biblioteca: svg(
+    `<rect x="8" y="14" width="10" height="40" fill="${RED}" stroke="${INK}" stroke-width="2"/><rect x="20" y="10" width="10" height="44" fill="${AZURE}" stroke="${INK}" stroke-width="2"/><rect x="32" y="16" width="10" height="38" fill="#35c46a" stroke="${INK}" stroke-width="2"/>${badge('+2', VIOLET, 50, 48, 10)}`,
+  ),
+  fortezza: svg(
+    `<path d="M8 56V22h8v8h8v-8h16v8h8v-8h8v34z" fill="#9aa3b5" stroke="${INK}" stroke-width="2.6" stroke-linejoin="round"/><path d="M26 56V42a6 6 0 0 1 12 0v14" fill="#5f6a82"/><ellipse cx="32" cy="14" rx="8" ry="6" fill="#c9ecfa" stroke="${GOLD_D}" stroke-width="2"/>`,
+  ),
+  turnoPerfetto: svg(
+    `<circle cx="32" cy="32" r="24" fill="#fff" stroke="${INK}" stroke-width="3"/><circle cx="32" cy="32" r="15" fill="${RED}"/><circle cx="32" cy="32" r="6" fill="#fff"/><path d="M52 8L34 30" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>`,
+  ),
+  rimontaFuriosa: svg(
+    `<path d="M6 54l14-12 10 6 22-30" fill="none" stroke="${RED}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M42 14h12v12" fill="none" stroke="${RED}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 20l6-8M18 24l8-4" stroke="${GOLD}" stroke-width="3" stroke-linecap="round"/>`,
+  ),
+  granFinale: svg(
+    `<path d="M32 6l4 12h12l-10 8 4 12-10-8-10 8 4-12-10-8h12z" fill="${GOLD}" stroke="${GOLD_D}" stroke-width="2" stroke-linejoin="round"/><path d="M8 48l8-6M56 48l-8-6M32 46v12" stroke="${VIOLET}" stroke-width="3.5" stroke-linecap="round"/><circle cx="14" cy="56" r="3" fill="${RED}"/><circle cx="50" cy="56" r="3" fill="${AZURE}"/>`,
+  ),
+  bancarotta: svg(
+    `<path d="M14 26h36l-4 28H18z" fill="${WOOD}" stroke="${WOOD_D}" stroke-width="2.6"/><path d="M22 26c0-8 4-14 10-14s10 6 10 14" fill="none" stroke="${WOOD_D}" stroke-width="3"/><path d="M24 34l16 14M40 34L24 48" stroke="${RED}" stroke-width="4" stroke-linecap="round"/>`,
+  ),
+  tempestaCarte: svg(
+    `${cardShape(6, 22, '#fff', -20)}${cardShape(22, 12, GOLD, 0)}${cardShape(38, 22, '#7fd6f5', 20)}<path d="M30 52l-4 8h8l-4 6" fill="none" stroke="${VIOLET}" stroke-width="3" stroke-linecap="round"/>`,
+  ),
+  muroInvalicabile: svg(
+    `<rect x="6" y="14" width="52" height="40" fill="#c97a4a" stroke="${INK}" stroke-width="2.6"/><path d="M6 27h52M6 40h52M20 14v13M40 14v13M30 27v13M14 40v14M48 40v14" stroke="${WOOD_D}" stroke-width="2"/>${badge('×2', AZURE, 52, 12, 9)}`,
+  ),
+  pattoDiavolo: svg(
+    `<path d="M12 52c4-20 10-30 20-30s16 10 20 30z" fill="#c4321b" stroke="${INK}" stroke-width="2.6"/><path d="M20 22l-6-14 12 8M44 22l6-14-12 8" fill="#c4321b" stroke="${INK}" stroke-width="2" stroke-linejoin="round"/><path d="M24 38h16" stroke="${GOLD}" stroke-width="3"/>${badge('+40', GOLD_D, 32, 50, 10)}`,
+  ),
+  ladroSupremo: svg(
+    `<circle cx="32" cy="32" r="28" fill="#1a0b3a"/><rect x="14" y="22" width="36" height="10" rx="5" fill="#ff3fa4"/><circle cx="24" cy="27" r="3" fill="#fff"/><circle cx="40" cy="27" r="3" fill="#fff"/>${coin(18, 46, 6)}${coin(32, 48, 6)}${coin(46, 46, 6)}`,
+  ),
+  fenice: svg(
+    `<circle cx="32" cy="32" r="28" fill="#1a0b3a"/><path d="M32 50c-10-6-20-14-22-28 8 6 14 6 18 2-2-8 2-14 4-18 2 4 6 10 4 18 4 4 10 4 18-2-2 14-12 22-22 28z" fill="#ff7a2f" stroke="#ffd23f" stroke-width="2" stroke-linejoin="round"/>`,
+  ),
+  onnipotenza: svg(
+    `<circle cx="32" cy="32" r="28" fill="#1a0b3a"/>${die(8, 24, 14, [[0.5, 0.5]], '#fff6c2')}${die(25, 24, 14, [[0.5, 0.5]], '#fff6c2')}${die(42, 24, 14, [[0.5, 0.5]], '#fff6c2')}<path d="M14 16l6 4M50 16l-6 4M32 8v8" stroke="#ffd23f" stroke-width="3" stroke-linecap="round"/>`,
+  ),
+  jackpotCosmico: svg(
+    `<circle cx="32" cy="32" r="28" fill="#1a0b3a"/>${coin(32, 30, 14)}<circle cx="12" cy="14" r="1.6" fill="#fff"/><circle cx="52" cy="50" r="1.6" fill="#fff"/>${badge('+60', '#ff3fa4', 46, 50, 10)}`,
+  ),
+  manoDelRe: svg(
+    `<circle cx="32" cy="32" r="28" fill="#1a0b3a"/><path d="M16 22L18 10l7 6 7-9 7 9 7-6 2 12z" fill="${GOLD}" stroke="${GOLD_D}" stroke-width="2" stroke-linejoin="round"/>${cardShape(10, 28, '#fff', -12)}${cardShape(22, 26, GOLD, 0)}${cardShape(34, 28, '#7fd6f5', 12)}`,
   ),
   dominioAssoluto: svg(
     `<circle cx="32" cy="32" r="30" fill="#001a26"/><circle cx="32" cy="32" r="26" fill="none" stroke="#00d9ff" stroke-width="2.5" stroke-dasharray="3 4"/><path d="M14 22L18 8l7 7 7-10 7 10 7-7 4 14z" fill="#00d9ff" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/>${die(10, 28, 14, [[0.5, 0.5]], "#e6fbff")}${die(25, 28, 14, [[0.5, 0.5]], "#e6fbff")}${die(40, 28, 14, [[0.5, 0.5]], "#e6fbff")}<text x="32" y="58" text-anchor="middle" font-size="11" font-weight="700" fill="#00d9ff" font-family="Fredoka, sans-serif">×5</text>`,

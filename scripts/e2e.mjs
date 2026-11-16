@@ -179,7 +179,8 @@ async function landscapeTest(browser) {
 async function tryUseCard(page) {
   const plan = await page.evaluate(() => {
     const g = window.yatzyDebug.game;
-    const order = ['dominioAssoluto', 'pioggiaOro', 'tempestaPerfetta', 'fontanaDesideri', 'tesoroDraghi', 'clonazione', 'terremoto', 'jackpot', 'catene', 'contrattacco', 'ladroDiLanci', 'eco', 'tassaDelRe', 'raddoppioSuperiore', 'trappola', 'investimento', 'specchioRiflesso', 'rivincita', 'combo', 'paccaSpalla', 'rimbalzo', 'antidoto', 'seiFortunato', 'spintaGentile', 'occhioDestino', 'bigBang', 'furtoCosmico', 'bucoNero', 'tempoInfinito', 'benedizioneEterna', 'reDeiLadri', 'scudoDivino', 'coronaDestino', 'moltiplicatore', 'scambioSorte', 'sabotaggio', 'manoLesta', 'dadoGemello', 'calamita',
+    const order = ['onnipotenza', 'jackpotCosmico', 'ladroSupremo', 'fenice', 'manoDelRe', 'granFinale', 'bancarotta', 'tempestaCarte', 'muroInvalicabile', 'pattoDiavolo', 'sfondamento', 'rapina', 'grandeScommessa', 'sigillo', 'valanga', 'biblioteca', 'fortezza', 'turnoPerfetto', 'rimontaFuriosa',
+      'pescaDoppia', 'contromossa', 'scommessaYatzy', 'invidia', 'spia', 'esorcismo', 'slancio', 'rogo', 'ritmo', 'ultimoAtto', 'scambioCarte', 'colpoDiFortuna', 'piccolaScommessa', 'salvadanaio', 'spintone', 'allarme', 'primoPasso', 'elemosina', 'tiroMancino', 'amuleto', 'dominioAssoluto', 'pioggiaOro', 'tempestaPerfetta', 'fontanaDesideri', 'tesoroDraghi', 'clonazione', 'terremoto', 'jackpot', 'catene', 'contrattacco', 'ladroDiLanci', 'eco', 'tassaDelRe', 'raddoppioSuperiore', 'trappola', 'investimento', 'specchioRiflesso', 'rivincita', 'combo', 'paccaSpalla', 'rimbalzo', 'antidoto', 'seiFortunato', 'spintaGentile', 'occhioDestino', 'bigBang', 'furtoCosmico', 'bucoNero', 'tempoInfinito', 'benedizioneEterna', 'reDeiLadri', 'scudoDivino', 'coronaDestino', 'moltiplicatore', 'scambioSorte', 'sabotaggio', 'manoLesta', 'dadoGemello', 'calamita',
       'mezzaLuna', 'lancioRubato', 'geloEterno', 'tempestaLanci', 'spiccioloFortunato', 'reteSalvataggio', 'lancioBenedetto',
       'doppioLancio', 'furtoFortuna', 'saccheggioReale', 'scudoLegno', 'scudoArcano', 'maledizioneCaos', 'apocalisseDadi', 'rewindTemporale', 'dadoTruccato', 'ritiraFortuna', 'riscritturaDestino', 'prigioneTemporale'];
     for (const id of order) {
@@ -250,13 +251,14 @@ async function tryUseCard(page) {
       break;
     }
     case 'scudoLegno':
-    case 'scudoArcano': {
+    case 'scudoArcano':
+    case 'amuleto': {
       const cats = await g(() => {
         const gm = window.yatzyDebug.game;
         return Object.keys(gm.current.card.scores).filter((c) => gm.current.card.canShield(c));
       });
       const me = await g(() => window.yatzyDebug.game.current.id);
-      for (const c of cats.slice(0, plan.id === 'scudoArcano' ? 3 : 2)) await pd(page, `.cell.${me}[data-cat="${c}"]`);
+      for (const c of cats.slice(0, { scudoArcano: 3, scudoLegno: 2, amuleto: 1 }[plan.id])) await pd(page, `.cell.${me}[data-cat="${c}"]`);
       await pd(page, '.tb-btn.ok');
       break;
     }
@@ -495,6 +497,8 @@ async function cardsTest(browser) {
   t = await page.evaluate(() => [window.yatzyDebug.game.player('red').card.total(), window.yatzyDebug.game.player('blue').card.total(), document.querySelector('.cell.red[data-cat="yatzy"] .val').textContent]);
   check(t[0] === 30 && t[1] === 20 && t[2] === '30', `Saccheggio Reale: 20 punti passano dal rosso al blu (${t[0]} - ${t[1]})`);
   // prigione: blocca tutte le carte del rosso (compreso il Rewind)
+  // (terza carta del turno: in questa prova si azzera il limite di 2 carte per turno)
+  await page.evaluate(() => (window.yatzyDebug.game.turnState.cardsPlayed = 0));
   await use('prigioneTemporale');
   await idle(page);
   await score('blue', [1, 2, 3, 4, 6], 'chance');

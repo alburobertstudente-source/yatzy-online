@@ -85,20 +85,39 @@ async function settle(a, b, timeout = 40000) {
   for (;;) {
     const [sa, sb] = await Promise.all([state(a), state(b)]);
     if (sa && sb && !sa.busy && !sb.busy && sa.queue === 0 && sb.queue === 0 && sa.turn === sb.turn) return [sa, sb];
-    if (sa?.scratching && sa.myTurn) await handleScratch(a);
-    if (sb?.scratching && sb.myTurn) await handleScratch(b);
+    if (sa?.scratching && sa.myTurn) await handleScratch(a, b);
+    if (sb?.scratching && sb.myTurn) await handleScratch(b, a);
     if (Date.now() - t0 > timeout) throw new Error(`timeout settle ${JSON.stringify([sa, sb])}`);
     await a.waitForTimeout(80);
   }
 }
 
-async function handleScratch(page) {
+/** Carte pescate dall'avversario: l'altro telefono non deve mai vederne il nome. */
+let leakChecks = 0;
+const leaks = [];
+async function noLeak(other, card) {
+  if (!other || !card?.name) return;
+  const seen = await other.evaluate(({ name, uid }) => {
+    const sp = document.querySelector('.scratch-screen');
+    return Boolean((sp && sp.textContent.includes(name)) || document.querySelector(`.hand [data-uid="${uid}"], .scratch-screen [data-uid="${uid}"]`));
+  }, card);
+  leakChecks++;
+  if (seen) leaks.push(card.name);
+}
+
+async function handleScratch(page, other = null) {
   await page.evaluate(() => window.yatzyDebug.revealScratch());
   await page.waitForSelector('.sc-take, .discard-row', { timeout: 15000 });
   await page.waitForTimeout(60);
+  const card = await page.evaluate(() => ({ name: document.querySelector('.scratch-card .cf-name')?.textContent || '', uid: window.yatzyDebug.game.current.hand.at(-1)?.uid }));
+  await noLeak(other, card);
   if (await page.locator('.discard-row').count()) await pd(page, '.discard-row .card-face.mini');
   else await page.locator('.sc-take').click();
   await page.waitForFunction(() => !window.yatzyDebug.scratching, null, { timeout: 15000 });
+  if (other) {
+    await other.waitForTimeout(400);
+    await noLeak(other, card);
+  }
 }
 
 /** Il telefono di turno gioca un turno toccando l'interfaccia. */
@@ -226,6 +245,7 @@ try {
   const [fh, fg] = await settle(host, guest);
   check(diverged === 0 && fh.phase === 'over', `stati identici dopo ogni turno, partita finita (${turns} turni giocati)`);
   check(fh.hash === fg.hash, 'la divergenza forzata è stata corretta dall\'host');
+  check(leakChecks >= 6 && leaks.length === 0, `le carte pescate dall'avversario restano coperte sull'altro telefono (${leakChecks} controlli${leaks.length ? `, visti: ${leaks.join(', ')}` : ''})`);
   check(spectatorChecks >= 20, `chi non è di turno non può lanciare (${spectatorChecks} prove)`);
   await host.waitForSelector('.gameover', { timeout: 30000 });
   await guest.waitForSelector('.gameover', { timeout: 30000 });

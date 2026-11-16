@@ -13,9 +13,9 @@ function give(game, id) {
   return entry.uid;
 }
 
-test('60 carte in 6 rarità (comprese mitiche e Assurda), con i nomi richiesti', () => {
-  assert.equal(CARD_IDS.length, 60);
-  const per = { common: 11, rare: 20, epic: 12, legendary: 9, mythic: 7, absurd: 1 };
+test('99 carte in 6 rarità (comprese mitiche e Assurda), con i nomi richiesti', () => {
+  assert.equal(CARD_IDS.length, 99);
+  const per = { common: 20, rare: 31, epic: 21, legendary: 14, mythic: 12, absurd: 1 };
   for (const r of RARITIES) assert.equal(cardsOfRarity(r).length, per[r], r);
   assert.ok(Math.abs(Object.values(CARD_RULES.RARITY_WEIGHTS).reduce((a, b) => a + b, 0) - 100) < 1e-9);
   assert.equal(CARD_RULES.RARITY_WEIGHTS.absurd, 0.1);
@@ -330,7 +330,7 @@ test('Corona del Destino: triplica il punteggio del turno, fino a +100', () => {
   game.select('fourKind');
   const r2 = game.confirm();
   assert.equal(r2.score, 29);
-  assert.equal(r2.crownExtra, 29);
+  assert.equal(r2.crownExtra, 58, 'triplo: +2 volte il punteggio');
   assert.equal(CARD_RULES.CROWN_CAP, 100);
 });
 
@@ -375,7 +375,7 @@ test('Rewind Temporale: annulla un furto subito', () => {
   const rw = give(game, 'rewindTemporale');
   const r = game.useCard(rw);
   assert.equal(r.undone.kind, 'steal');
-  assert.equal(r.undone.amount, 20);
+  assert.equal(r.undone.amount, 8);
   assert.equal(game.player('red').card.total(), 50);
   assert.equal(game.player('blue').card.total(), 16);
 });
@@ -442,7 +442,7 @@ test('salvataggio e ripresa con carte, scudi, maledizioni e furti', () => {
   give(game, 'coronaDestino');
   game.useCard(give(game, 'occhioDestino'));
   const json = JSON.parse(JSON.stringify(game.toJSON()));
-  const copy = Game.fromJSON(json, { roller });
+  const copy = Game.fromJSON(json, { roller, playLimit: 99 });
   assert.equal(copy.player('red').card.total(), 44);
   assert.equal(copy.player('blue').card.total(), 6);
   assert.equal(copy.player('blue').card.shieldCount('ones'), 1);

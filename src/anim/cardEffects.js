@@ -4,7 +4,7 @@
  * rewind, corona, mano degli dei, occhio del destino.
  */
 import { h, localRect, wait } from '../ui/dom.js';
-import { CARD_ICONS, MINI, CHAINS } from '../ui/cardArt.js';
+import { CARD_ICONS, MINI, CHAINS, CARD_BACK } from '../ui/cardArt.js';
 import { CARDS } from '../core/cards.js';
 import { play, EASE, ms, pop, shake } from './animations.js';
 import { sparkle, toast } from './effects.js';
@@ -198,8 +198,8 @@ export class CardFx {
 
   /** Banner della maledizione quando scatta sul lancio del giocatore. */
   async curseBanner(type) {
-    const name = type === 'apocalypse' ? 'APOCALISSE DEI DADI!' : type === 'freeze' ? 'GELO ETERNO!' : 'MALEDIZIONE DEL CAOS!';
-    const sub = type === 'apocalypse' ? 'Tutti i dadi rilanciati, un lancio in meno, niente dadi conservati' : type === 'freeze' ? 'Tre dadi si congelano' : 'Dopo ogni lancio tre dadi vengono rilanciati';
+    const name = type === 'apocalypse' ? 'APOCALISSE DEI DADI!' : type === 'freeze' ? 'GELO ETERNO!' : type === 'nudge' ? 'TIRO MANCINO!' : 'MALEDIZIONE DEL CAOS!';
+    const sub = type === 'apocalypse' ? 'Tutti i dadi rilanciati, un lancio in meno, niente dadi conservati' : type === 'freeze' ? 'Tre dadi si congelano' : type === 'nudge' ? 'Un dado diventa 1' : 'Dopo ogni lancio tre dadi vengono rilanciati';
     const el = h('div', { class: `curse-banner ${type}` }, h('div', { class: 'cb-icon', html: MINI.curse }), h('div', {}, h('b', {}, name), h('small', {}, sub)));
     this.fx.append(el);
     shake(this.table.querySelector('.play-area'), 7, 500);
@@ -213,15 +213,16 @@ export class CardFx {
   }
 
   /** Catene sulla carta avversaria imprigionata (mostrata al centro). */
-  async prison(cardId) {
+  async prison(cardId = null) {
     const tw = this.table.offsetWidth;
     const th = this.table.offsetHeight;
-    const def = CARDS[cardId];
+    // senza cardId: carta coperta (le carte dell'avversario non si rivelano)
+    const def = cardId ? CARDS[cardId] : null;
     const el = h(
       'div',
-      { class: `fx-cast r-${def.rarity} is-jailed` },
-      h('div', { class: 'fx-cast-icon', html: CARD_ICONS[cardId] }),
-      h('div', { class: 'fx-cast-name' }, def.name),
+      { class: `fx-cast r-${def ? def.rarity : 'common'} is-jailed` },
+      h('div', { class: 'fx-cast-icon', html: def ? CARD_ICONS[cardId] : CARD_BACK }),
+      h('div', { class: 'fx-cast-name' }, def ? def.name : 'CARTE AVVERSARIE'),
       h('div', { class: 'fx-chains', html: CHAINS }),
     );
     el.style.left = `${tw / 2 - 90}px`;

@@ -766,7 +766,7 @@ export class Controller {
     const c = this.game ? this.#handOwner().status.curse : null;
     if (!c) return;
     const r = this.#rect(this.hand.el);
-    const text = c.type === 'apocalypse' ? 'APOCALISSE IN ARRIVO AL PROSSIMO LANCIO' : c.type === 'freeze' ? 'GELO IN ARRIVO AL PROSSIMO LANCIO' : 'MALEDIZIONE IN ARRIVO AL PROSSIMO LANCIO';
+    const text = c.type === 'apocalypse' ? 'APOCALISSE IN ARRIVO AL PROSSIMO LANCIO' : c.type === 'freeze' ? 'GELO IN ARRIVO AL PROSSIMO LANCIO' : c.type === 'nudge' ? 'TIRO MANCINO AL PROSSIMO LANCIO' : 'MALEDIZIONE IN ARRIVO AL PROSSIMO LANCIO';
     toast(this.fx, text, { x: r.x + r.w / 2, y: r.y + r.h + 26, kind: 'hint' });
   }
 
@@ -1049,10 +1049,12 @@ export class Controller {
         break;
       case 'cardSteal':
         sound.steal();
-        await this.cardFx.prison(res.cardId);
+        // il nome della carta rubata lo vede solo chi la riceve (o chi l'aveva già)
+        const sees = !this.viewer || this.viewer === me.id || this.viewer === opp.id;
+        await this.cardFx.prison(sees ? res.cardId : null);
         this.hand.render(g, { interactive: false, player: this.#handOwner() });
         this.hud.setCardInfo(g.players);
-        toast(this.fx, `RUBATA: ${CARDS[res.cardId].name.toUpperCase()}`, { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'gold' });
+        toast(this.fx, sees ? `RUBATA: ${CARDS[res.cardId].name.toUpperCase()}` : 'CARTA RUBATA', { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'gold' });
         break;
       case 'halveSet':
         sound.curse();
@@ -1120,8 +1122,9 @@ export class Controller {
         break;
       case 'prison':
         sound.prison();
-        await this.cardFx.prison(res.cardId);
-        toast(this.fx, res.count > 1 ? `${res.count} CARTE BLOCCATE` : `${CARDS[res.cardId].name.toUpperCase()} BLOCCATA`, { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'hint' });
+        // chi attacca non vede le carte bloccate: solo quante sono
+        await this.cardFx.prison(null);
+        toast(this.fx, res.count > 1 ? `${res.count} CARTE BLOCCATE` : 'UNA CARTA BLOCCATA', { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'hint' });
         break;
       case 'points': {
         sound.coins();
@@ -1146,7 +1149,7 @@ export class Controller {
         buzz([50, 30, 50]);
         shake(this.stage.table.querySelector('.play-area') || this.stage.table, 9, 700);
         this.card.render(g, { interactive: false });
-        toast(this.fx, res.mirrored ? 'TERREMOTO RIFLESSO DALLO SPECCHIO!' : `TERREMOTO: −${res.taken} ALL'AVVERSARIO`, { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'hint' });
+        toast(this.fx, res.mirrored ? 'ATTACCO RESPINTO!' : res.label || `${CARDS[res.cardId]?.name.toUpperCase() ?? 'TERREMOTO'}: −${res.taken} ALL'AVVERSARIO`, { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'hint' });
         await wait(ms(600));
         break;
       case 'clone':
@@ -1155,6 +1158,13 @@ export class Controller {
         this.hud.setCardInfo(g.players);
         toast(this.fx, `CLONATE ${res.cards.length} CARTE!`, { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'gold' });
         await wait(ms(500));
+        break;
+      case 'negated':
+        sound.blocked();
+        buzz([30, 30, 30]);
+        await this.cardFx.prison(def ? res.cardId : null);
+        toast(this.fx, 'CONTROMOSSA! LA CARTA NON HA EFFETTO', { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'hint' });
+        await wait(ms(400));
         break;
       case 'dominion':
         sound.yatzyBonus();
@@ -1191,6 +1201,9 @@ export class Controller {
       default:
         break;
     }
+    if (res.spied) toast(this.fx, `SPIA: +${res.spied} ALL'AVVERSARIO`, { x: tr.x + tr.w / 2, y: tr.y + tr.h + 30, kind: 'hint' });
+    // carte che fanno pescare (Pesca Doppia, Biblioteca, Tempesta di Carte…)
+    if (g === this.game && g.pendingDraws > 0 && !g.scoredThisTurn && g.phase === 'playing') await this.#drawPhase({ extra: true });
   }
 
   /* ------------------------------------------------------------ */
@@ -1308,6 +1321,10 @@ export class Controller {
     const cardExtra = res.cardExtra || 0;
     await Promise.all([this.hud.setTotal(pid, res.total - yb - res.crownExtra - cardExtra, true), clearing]);
 
+    if (res.envied) {
+      const rr = this.#rect(this.hud.totalEl(g.other(g.player(pid)).id));
+      toast(this.fx, `INVIDIA: +${res.envied} ALL'AVVERSARIO`, { x: rr.x + rr.w / 2, y: rr.y + rr.h + 20, kind: 'hint' });
+    }
     // Trappola dell'avversario: −12
     if (res.trapped && (res.trapped.taken > 0 || res.trapped.blocked)) {
       const c = this.#rect(cell.el);
@@ -1340,6 +1357,15 @@ export class Controller {
       const names = res.extras.map((x) => CARDS[x.cardId].name.toUpperCase()).join(' + ');
       toast(this.fx, names, { x: c.x + c.w / 2, y: c.y - 6, kind: 'gold' });
       await this.cardFx.flyPoints({ x: c.x + c.w / 2, y: c.y + c.h / 2 }, this.hud.totalEl(pid), `+${cardExtra}`);
+      await this.hud.setTotal(pid, res.total - yb - res.crownExtra, true);
+    }
+    if (cardExtra < 0) {
+      // scommessa persa
+      sound.sadTrombone();
+      const c = this.#rect(cell.el);
+      shake(cell.el, 4);
+      toast(this.fx, `SCOMMESSA PERSA ${cardExtra}`, { x: c.x + c.w / 2, y: c.y - 6, kind: 'hint' });
+      await wait(ms(500));
       await this.hud.setTotal(pid, res.total - yb - res.crownExtra, true);
     }
 
@@ -1396,6 +1422,16 @@ export class Controller {
       sound.coins();
       toast(this.fx, `INVESTIMENTO: +${n.invest} PUNTI`, { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'gold' });
       for (const p of g.players) await this.hud.setTotal(p.id, p.card.total(), true);
+    }
+    if (n.extraNext) {
+      sound.combo();
+      toast(this.fx, `+${n.extraNext} LANCI IN QUESTO TURNO`, { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'gold' });
+      await wait(ms(500));
+    }
+    if (n.sealed) {
+      sound.prison();
+      toast(this.fx, 'SIGILLO: UNA SOLA CARTA E UN LANCIO IN MENO', { x: tr.x + tr.w / 2, y: tr.y - 8, kind: 'hint' });
+      await wait(ms(700));
     }
     if (n.chains) {
       sound.prison();

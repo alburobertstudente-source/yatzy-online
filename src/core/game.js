@@ -22,8 +22,8 @@ import { detectMeme } from './memes.js';
 
 export { GameError };
 
-const newStatus = () => ({ curse: null, noHoldDie: null, sabotage: null, halve: null, lessRolls: null, blessTurns: 0, yatzyTurns: 0, tempoTurns: 0, mirror: null, counter: null, trap: null, chains: null, invest: null });
-const newTurnState = () => ({ foresight: {}, crown: null, noHold: [], frozen: [], blocked: [], bonuses: [], blessed: false, blessAll: false, cardNotes: null, chaos: false, yatzyAll: false, cardsPlayed: 0 });
+const newStatus = () => ({ curse: null, noHoldDie: null, sabotage: null, halve: null, lessRolls: null, blessTurns: 0, yatzyTurns: 0, tempoTurns: 0, alarm: null, negate: null, envy: null, spy: null, immune: null, sealed: null, extraNext: 0, lessNext: 0, bonusDraw: 0, mirror: null, counter: null, trap: null, chains: null, invest: null });
+const newTurnState = () => ({ foresight: {}, crown: null, noHold: [], frozen: [], blocked: [], bonuses: [], blessed: false, blessAll: false, cardNotes: null, chaos: false, yatzyAll: false, cardsPlayed: 0, playLimit: null, lost: 0 });
 
 export class Game {
   /**
@@ -32,7 +32,9 @@ export class Game {
    * @param {() => number} [opts.rng] generatore per la pescata delle carte e i dadi delle carte
    * @param {{id:string,name:string}[]} [opts.players]
    */
-  constructor({ roller, rng, players = PLAYERS, cards = true, hooks = null } = {}) {
+  constructor({ roller, rng, players = PLAYERS, cards = true, hooks = null, playLimit = CARD_RULES.PLAYS_PER_TURN } = {}) {
+    /** carte giocabili per turno */
+    this.playLimit = playLimit;
     this.rng = rng ?? roller?.rng ?? createCryptoRandom();
     this.roller = roller ?? new FairRoller({ rng: this.rng });
     this.players = players.map((p) => ({ ...p, card: new Scorecard(), hand: [], status: newStatus() }));
@@ -207,9 +209,25 @@ export class Game {
     const av = cardAvailability(this, entry);
     if (!av.ok) throw new GameError(av.reason);
     const effectId = this.nextEffectId++;
+    const opp = this.other(me);
+    // Contromossa dell'avversario: la carta si consuma senza effetto
+    if (opp.status.negate) {
+      opp.status.negate = null;
+      me.hand = me.hand.filter((c) => c.uid !== uid);
+      this.turnState.cardsPlayed = (this.turnState.cardsPlayed || 0) + 1;
+      const out = { playerId: me.id, cardId: entry.id, uid, effectId, kind: 'negated', values: [...this.dice.values], totals: Object.fromEntries(this.players.map((p) => [p.id, p.card.total()])) };
+      this.emit('card', out);
+      return out;
+    }
     const { result, log } = applyCard(this, me, entry, params, effectId);
     me.hand = me.hand.filter((c) => c.uid !== uid);
     this.turnState.cardsPlayed = (this.turnState.cardsPlayed || 0) + 1;
+    // Spia dell'avversario: 5 punti per ogni carta giocata
+    let spied = 0;
+    if (opp.status.spy) {
+      spied = 5;
+      opp.card.addCardPoints({ id: effectId, amount: 5, kind: 'counter', cat: null });
+    }
     this.effectLog.push(log);
     if (this.effectLog.length > 60) this.effectLog.splice(0, this.effectLog.length - 60);
     const out = {
@@ -218,6 +236,7 @@ export class Game {
       uid,
       effectId,
       ...result,
+      spied,
       values: [...this.dice.values],
       totals: Object.fromEntries(this.players.map((p) => [p.id, p.card.total()])),
     };
@@ -278,6 +297,8 @@ export class Game {
         // l'Apocalisse travolge anche i dadi conservati
         idx = [0, 1, 2, 3, 4];
         idx.forEach((i) => this.dice.release(i));
+      } else if (c.type === 'nudge') {
+        idx = shuffle(idx.length ? idx : [0, 1, 2, 3, 4], this.rng).slice(0, 1);
       } else if (c.type === 'freeze') {
         frozen = shuffle(idx.length ? idx : [0, 1, 2, 3, 4], this.rng).slice(0, 3).sort((a, b) => a - b);
         frozen.forEach((i) => this.dice.release(i));
@@ -285,7 +306,7 @@ export class Game {
         idx = [];
       }
       const before = idx.map((i) => this.dice.values[i]);
-      for (const i of idx) this.dice.setValue(i, this.randomDie());
+      for (const i of idx) this.dice.setValue(i, c.type === 'nudge' ? 1 : this.randomDie());
       let noHold = null;
       if (c.type === 'apocalypse') {
         // l'Apocalisse: un lancio in meno e per tutto il turno nessun dado si può conservare
@@ -392,9 +413,13 @@ export class Game {
       if (def.kind === 'plus') amount = score > 0 ? def.amount : 0;
       else if (def.kind === 'mult') amount = Math.min(score, def.cap);
       else if (def.kind === 'net') amount = score === 0 ? def.amount : 0;
+      else if (def.kind === 'bet' || def.kind === 'cosmicBet') amount = score >= def.min ? def.win : -def.lose;
+      else if (def.kind === 'betYatzy') amount = isYatzy(dice) ? def.win : -def.lose;
+      else if (def.kind === 'final') amount = this.round >= 10 ? Math.min(score, def.cap) : def.early;
+      else if (def.kind === 'perfect') amount = score >= def.min ? def.win : 0;
       else if (def.kind === 'jackpot') amount = ['fullHouse', 'smallStraight', 'largeStraight', 'fourKind', 'yatzy'].includes(id) && score > 0 ? def.amount : 0;
       else if (def.kind === 'upper2') amount = CATEGORY_INFO[id].section === 'upper' ? Math.min(score, def.cap) : 0;
-      if (amount > 0) {
+      if (amount !== 0) {
         card.addCardPoints({ id: b.effectId, amount, kind: 'bonus', cat: id });
         cardExtra += amount;
         extras.push({ cardId: b.cardId, amount });
@@ -413,6 +438,15 @@ export class Game {
       halved = { cat: id, taken, blocked };
       const log = this.effectLog.find((e) => e.id === hv.effectId);
       if (log) Object.assign(log, { fired: true, cat: id, taken, blocked });
+    }
+
+    // Invidia dell'avversario: un punteggio da 30 in su gli regala 15 punti
+    let envied = 0;
+    const rival = this.other(me);
+    if (rival.status.envy && score >= 30) {
+      rival.status.envy = null;
+      envied = 15;
+      rival.card.addCardPoints({ id: this.nextEffectId++, amount: 15, kind: 'counter', cat: null });
     }
 
     // Trappola dell'avversario: −12 al punteggio segnato
@@ -444,6 +478,7 @@ export class Game {
       extras,
       halved,
       trapped,
+      envied,
       meme: detectMeme({ category: id, score, dice, fullHouseOpen: card.scores.fullHouse === null }),
       prevTotal,
       total: card.total(),
@@ -519,6 +554,29 @@ export class Game {
       for (let k = 0; k < 2 && this.dice.maxRolls < ROLL_CAP; k++) this.dice.addRoll();
       notes.bless = me.status.blessTurns + 1;
     }
+    // la Spia guardava il turno avversario appena finito; il Muro dura 2 turni avversari
+    if (me.status.spy) me.status.spy = null;
+    if (me.status.immune && --me.status.immune.turns <= 0) me.status.immune = null;
+    if (me.status.extraNext) {
+      for (let k = 0; k < me.status.extraNext && this.dice.maxRolls < ROLL_CAP; k++) this.dice.addRoll();
+      notes.extraNext = me.status.extraNext;
+      me.status.extraNext = 0;
+    }
+    if (me.status.lessNext) {
+      for (let k = 0; k < me.status.lessNext; k++) this.dice.removeRoll();
+      me.status.lessNext = 0;
+      notes.lessRolls = true;
+    }
+    if (me.status.sealed) {
+      me.status.sealed = null;
+      this.turnState.playLimit = 1;
+      this.dice.removeRoll();
+      notes.sealed = true;
+    }
+    if (me.status.bonusDraw) {
+      this.pendingDraws += me.status.bonusDraw;
+      me.status.bonusDraw = 0;
+    }
     if (me.status.invest) {
       const inv = me.status.invest;
       me.status.invest = null;
@@ -586,6 +644,8 @@ export class Game {
         chaos: Boolean(this.turnState.chaos),
         yatzyAll: Boolean(this.turnState.yatzyAll),
         cardsPlayed: this.turnState.cardsPlayed || 0,
+        playLimit: this.turnState.playLimit ?? null,
+        lost: this.turnState.lost || 0,
         noHold: [...(this.turnState.noHold || [])],
         frozen: [...(this.turnState.frozen || [])],
         blocked: [...(this.turnState.blocked || [])],
@@ -608,9 +668,9 @@ export class Game {
     return (h >>> 0).toString(16).padStart(8, '0');
   }
 
-  static fromJSON(data, { roller, rng, players = PLAYERS } = {}) {
+  static fromJSON(data, { roller, rng, players = PLAYERS, playLimit } = {}) {
     if (!data || data.v !== 2) throw new GameError('Salvataggio non valido');
-    const g = new Game({ roller, rng, players });
+    const g = new Game({ roller, rng, players, ...(playLimit ? { playLimit } : {}) });
     for (const p of g.players) {
       const saved = data.players?.find((x) => x.id === p.id);
       if (!saved) continue;
@@ -636,6 +696,8 @@ export class Game {
       chaos: Boolean(ts.chaos),
       yatzyAll: Boolean(ts.yatzyAll),
       cardsPlayed: Number(ts.cardsPlayed) || 0,
+      playLimit: Number.isInteger(ts.playLimit) ? ts.playLimit : null,
+      lost: Number(ts.lost) || 0,
       noHold: Array.isArray(ts.noHold) ? [...ts.noHold] : [],
       frozen: Array.isArray(ts.frozen) ? [...ts.frozen] : [],
       blocked: Array.isArray(ts.blocked) ? [...ts.blocked] : [],

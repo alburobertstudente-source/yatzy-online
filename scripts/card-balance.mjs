@@ -1,9 +1,9 @@
 /**
  * Bilanciamento delle carte: valore atteso di ogni carta misurato col bot.
- * Da una posizione di metà partita (stesso seme), si giocano 2 turni a testa
+ * Da una posizione di metà partita (stesso seme), si giocano 4 turni a testa
  * con la carta usata dal giocatore di turno dopo il primo lancio, e senza.
  * Valore = differenza media di (miei punti − punti avversario).
- *   node scripts/card-balance.mjs [partite per carta]
+ *   node scripts/card-balance.mjs [partite per carta] [parte/parti, es. 1/3]
  */
 import { Game } from '../src/core/game.js';
 import { CARDS, CARD_IDS } from '../src/core/cards.js';
@@ -12,6 +12,7 @@ import { createSeededRandom } from '../src/core/probability.js';
 import { botMove, applyMove } from '../src/ai/bot.js';
 
 const N = Number(process.argv[2]) || 40;
+const [PART, PARTS] = (process.argv[3] || '1/1').split('/').map(Number);
 const SKILL = 0.6;
 
 function drawAll(g) {
@@ -61,7 +62,7 @@ for (let i = 0; i < N; i++) {
 }
 
 const rows = [];
-for (const id of CARD_IDS) {
+for (const id of CARD_IDS.filter((_, k) => k % PARTS === PART - 1)) {
   let sum = 0;
   let usedN = 0;
   for (let i = 0; i < N; i++) {
@@ -72,7 +73,7 @@ for (const id of CARD_IDS) {
       const pid = g.current.id;
       const u = turn(g, rng, withCard ? id : null);
       if (withCard && u) usedN++;
-      for (let t = 0; t < 3 && g.phase === 'playing'; t++) turn(g, rng);
+      for (let t = 0; t < 7 && g.phase === 'playing'; t++) turn(g, rng);
       res.push(margin(g, pid));
     }
     sum += res[0] - res[1];

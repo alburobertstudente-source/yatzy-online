@@ -224,9 +224,9 @@ export class ScratchView {
   spectate({ playerName, color, round, totalRounds, extra = false }) {
     const back = h('div', { class: `card-back c-${color}` }, h('div', { class: 'cb-star', html: CARD_BACK }), h('div', { class: 'cb-dots' }, h('span'), h('span'), h('span')));
     const box = h('div', { class: 'scratch-card spectating' }, back);
-    const title = h('div', { class: 'sc-title' }, extra ? 'CARTA EXTRA' : `${playerName} GRATTA...`);
+    const title = h('div', { class: 'sc-title' }, extra ? `${playerName} PESCA UNA CARTA EXTRA…` : `${playerName} STA PESCANDO…`);
     const sub = h('div', { class: 'sc-sub' }, `Turno del ${playerName} · Round ${round}/${totalRounds}`);
-    const note = h('div', { class: 'sc-note' }, 'Aspetta che scopra il suo potenziamento');
+    const note = h('div', { class: 'sc-note' }, 'Le carte avversarie restano coperte finché non le gioca');
     const screen = h('div', { class: `scratch-screen spectator c-${color}` }, h('div', { class: 'sc-head' }, title, sub), box, note);
     this.host.append(screen);
     play(screen, [{ opacity: 0 }, { opacity: 1 }], { duration: 220, easing: 'linear' });

@@ -30,7 +30,8 @@ export class ScriptedRoller {
 
 export function scriptedGame(script, { cards = [] } = {}) {
   const roller = new ScriptedRoller(script);
-  const game = new Game({ roller, rng: createSeededRandom(9) });
+  // nei test delle singole carte non c'è il limite di carte per turno (ha un test suo)
+  const game = new Game({ roller, rng: createSeededRandom(9), playLimit: 99 });
   game.forcedCards.push(...cards);
   return { game, roller };
 }
