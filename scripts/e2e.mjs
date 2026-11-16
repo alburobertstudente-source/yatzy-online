@@ -482,12 +482,14 @@ async function cardsTest(browser) {
   // furto bloccato dallo scudo, poi saccheggio sulla Yatzy dopo che lo scudo è consumato
   await page.evaluate(() => ['furtoFortuna', 'saccheggioReale', 'prigioneTemporale'].forEach((id) => window.yatzyDebug.giveCard(id)));
   await page.evaluate(() => window.yatzyDebug.giveCard('rewindTemporale', 'red'));
+  // il rosso ha la Yatzy (50) più i punti della Maledizione del Caos giocata prima
+  const red0 = await page.evaluate(() => window.yatzyDebug.game.player('red').card.total());
   await use('furtoFortuna');
   await pd(page, '.cell.red[data-cat="yatzy"]');
   await pd(page, '.tb-btn.ok');
   await idle(page);
   let t = await page.evaluate(() => [window.yatzyDebug.game.player('red').card.total(), window.yatzyDebug.game.player('blue').card.total()]);
-  check(t[0] === 50 && t[1] === 0, 'Furto di Fortuna bloccato dallo scudo');
+  check(t[0] === red0 && t[1] === 0, `Furto di Fortuna bloccato dallo scudo (${t[0]} - ${t[1]})`);
   await use('saccheggioReale');
   await pd(page, '.cell.red[data-cat="yatzy"]');
   await pd(page, '.tb-btn.ok');
@@ -495,7 +497,7 @@ async function cardsTest(browser) {
   await page.screenshot({ path: join(OUT, 'saccheggio.png') });
   await idle(page);
   t = await page.evaluate(() => [window.yatzyDebug.game.player('red').card.total(), window.yatzyDebug.game.player('blue').card.total(), document.querySelector('.cell.red[data-cat="yatzy"] .val').textContent]);
-  check(t[0] === 42 && t[1] === 8 && t[2] === '42', `Saccheggio Reale: 8 punti passano dal rosso al blu (${t[0]} - ${t[1]})`);
+  check(t[0] === red0 - 8 && t[1] === 8 && t[2] === '42', `Saccheggio Reale: 8 punti passano dal rosso al blu (${t[0]} - ${t[1]})`);
   // prigione: blocca tutte le carte del rosso (compreso il Rewind)
   // (terza carta del turno: in questa prova si azzera il limite di 2 carte per turno)
   await page.evaluate(() => (window.yatzyDebug.game.turnState.cardsPlayed = 0));
