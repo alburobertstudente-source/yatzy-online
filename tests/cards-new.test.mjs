@@ -460,7 +460,7 @@ test('Dominio Assoluto (Assurda): per 5 turni ogni lancio è uno Yatzy, con i bo
   assert.notEqual(new Set(after.values).size, 1, 'finito dopo 5 turni');
 });
 
-test('rimonta: chi è indietro di 60+ punti pesca una carta in più', () => {
+test('rimonta: chi è indietro di 50+ punti pesca una carta in più', () => {
   const { game, roller } = scriptedGame();
   drawAll(game);
   game.useCard(give(game, 'tesoroDraghi'));

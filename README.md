@@ -183,9 +183,9 @@ I dadi sono **equi per entrambi i giocatori**: nessun vantaggio nascosto. Anche 
 
 Il progetto delle carte (obiettivi, economia, archetipi, regole anti-frustrazione) è in [docs/CARDS_DESIGN.md](docs/CARDS_DESIGN.md).
 
-**Regole del duello**: si giocano al massimo **2 carte per turno**; in un turno avversario si possono perdere al massimo **45 punti** con le carte; le carte in mano sono **segrete** (online l'avversario vede solo il retro, e quando peschi solo "sta pescando…").
+**Regole del duello**: si possono giocare **tutte le carte che vuoi** in un turno (solo il Sigillo avversario lo riduce a 1); in un turno avversario si possono perdere al massimo **45 punti** con le carte; le carte in mano sono **segrete** (online l'avversario vede solo il retro, e quando peschi solo "sta pescando…").
 
-**Rimonta**: chi all'inizio del proprio turno è indietro di 60 punti o più gratta una carta in più (vale per entrambi i giocatori).
+**Rimonta**: chi all'inizio del proprio turno è indietro di 50 punti o più gratta una carta in più (vale per entrambi i giocatori).
 
 | Rarità | Probabilità | Carte |
 |---|---|---|

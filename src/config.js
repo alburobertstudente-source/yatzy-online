@@ -49,8 +49,10 @@ export const CARD_RULES = {
   MAX_SHIELDS: 2,
   /** Punti extra massimi della Corona del Destino. */
   CROWN_CAP: 100,
-  /** Carte giocabili in un turno (le combo si costruiscono in più turni). */
-  PLAYS_PER_TURN: 2,
+  /** Carte giocabili in un turno: nessun limite (solo il Sigillo lo riduce a 1). */
+  PLAYS_PER_TURN: Infinity,
+  /** Chi è indietro di almeno questi punti gratta una carta in più a inizio turno. */
+  COMEBACK_GAP: 50,
   /** Punti che si possono perdere al massimo in un turno avversario (furti, terremoti…). */
   LOSS_CAP: 45,
 };

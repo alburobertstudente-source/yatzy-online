@@ -127,7 +127,7 @@ export class Screens {
       row(DOCTOR_BADGE, 'Rifiuti il Dottore', 'fai Full ma lo segni altrove: niente visita dal Dottore'),
       row(HALO_BADGE, 'Rinuncia a Satana', 'metti 0 nella casella Yatzy'),
       h('h3', {}, 'Carte potenziamento'),
-      h('p', {}, `All'inizio di ogni turno gratti una carta con un potenziamento a caso. Tocca una carta della tua mano per vederla e usarla durante il tuo turno, prima di segnare. Puoi tenere al massimo ${CARD_RULES.HAND_MAX} carte e giocarne al massimo ${CARD_RULES.PLAYS_PER_TURN} per turno. Le carte dell'avversario restano coperte finché non le gioca; chi è indietro di 60 punti o più gratta una carta in più.`),
+      h('p', {}, `All'inizio di ogni turno gratti una carta con un potenziamento a caso. Tocca una carta della tua mano per vederla e usarla durante il tuo turno, prima di segnare. Puoi tenere al massimo ${CARD_RULES.HAND_MAX} carte e giocarne quante vuoi in un turno. Le carte dell'avversario restano coperte finché non le gioca; chi è indietro di ${CARD_RULES.COMEBACK_GAP} punti o più gratta una carta in più.`),
       ...RARITIES.map((r) =>
         h(
           'div',

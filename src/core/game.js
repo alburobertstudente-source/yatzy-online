@@ -604,8 +604,8 @@ export class Game {
       this.turnState.noHold = [0, 1, 2, 3, 4];
       notes.chains = true;
     }
-    // rimonta: chi è indietro di 60 punti o più pesca una carta in più (vale per tutti e due)
-    if (this.cardsEnabled && this.other(me).card.total() - me.card.total() >= 60) {
+    // rimonta: chi è indietro di COMEBACK_GAP punti o più pesca una carta in più (vale per tutti e due)
+    if (this.cardsEnabled && this.other(me).card.total() - me.card.total() >= CARD_RULES.COMEBACK_GAP) {
       this.pendingDraws++;
       notes.comeback = true;
     }

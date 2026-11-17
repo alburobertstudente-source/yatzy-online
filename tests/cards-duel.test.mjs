@@ -22,14 +22,14 @@ function midGame() {
 }
 
 /* ---------------- regole del duello ---------------- */
-test('al massimo 2 carte per turno; il Sigillo la riduce a 1 e toglie un lancio', () => {
+test('nessun limite di carte per turno; il Sigillo lo riduce a 1 e toglie un lancio', () => {
   const game = new Game({ rng: createSeededRandom(4) });
   drawAll(game);
   use(game, 'paccaSpalla');
   use(game, 'paccaSpalla');
   const third = give(game, 'paccaSpalla');
-  assert.equal(game.cardAvailability(third).ok, false);
-  assert.equal(CARD_RULES.PLAYS_PER_TURN, 2);
+  assert.equal(game.cardAvailability(third).ok, true);
+  assert.equal(CARD_RULES.PLAYS_PER_TURN, Infinity);
   game.current.hand = [];
   game.useCard; // il terzo resta in mano
   game.roll();
